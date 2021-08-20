@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Advanced_SNES_ROM_Utility
 {
-    public partial class ROM
+    public partial class SNESROM
     {
         public string ROMPath;
         public string ROMName;
@@ -54,7 +54,7 @@ namespace Advanced_SNES_ROM_Utility
         public string StringRegion;
         public string StringSMCHeader;
 
-        public ROM(string @romPath)
+        public SNESROM(string @romPath)
         {
             // Read ROM
             if (File.Exists(@romPath))

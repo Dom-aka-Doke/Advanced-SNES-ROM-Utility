@@ -12,6 +12,8 @@ namespace Advanced_SNES_ROM_Utility
         {
             InitializeComponent();
 
+            buttonSave.Enabled = false;
+            buttonSaveAs.Enabled = false;
             buttonAddHeader.Enabled = false;
             buttonRemoveHeader.Enabled = false;
             buttonSwapBinROM.Enabled = false;
@@ -31,9 +33,10 @@ namespace Advanced_SNES_ROM_Utility
 
         // Get option settings
         bool autoFixROMSize = Properties.Settings.Default.AutoFixIntROMSize;
+        bool saveWithHeader = false;
 
         // Create empty ROM
-        ROM sourceROM;
+        SNESROM sourceROM;
 
         private void buttonSelectROM_Click(object sender, EventArgs e)
         {
@@ -58,6 +61,8 @@ namespace Advanced_SNES_ROM_Utility
                 comboBoxSplitROM.Enabled = false;
 
                 // Disable all buttons on new load
+                buttonSave.Enabled = false;
+                buttonSaveAs.Enabled = false;
                 buttonAddHeader.Enabled = false;
                 buttonRemoveHeader.Enabled = false;
                 buttonExpandROM.Enabled = false;
@@ -69,13 +74,14 @@ namespace Advanced_SNES_ROM_Utility
                 buttonEdit.Enabled = true;
 
                 // Create new ROM
-                sourceROM = new ROM(@selectROMDialog.FileName);
+                sourceROM = new SNESROM(@selectROMDialog.FileName);
 
                 // Set path into label
                 textBoxROMName.Text = @selectROMDialog.FileName;
 
-                // Enable / disable button for adding header
-                if (sourceROM.SMCHeader == 0) { buttonAddHeader.Enabled = true; } else { buttonRemoveHeader.Enabled = true; }
+                // Enable buttons for saving
+                buttonSave.Enabled = true;
+                buttonSaveAs.Enabled = true;
 
                 // If option auto fix ROM size is enabled
                 if (autoFixROMSize)
@@ -171,12 +177,6 @@ namespace Advanced_SNES_ROM_Utility
                     comboBoxSplitROM.Enabled = true;
                 }
 
-                // Check if checksum can be fixed
-                if (!sourceROM.ReadChksm.SequenceEqual(sourceROM.CalcChksm))
-                {
-                    buttonFixChksm.Enabled = true;
-                }
-
                 // Check if ROM contains region locks
                 if(sourceROM.UnlockRegion(sourceROM.SourceROM, sourceROM.SourceROMSMCHeader, false, sourceROM.ROMSavePath, sourceROM.ROMName, sourceROM.StringRegion))
                 {
@@ -193,38 +193,22 @@ namespace Advanced_SNES_ROM_Utility
                     buttonFixChksm.Enabled = false;
                 }
 
-                RefreshLabels();
+                RefreshLabelsAndButtons();
             }
         }
 
         private void ButtonAddHeader_Click(object sender, EventArgs e)
         {
-            // Just add 512 bytes of 0x00 to the beginning of the file
-            byte[] romHeader = new byte[512];
-            byte[] sourceROMHeadered = new byte[sourceROM.SourceROM.Length + romHeader.Length];
-
-            foreach(byte singleByte in romHeader)
-            {
-                romHeader[singleByte] = 0x00;
-            }
-
-            Buffer.BlockCopy(romHeader, 0, sourceROMHeadered, 0, romHeader.Length);
-            Buffer.BlockCopy(sourceROM.SourceROM, 0, sourceROMHeadered, romHeader.Length, sourceROM.SourceROM.Length);
-
-            // Save file with header
-            File.WriteAllBytes(@sourceROM.ROMSavePath + @"\" + sourceROM.ROMName + "_[headered]" + ".smc", sourceROMHeadered);
+            saveWithHeader = true;
             buttonAddHeader.Enabled = false;
-
-            MessageBox.Show("Header successfully added!\n\nFile saved to: '" + @sourceROM.ROMSavePath + @"\" + sourceROM.ROMName + "_[headered]" + ".smc'");
+            buttonRemoveHeader.Enabled = true;
         }
 
         private void ButtonRemoveHeader_Click(object sender, EventArgs e)
         {
-            // Save file without header
-            File.WriteAllBytes(@sourceROM.ROMSavePath + @"\" + sourceROM.ROMName + "_[no_header]" + ".sfc", sourceROM.SourceROM);
+            saveWithHeader = false;
+            buttonAddHeader.Enabled = true;
             buttonRemoveHeader.Enabled = false;
-
-            MessageBox.Show("Header successfully removed!\n\nFile saved to: '" + @sourceROM.ROMSavePath + @"\" + sourceROM.ROMName + "_[no_header]" + ".sfc'");
         }
 
         private void ButtonSwapBinROM_Click(object sender, EventArgs e)
@@ -253,7 +237,7 @@ namespace Advanced_SNES_ROM_Utility
                 sourceROM.SwapBin(sourceROM.SourceROM, sourceROM.ROMSavePath, sourceROM.ROMName);
             }
             
-            buttonSwapBinROM.Enabled = false;
+            //buttonSwapBinROM.Enabled = false;
         }
 
         private void ButtonExpandROM_Click(object sender, EventArgs e)
@@ -272,8 +256,8 @@ namespace Advanced_SNES_ROM_Utility
             // Save file without header
             File.WriteAllBytes(@sourceROM.ROMSavePath + @"\" + sourceROM.ROMName + "_[expanded]" + ".bin", expandedROM);
 
-            buttonExpandROM.Enabled = false;
-            comboBoxExpandROM.Enabled = false;
+            //buttonExpandROM.Enabled = false;
+            //comboBoxExpandROM.Enabled = false;
 
             MessageBox.Show("ROM successfully expanded!\n\nFile saved to: '" + @sourceROM.ROMSavePath + @"\" + sourceROM.ROMName + "_[expanded]" + ".bin'\n\nIn case there was a header, it has been removed!");
         }
@@ -295,37 +279,16 @@ namespace Advanced_SNES_ROM_Utility
                 MessageBox.Show("ROM successfully splittet!\n\nFile saved to: '" + @sourceROM.ROMSavePath + @"\" + romChunkName + "_[split]" + ".bin'\n\nIn case there was a header, it has been removed!");
             }
 
-            buttonSplitROM.Enabled = false;
-            comboBoxSplitROM.Enabled = false;
+            //buttonSplitROM.Enabled = false;
+            //comboBoxSplitROM.Enabled = false;
         }
 
         private void ButtonFixChksm_Click(object sender, EventArgs e)
         {
             sourceROM.FixChecksum();
             sourceROM.Initialize();
-            RefreshLabels();
+            RefreshLabelsAndButtons();
             buttonFixChksm.Enabled = false;
-
-            /*
-            // Save checksum fixed file with header
-            if (sourceROM.SourceROMSMCHeader != null)
-            {
-                byte[] checksumFixedHeaderedROM = new byte[sourceROM.SourceROMSMCHeader.Length + checksumFixedROM.Length];
-
-                Buffer.BlockCopy(sourceROM.SourceROMSMCHeader, 0, checksumFixedHeaderedROM, 0, sourceROM.SourceROMSMCHeader.Length);
-                Buffer.BlockCopy(checksumFixedROM, 0, checksumFixedHeaderedROM, sourceROM.SourceROMSMCHeader.Length, checksumFixedROM.Length);
-
-                File.WriteAllBytes(@sourceROM.ROMSavePath + @"\" + sourceROM.ROMName + "_[checksum_fixed]" + ".sfc", checksumFixedHeaderedROM);
-                MessageBox.Show("Checksum successfully fixed!\n\nFile saved to: '" + @sourceROM.ROMSavePath + @"\" + sourceROM.ROMName + "_[checksum_fixed]" + ".sfc'");
-            }
-
-            else
-            {
-                // Save checksum fixed file without header
-                File.WriteAllBytes(@sourceROM.ROMSavePath + @"\" + sourceROM.ROMName + "_[checksum_fixed]" + ".sfc", checksumFixedROM);
-                MessageBox.Show("Checksum successfully fixed!\n\nFile saved to: '" + @sourceROM.ROMSavePath + @"\" + sourceROM.ROMName + "_[checksum_fixed]" + ".sfc'");
-            }
-            */
         }
 
         private void buttonFixRegion_Click(object sender, EventArgs e)
@@ -346,7 +309,54 @@ namespace Advanced_SNES_ROM_Utility
             editROMInformation.Show();
         }
 
-        private void RefreshLabels()
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            Save(sourceROM.ROMPath, "ROM has successfully been saved to: " + sourceROM.ROMPath, saveWithHeader);
+        }
+
+        private void Save(string filepath, string message, bool saveWithHeader)
+        {
+            if (saveWithHeader)
+            {
+                // Create header if there's none
+                if (sourceROM.SMCHeader == 0)
+                {
+                    sourceROM.SMCHeader = 512;
+                    sourceROM.SourceROMSMCHeader = new byte[512];
+
+                    foreach (byte singleByte in sourceROM.SourceROMSMCHeader)
+                    {
+                        sourceROM.SourceROMSMCHeader[singleByte] = 0x00;
+                    }
+                }
+
+                // Merge header with ROM
+                byte[] haderedROM = new byte[sourceROM.SourceROMSMCHeader.Length + sourceROM.SourceROM.Length];
+
+                Buffer.BlockCopy(sourceROM.SourceROMSMCHeader, 0, haderedROM, 0, sourceROM.SourceROMSMCHeader.Length);
+                Buffer.BlockCopy(sourceROM.SourceROM, 0, haderedROM, sourceROM.SourceROMSMCHeader.Length, sourceROM.SourceROM.Length);
+
+                // Write to file
+                File.WriteAllBytes(filepath, haderedROM);
+                MessageBox.Show(message);
+
+                // Create source ROM for initializing
+                sourceROM.SourceROM = haderedROM;
+            }
+
+            else
+            {
+                // Just write ROM to file
+                File.WriteAllBytes(filepath, sourceROM.SourceROM);
+                MessageBox.Show(message);
+            }
+
+            // Initialize and refresh labels and buttons
+            sourceROM.Initialize();
+            RefreshLabelsAndButtons();
+        }
+
+        private void RefreshLabelsAndButtons()
         {
             // Set labels
             labelGetTitle.Text = sourceROM.StringTitle;
@@ -366,6 +376,10 @@ namespace Advanced_SNES_ROM_Utility
             labelGetCalcInvChksm.Text = BitConverter.ToString(sourceROM.CalcInvChksm).Replace("-", "");
             labelGetVersion.Text = sourceROM.StringVersion;
             labelGetCRC32Chksm.Text = sourceROM.CRC32Hash;
+
+            // Set buttons
+            if (sourceROM.SMCHeader == 0) { buttonAddHeader.Enabled = true; buttonRemoveHeader.Enabled = false; saveWithHeader = true; } else { buttonAddHeader.Enabled = false; buttonRemoveHeader.Enabled = true; saveWithHeader = false; }
+            if (!sourceROM.ReadChksm.SequenceEqual(sourceROM.CalcChksm)) { buttonFixChksm.Enabled = true; }
         }
 
         private void toolStripMenuItemAutoFixROM_Click(object sender, EventArgs e)
@@ -425,7 +439,5 @@ namespace Advanced_SNES_ROM_Utility
             public int Id { get; set; }
             public string Name { get; set; }
         }
-
-
     }
 }

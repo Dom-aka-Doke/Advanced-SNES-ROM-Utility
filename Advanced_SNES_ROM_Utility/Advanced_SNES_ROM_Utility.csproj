@@ -86,7 +86,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ROM.cs" />
+    <Compile Include="SNESROM.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -124,6 +124,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Graphics\save_icon.png" />
+    <None Include="Graphics\save-as_icon.png" />
     <Content Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
