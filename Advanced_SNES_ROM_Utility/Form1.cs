@@ -178,7 +178,7 @@ namespace Advanced_SNES_ROM_Utility
                 }
 
                 // Check if ROM contains region locks
-                if(UnlockRegion(sourceROM.SourceROM, sourceROM.SourceROMSMCHeader, false, sourceROM.ROMSavePath, sourceROM.ROMName, sourceROM.StringRegion))
+                if(sourceROM.UnlockRegion(sourceROM.SourceROM, sourceROM.SourceROMSMCHeader, false, sourceROM.ROMSavePath, sourceROM.ROMName, sourceROM.StringRegion))
                 {
                     buttonFixRegion.Enabled = true;
                 }
@@ -244,13 +244,13 @@ namespace Advanced_SNES_ROM_Utility
 
                     Buffer.BlockCopy(sourceROM.SourceROM, index * chunkSize, sourceROMChunk, 0, chunkSize);
 
-                    SwapBin(sourceROMChunk, sourceROM.ROMSavePath, romChunkName);
+                    sourceROM.SwapBin(sourceROMChunk, sourceROM.ROMSavePath, romChunkName);
                 }
             }
 
             else
             {
-                SwapBin(sourceROM.SourceROM, sourceROM.ROMSavePath, sourceROM.ROMName);
+                sourceROM.SwapBin(sourceROM.SourceROM, sourceROM.ROMSavePath, sourceROM.ROMName);
             }
             
             buttonSwapBinROM.Enabled = false;
@@ -330,13 +330,13 @@ namespace Advanced_SNES_ROM_Utility
 
         private void buttonFixRegion_Click(object sender, EventArgs e)
         {
-            UnlockRegion(sourceROM.SourceROM, sourceROM.SourceROMSMCHeader, true, sourceROM.ROMSavePath, sourceROM.ROMName, sourceROM.StringRegion);
+            sourceROM.UnlockRegion(sourceROM.SourceROM, sourceROM.SourceROMSMCHeader, true, sourceROM.ROMSavePath, sourceROM.ROMName, sourceROM.StringRegion);
             buttonFixRegion.Enabled = false;
         }
 
         private void buttonDeinterleave_Click(object sender, EventArgs e)
         {
-            Deinterlave(sourceROM.SourceROM, sourceROM.SourceROMSMCHeader, sourceROM.CalculatedFileSize, sourceROM.ROMSavePath, sourceROM.ROMName);
+            sourceROM.Deinterlave(sourceROM.SourceROM, sourceROM.SourceROMSMCHeader, sourceROM.CalculatedFileSize, sourceROM.ROMSavePath, sourceROM.ROMName);
             buttonDeinterleave.Enabled = false;
         }
 

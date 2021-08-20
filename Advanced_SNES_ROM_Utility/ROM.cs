@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Advanced_SNES_ROM_Utility
 {
-    class ROM
+    public partial class ROM
     {
         public string ROMPath;
         public string ROMName;
@@ -1216,35 +1216,6 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             CRC32Hash = hash;
-        }
-
-        public void FixChecksum()
-        {
-            byte[] checksumFixedROM = new byte[SourceROM.Length];
-            byte[] newChksm = new byte[2];
-            byte[] newInvChksm = new byte[2];
-            byte[] newChksmSequence = new byte[4];
-            uint offset = ROMHeaderOffset + 0x2C;
-
-            newChksm = CalcChksm;
-            newInvChksm = CalcInvChksm;
-
-            // Reverse checksum for inserting
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(newChksm);
-                Array.Reverse(newInvChksm);
-            }
-
-            newChksmSequence[0] = newInvChksm[0];
-            newChksmSequence[1] = newInvChksm[1];
-            newChksmSequence[2] = newChksm[0];
-            newChksmSequence[3] = newChksm[1];
-
-            Buffer.BlockCopy(SourceROM, 0, checksumFixedROM, 0, SourceROM.Length);
-            Buffer.BlockCopy(newChksmSequence, 0, checksumFixedROM, (int)offset, newChksmSequence.Length);
-
-            SourceROM = checksumFixedROM;
         }
     }
 }

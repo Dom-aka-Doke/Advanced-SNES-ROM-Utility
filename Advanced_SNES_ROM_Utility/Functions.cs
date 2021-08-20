@@ -6,9 +6,38 @@ using System.Windows.Forms;
 
 namespace Advanced_SNES_ROM_Utility
 {
-    public partial class Form1
+    public partial class ROM
     {
-        public static void SwapBin(byte[] sourceROM, string romSavePath, string romName)
+        public void FixChecksum()
+        {
+            byte[] checksumFixedROM = new byte[SourceROM.Length];
+            byte[] newChksm = new byte[2];
+            byte[] newInvChksm = new byte[2];
+            byte[] newChksmSequence = new byte[4];
+            uint offset = ROMHeaderOffset + 0x2C;
+
+            newChksm = CalcChksm;
+            newInvChksm = CalcInvChksm;
+
+            // Reverse checksum for inserting
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(newChksm);
+                Array.Reverse(newInvChksm);
+            }
+
+            newChksmSequence[0] = newInvChksm[0];
+            newChksmSequence[1] = newInvChksm[1];
+            newChksmSequence[2] = newChksm[0];
+            newChksmSequence[3] = newChksm[1];
+
+            Buffer.BlockCopy(SourceROM, 0, checksumFixedROM, 0, SourceROM.Length);
+            Buffer.BlockCopy(newChksmSequence, 0, checksumFixedROM, (int)offset, newChksmSequence.Length);
+
+            SourceROM = checksumFixedROM;
+        }
+
+        public void SwapBin(byte[] sourceROM, string romSavePath, string romName)
         {
             // Make a copy of the ROM for swapping
             byte[] swappedSourceROM = new byte[sourceROM.Length];
@@ -35,7 +64,7 @@ namespace Advanced_SNES_ROM_Utility
             MessageBox.Show("File successfully swapped!\n\nFile saved to: '" + @romSavePath + @"\" + romName + "_[swapped]" + ".bin'\n\nIn case there was a header, it has been removed!");
         }
 
-        public static void Deinterlave(byte[] sourceROM, byte[] sourceROMSMCHeader, int calcFileSize, String romSavePath, String romName)
+        public void Deinterlave(byte[] sourceROM, byte[] sourceROMSMCHeader, int calcFileSize, String romSavePath, String romName)
         {
             byte[] ufoTitle = new byte[8];
             byte[] gdTitle = new byte[14];
@@ -191,7 +220,7 @@ namespace Advanced_SNES_ROM_Utility
             MessageBox.Show("File successfully deinterleaved!\n\nFile saved to: '" + @romSavePath + @"\" + romName + identifier + ".sfc'\n\nIn case there was a header, it has been removed!");
         }
 
-        public static bool UnlockRegion(byte[] sourceROM, byte[] sourceROMSMCHeader, bool unlock, string romSavePath, string romName, string region)
+        public bool UnlockRegion(byte[] sourceROM, byte[] sourceROMSMCHeader, bool unlock, string romSavePath, string romName, string region)
         {
             List<byte[]> lockingCodes = new List<byte[]>();
             List<byte[]> unlockingCodes = new List<byte[]>();
