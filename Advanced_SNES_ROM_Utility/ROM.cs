@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -8,13 +8,177 @@ namespace Advanced_SNES_ROM_Utility
 {
     class ROM
     {
-        public static uint CheckSMCHeader(byte[] sourceROM)
+        public string ROMPath;
+        public string ROMName;
+        public string ROMSavePath;
+
+        public byte[] SourceROM;
+        public byte[] SourceROMHeader;
+        public byte[] SourceROMSMCHeader;
+
+        public byte[] ReadChksm;
+        public byte[] ReadInvChksm;
+        public byte[] CalcChksm;
+        public byte[] CalcInvChksm;
+
+        public uint ROMHeaderOffset;
+        public uint SMCHeader;
+        public int IntROMSize;
+        public int CalculatedFileSize;
+        public string CRC32Hash;
+
+        public bool IsNewHeader;
+        public bool IsBSROM;
+        public bool IsInterleaved;
+
+        public byte ByteROMType;
+        public byte ByteMapMode;
+        public byte ByteROMSpeed;
+        public byte ByteSRAMSize;
+        public byte ByteExRAMSize;
+        public byte ByteVersion;
+        public byte ByteROMSize;
+        public byte[] ByteArrayTitle;
+        public byte ByteCountry;
+        public int IntCompany;
+
+        public string StringROMType;
+        public string StringMapMode;
+        public string StringROMSpeed;
+        public string StringRAMSize;
+        public string StringVersion;
+        public string StringROMSize;
+        public string StringTitle;
+        public string StringCountry;
+        public string StringCompany;
+        public string StringRegion;
+        public string StringSMCHeader;
+
+        public ROM(string @romPath)
+        {
+            // Read ROM
+            if (File.Exists(@romPath))
+            {
+                ROMPath = @romPath;
+
+                try
+                {
+                    ROMName = Path.GetFileNameWithoutExtension(ROMPath);
+                    ROMSavePath = Path.GetDirectoryName(ROMPath);
+                    SourceROM = File.ReadAllBytes(ROMPath);
+
+                    // Initialize ROM
+                    Initialize();
+                }
+
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        public void Initialize()
+        {
+            // Initialize ROM
+            GetSMCHeader();
+            GetROMHeader();
+            GetTitle();
+            GetROMType();
+            GetMapMode();
+            GetROMSpeed();
+            GetROMSize();
+            CheckIsNewHeader();
+            GetSRAMSize();
+            GetExRAMSize();
+            GetCountry();
+            GetCompany();
+            GetChecksum();
+            GetInverseChecksum();
+            GetVersion();
+            CalculateFileSize();
+            CalculateChecksum();
+            CalculateInverseChecksum();
+            CalculateCrc32Hash();
+        }
+
+        private void GetSMCHeader()
         {
             // Calculate size of header
-            int header = sourceROM.Length % 1024;
+            SMCHeader = (uint)SourceROM.Length % 1024;
 
-            return (uint)header;
+            if (SMCHeader == 0)
+            {
+                StringSMCHeader = "No";
+            }
+
+            else if (SMCHeader > 0)
+            {
+                StringSMCHeader = "Malformed";
+
+                SourceROMSMCHeader = new byte[SMCHeader];
+                byte[] newSourceROM = new byte[SourceROM.Length - SMCHeader];
+
+                Buffer.BlockCopy(SourceROM, 0, SourceROMSMCHeader, 0, (int)SMCHeader);
+                Buffer.BlockCopy(SourceROM, (int)SMCHeader, newSourceROM, 0, newSourceROM.Length);
+
+                SourceROM = newSourceROM;
+            }
+
+            if (SMCHeader == 512)
+            {
+                StringSMCHeader = "Yes";
+            }
         }
+
+        private void GetROMHeader()
+        {
+            // Initialize with most likely values
+            ROMHeaderOffset = 0x7FB0;
+            IsBSROM = false;
+
+            int mapModeScoreLoROM = GetMapModeScore(SourceROM, 0x7FB0, false);
+            int mapModeScoreBSLoROM = GetMapModeScore(SourceROM, 0x7FB0, true);
+            int mapModeScoreHiROM = GetMapModeScore(SourceROM, 0xFFB0, false);
+            int mapModeScoreBSHiROM = GetMapModeScore(SourceROM, 0xFFB0, true);
+            int mapModeScoreExLoROM = GetMapModeScore(SourceROM, 0x407FB0, false);
+            int mapModeScoreExHiROM = GetMapModeScore(SourceROM, 0x40FFB0, false);
+
+            if (mapModeScoreLoROM >= mapModeScoreHiROM && mapModeScoreLoROM >= mapModeScoreExLoROM && mapModeScoreLoROM >= mapModeScoreExHiROM)
+            {
+                ROMHeaderOffset = 0x7FB0;
+
+                if (mapModeScoreBSLoROM > mapModeScoreLoROM)
+                {
+                    IsBSROM = true;
+                }
+            }
+
+            else if (mapModeScoreHiROM >= mapModeScoreExLoROM && mapModeScoreHiROM >= mapModeScoreExHiROM)
+            {
+                ROMHeaderOffset = 0xFFB0;
+
+                if (mapModeScoreBSHiROM > mapModeScoreHiROM)
+                {
+                    IsBSROM = true;
+                }
+            }
+
+            else if (mapModeScoreExLoROM >= mapModeScoreExHiROM)
+            {
+                ROMHeaderOffset = 0x407FB0;
+            }
+
+            else
+            {
+                ROMHeaderOffset = 0x40FFB0;
+            }
+
+            // Load header
+            SourceROMHeader = new byte[80];
+            Buffer.BlockCopy(SourceROM, (int)ROMHeaderOffset, SourceROMHeader, 0, 80);
+        }
+
         public static int GetMapModeScore(byte[] sourceROM, uint offset, bool isBSROM)
         {
             // Check if ROM has normal or extended size
@@ -22,17 +186,6 @@ namespace Advanced_SNES_ROM_Utility
             {
                 return -100;
             }
-
-            /* For Debugging only
-            string cOpCode = "";
-            string cChecksum = "";
-            string cMapMode = "";
-            string cFixedValue33 = "";
-            string cFixedValue00 = "";
-            string cROMSize = "";
-            string cDestinationcode = "";
-            string cBSTitle = "";
-            */
 
             // Define score variable
             int score = 0;
@@ -95,9 +248,6 @@ namespace Advanced_SNES_ROM_Utility
             )
             {
                 score += 8;
-
-                // Debugging
-                //cOpCode = "✓ (+8)";
             }
 
             // Plausible opcodes
@@ -115,9 +265,6 @@ namespace Advanced_SNES_ROM_Utility
             )
             {
                 score += 4;
-
-                // Debugging
-                //cOpCode = "✓ (+4)";
             }
 
             // Implausible opcodes
@@ -130,9 +277,6 @@ namespace Advanced_SNES_ROM_Utility
             )
             {
                 score -= 4;
-
-                // Debugging
-                //cOpCode = "❌ (-4)";
             }
 
             // Least likely opcodes
@@ -144,18 +288,12 @@ namespace Advanced_SNES_ROM_Utility
             )
             {
                 score -= 8;
-
-                // Debugging
-                //cOpCode = "❌ (-8)";
             }
 
             // Check if checksums add up to 0xFFFF
             if (BitConverter.ToUInt16(checksum, 0) + BitConverter.ToUInt16(checksumInverse, 0) == 0xFFFF)
             {
                 score += 4;
-
-                // Debugging
-                //cChecksum = "✓ (+4)";
             }
 
             // Check if internal ROM type is valid
@@ -163,60 +301,39 @@ namespace Advanced_SNES_ROM_Utility
             if (offset == 0x7FB0 && (mapMode[0] == 0x20 || mapMode[0] == 0x30))
             {
                 score += 2;
-
-                // Debugging
-                //cMapMode = "✓ (+2)";
             }
             // HiROM
             if (offset == 0xFFB0 && (mapMode[0] == 0x21 || mapMode[0] == 0x31))
             {
                 score += 2;
-
-                // Debugging
-                //cMapMode = "✓ (+2)";
             }
             // ExLoROM - f.e. Star Ocean
             if (offset == 0x407FB0 && mapMode[0] == 0x32)
             {
                 score += 4;
-
-                // Debugging
-                //cMapMode = "✓ (+4)";
             }
             // ExHiROM - f.e. Tales Of Phantasia
             if (offset == 0x40FFB0 && mapMode[0] == 0x35)
             {
                 score += 4;
-
-                // Debugging
-                //cMapMode = "✓ (+4)";
             }
 
             // Check if internal ROM size is vaild
             if (romSize[0] >= 0x07 && romSize[0] <= 0x0D)
             {
                 score += 2;
-
-                // Debugging
-                //cROMSize = "✓ (+2)";
             }
 
             // Check if destination code size is vaild
             if (destinationCode[0] <= 0x14)
             {
                 score += 2;
-
-                // Debugging
-                //cDestinationcode = "✓ (+2)";
             }
 
             // Check for some fixed ROM values
             if (fixedValue33[0] == 0x33)
             {
                 score += 4;
-
-                // Debugging
-                //cFixedValue33 = "✓ (+4)";
             }
 
             if (fixedValue00[0] == 0x00 &&
@@ -228,9 +345,6 @@ namespace Advanced_SNES_ROM_Utility
                 fixedValue00[6] == 0x00)
             {
                 score += 2;
-
-                // Debugging
-                //cFixedValue00 = "✓ (+2)";
             }
 
             // If game is tested for being BS-X
@@ -243,32 +357,18 @@ namespace Advanced_SNES_ROM_Utility
                 if (titleBS[0] == 0x42 && titleBS[1] == 0x53)
                 {
                     score += 2;
-
-                    // Debugging
-                    //cBSTitle = "✓ (+2)";
                 }
             }
-
-            /* Debugging
-            string sOffset = offset.ToString("X4");
-            string sChecksum = BitConverter.ToString(checksum);
-            string sChecksumInverse = BitConverter.ToString(checksumInverse);
-            string sMapMode = BitConverter.ToString(mapMode);
-            string sResetVector = BitConverter.ToString(resetVector);
-            string sOPCode = BitConverter.ToString(opCode);
-            
-            MessageBox.Show("Offset: " + sOffset + "\nReset Vector: " + sResetVector + "\nOpcode: " + sOPCode + " " + cOpCode + "\nChecksum: " + sChecksum + "\nInverse Checksum: " + sChecksumInverse + "\nChesksum addition: " + (BitConverter.ToUInt16(checksum, 0) + BitConverter.ToUInt16(checksumInverse, 0)).ToString("X4") + " " + cChecksum + "\nMap Mode: " + sMapMode + " " + cMapMode + "\nROM Size " + cROMSize + "\nDestinationcode " + cDestinationcode + "\nFixed Value (0x33) " + cFixedValue33 + "\nFixed Value (0x00) " + cFixedValue00 + "\nBS Title " + cBSTitle + "\nScore: " + score);
-            */
 
             // Return score
             return score;
         }
 
-        public static byte[] ReadTitle(byte[] sourceROMHeader, bool isBSROM)
+        private void GetTitle()
         {
             byte[] title = new byte[21];
 
-            if (isBSROM) { title = new byte[16]; Buffer.BlockCopy(sourceROMHeader, 0x10, title, 0, 16); } else { Buffer.BlockCopy(sourceROMHeader, 0x10, title, 0, 21); }
+            if (IsBSROM) { title = new byte[16]; Buffer.BlockCopy(SourceROMHeader, 0x10, title, 0, 16); } else { Buffer.BlockCopy(SourceROMHeader, 0x10, title, 0, 21); }
 
             // Return title as little endian byte[]
             if (!BitConverter.IsLittleEndian)
@@ -276,13 +376,15 @@ namespace Advanced_SNES_ROM_Utility
                 Array.Reverse(title);
             }
 
-            return title;
+            ByteArrayTitle = title;
+
+            StringTitle = Encoding.GetEncoding(932).GetString(ByteArrayTitle);
         }
 
-        public static byte[] ReadMapMode(byte[] sourceROMHeader, bool isBSROM)
+        public void GetMapMode()
         {
             byte[] mapMode = new byte[1];
-            if (isBSROM) { Buffer.BlockCopy(sourceROMHeader, 0x28, mapMode, 0, 1); } else { Buffer.BlockCopy(sourceROMHeader, 0x25, mapMode, 0, 1); }
+            if (IsBSROM) { Buffer.BlockCopy(SourceROMHeader, 0x28, mapMode, 0, 1); } else { Buffer.BlockCopy(SourceROMHeader, 0x25, mapMode, 0, 1); }
             
             // SPC7110 games have an odd value in their header but actually are HiROM
             if (mapMode[0] == 0x3A)
@@ -293,33 +395,114 @@ namespace Advanced_SNES_ROM_Utility
             // Bitmask this byte, because non relevant bits are not clearly defined
             mapMode[0] &= 0x37;
 
-            return mapMode;
+            ByteMapMode = mapMode[0];
+
+            // Initialize with false
+            IsInterleaved = false;
+
+            switch (ByteMapMode)
+            {
+                case 0x20: StringMapMode = "LoROM"; break;
+                case 0x21: StringMapMode = "HiROM"; if (ROMHeaderOffset == 0x7FB0) { IsInterleaved = true; }; break;
+                case 0x22: StringMapMode = "LoROM (SDD-1)"; break;
+                case 0x23: StringMapMode = "LoROM (SA-1)"; break;
+                case 0x25: StringMapMode = "ExHiROM"; if (ROMHeaderOffset == 0x7FB0) { IsInterleaved = true; }; break;
+                case 0x30: StringMapMode = "LoROM"; break;
+                case 0x31: StringMapMode = "HiROM"; if (ROMHeaderOffset == 0x7FB0) { IsInterleaved = true; }; break;
+                case 0x32: StringMapMode = "ExLoROM"; break;
+                case 0x33: StringMapMode = "LoROM (SA-1)"; break;
+                case 0x35: StringMapMode = "ExHiROM"; if (ROMHeaderOffset == 0x7FB0) { IsInterleaved = true; }; break;
+                default: StringMapMode = "Unknown"; break;
+            }
+
+            // ROM that contains oversized title which overwrites the map mode byte, but actually is LoROM
+            if (StringTitle.Equals("YUYU NO QUIZ DE GO!GO"))
+            {
+                StringMapMode = "LoROM";
+
+                // If this ROM is not interleaved set it as not interleaved
+                if (ROMHeaderOffset == 0x7FB0)
+                {
+                    IsInterleaved = false;
+                }
+            }
         }
 
-        public static byte[] ReadROMType(byte[] sourceROMHeader, bool isBSROM)
+        private void GetROMType()
         {
             byte[] type = new byte[1];
-            if (isBSROM) { Buffer.BlockCopy(sourceROMHeader, 0x29, type, 0, 1); } else { Buffer.BlockCopy(sourceROMHeader, 0x26, type, 0, 1); }
+            if (IsBSROM) { Buffer.BlockCopy(SourceROMHeader, 0x29, type, 0, 1); } else { Buffer.BlockCopy(SourceROMHeader, 0x26, type, 0, 1); }
 
-            return type;
+            ByteROMType = type[0];
+
+            string[] falseDSP1Games = { "Ballz                ",    // Games that are detected as DSP-4 but actually are DSP-1
+                                            "Lock On              ",
+                                            "INDY CAR CHALLENGE   ",
+                                            "SUPER AIR DIVER      ",
+                                            "SUPER AIRDIVER2      ",
+                                            "SUZUKA 8Hours        ",
+                                            "ｴｰｽｦﾈﾗｴ!             ",    // Ace o Nerae!
+                                            "ｿｳｺｳｷﾍｲ ﾎﾞﾄﾑｽﾞ       " };  // Soukou Kihei Votoms - The Battling Road
+
+            string[] falseGSU2Games = { "STARFOX2             " };  // Games that are detected as GSU-1 but actually are GSU-2
+
+            switch (ByteROMType)
+            {
+                case 0x00: StringROMType = "ROM Only"; if (IsBSROM) { StringROMType = "BS-X+FLASH+SoundLink"; }; break;
+                case 0x01: StringROMType = "ROM+RAM"; break;
+                case 0x02: StringROMType = "ROM+RAM+Battery"; break;
+                case 0x03: if (ByteROMSpeed == 0x30 && !falseDSP1Games.Contains(StringTitle)) { StringROMType = "ROM+DSP4"; } else { StringROMType = "ROM+DSP1"; }; break;
+                case 0x04: StringROMType = "ROM+DSP1+RAM"; break;
+                case 0x05: if (ByteROMSpeed == 0x20) { StringROMType = "ROM+DSP2+RAM+Battery"; } else if (ByteROMSpeed == 0x30 && IntCompany.Equals("0x018E")) { StringROMType = "ROM+DSP3+RAM+Battery"; } else { StringROMType = "ROM+DSP1+RAM+Battery"; }; break;
+                case 0x10: if (IsBSROM) { StringROMType = "BS-X+FLASH"; }; break;
+                case 0x13: StringROMType = "ROM+MarioChip1+RAM"; break;
+                case 0x14: StringROMType = "ROM+GSU1+RAM"; if (ByteROMSize > 0x0A) { StringROMType = "ROM+GSU2+RAM"; }; break;
+                case 0x15: StringROMType = "ROM+GSU2+RAM+Battery"; if (ByteROMSize <= 0x0A && !falseGSU2Games.Contains(StringTitle)) { StringROMType = "ROM+GSU1+RAM+Battery"; }; break;
+                case 0x1A: StringROMType = "ROM+GSU1+RAM+Battery"; break;
+                case 0x20: if (IsBSROM) { StringROMType = "BS-X+PSRAM+SoundLink"; }; break;
+                case 0x25: StringROMType = "ROM+OBC1+RAM+Battery"; break;
+                case 0x30: if (IsBSROM) { StringROMType = "BS-X+PSRAM"; }; break;
+                case 0x34: StringROMType = "ROM+SA1+RAM"; break;
+                case 0x35: StringROMType = "ROM+SA1+RAM+Battery"; break;
+                case 0x36: StringROMType = "ROM+SA1"; break;
+                case 0x43: StringROMType = "ROM+S-DD1"; break;
+                case 0x45: StringROMType = "ROM+S-DD1+RAM+Battery"; break;
+                case 0x55: StringROMType = "ROM+S-RTC+RAM+Battery"; break;
+                case 0xA0: if (IsBSROM) { StringROMType = "BS-X+SoundNovel"; }; break;
+                case 0xE3: StringROMType = "ROM+SGB"; break;
+                case 0xE5: StringROMType = "ROM+BS-X"; break;
+                case 0xF3: StringROMType = "ROM+CX-4"; break;
+                case 0xF5: if (StringMapMode.Contains("HiROM")) { StringROMType = "ROM+SPC-7110+RAM+Battery"; } else if (StringMapMode.Contains("LoROM")) { StringROMType = "ROM+ST-018+RAM+Battery"; }; break;
+                case 0xF6: if (ByteROMSize == 0x0A) { StringROMType = "ROM+ST-010"; } else { StringROMType = "ROM+ST-011"; }; break;
+                case 0xF9: StringROMType = "ROM+SPC-7110+RTC+RAM+Battery"; break;
+                default: StringROMType = "Unknown"; break;
+            }
         }
-        public static byte ReadROMSpeed(byte mapMode)
+
+        private void GetROMSpeed()
         {
-            byte speed = mapMode;
             // Bitmask first nibble, because only this information is needed
-            speed &= 0xF0;
+            byte speed = (byte)(ByteMapMode & 0xF0);
 
-            return speed;
+            ByteROMSpeed = speed;
+
+            switch (ByteROMSpeed)
+            {
+                // If bitmasked map mode is 0x30 ROM is FastROM, if it is 0x20 then it is SlowROM
+                case 32: StringROMSpeed = "SlowROM (200 ns)"; break;
+                case 48: StringROMSpeed = "FastROM (120 ns)"; break;
+                default: StringROMSpeed = "Unknown"; break;
+            }
         }
 
-        public static byte[] ReadROMSize(byte[] sourceROMHeader, bool isBSROM)
+        private void GetROMSize()
         {
             byte[] size = new byte[1];
 
-            if (isBSROM)
+            if (IsBSROM)
             {
                 size = new byte[4];
-                Buffer.BlockCopy(sourceROMHeader, 0x20, size, 0, 4);
+                Buffer.BlockCopy(SourceROMHeader, 0x20, size, 0, 4);
                 int intSize = BitConverter.ToInt32(size, 0);
 
                 int count = 0;
@@ -347,91 +530,140 @@ namespace Advanced_SNES_ROM_Utility
             
             else
             { 
-                Buffer.BlockCopy(sourceROMHeader, 0x27, size, 0, 1);
+                Buffer.BlockCopy(SourceROMHeader, 0x27, size, 0, 1);
             }
 
-            return size;
+            ByteROMSize = size[0];
+
+            switch (ByteROMSize)
+            {
+                case 0x07: StringROMSize = "1 Mbit"; IntROMSize = 1; break;
+                case 0x08: StringROMSize = "2 Mbit"; IntROMSize = 2; break;
+                case 0x09: StringROMSize = "4 Mbit"; IntROMSize = 4; break;
+                case 0x0A: StringROMSize = "8 Mbit"; IntROMSize = 8; break;
+                case 0x0B: StringROMSize = "16 Mbit"; IntROMSize = 16; break;
+                case 0x0C: StringROMSize = "32 Mbit"; IntROMSize = 32; break;
+                case 0x0D: StringROMSize = "64 Mbit"; IntROMSize = 64; break;
+                default: StringROMSize = "Unknown"; break;
+            }
         }
 
-        public static bool CheckIsNewHeader(byte[] sourceROMHeader)
+        private void CheckIsNewHeader()
         {
             bool isNewHeader = false;
 
             byte[] value = new byte[1];
-            Buffer.BlockCopy(sourceROMHeader, 0x2A, value, 0, 1);
+            Buffer.BlockCopy(SourceROMHeader, 0x2A, value, 0, 1);
 
             if(value[0] == 0x33)
             {
                 isNewHeader = true;
             }
 
-            return isNewHeader;
+            IsNewHeader = isNewHeader;
         }
 
-        public static byte[] ReadSRAMSize(byte[] sourceROMHeader, bool isBSROM)
+        private void GetSRAMSize()
         {
             byte[] sramsize = new byte[1];
-            if (isBSROM) { sramsize[0] = 0x00; } else { Buffer.BlockCopy(sourceROMHeader, 0x28, sramsize, 0, 1); }
+            if (IsBSROM) { sramsize[0] = 0x00; } else { Buffer.BlockCopy(SourceROMHeader, 0x28, sramsize, 0, 1); }
 
-            return sramsize;
+            ByteSRAMSize = sramsize[0];
         }
 
-        public static byte[] ReadExRAMSize(byte[] sourceROMHeader, bool isNewHeader, string stringTitle, bool isBSROM)
+        private void GetExRAMSize()
         {
             byte[] exramsize = new byte[1];
 
             exramsize[0] = 0x00;
 
-            if (!isBSROM)
+            if (!IsBSROM)
             {
-                if(isNewHeader)
+                if(IsNewHeader)
                 {
-                    Buffer.BlockCopy(sourceROMHeader, 0x0D, exramsize, 0, 1);
+                    Buffer.BlockCopy(SourceROMHeader, 0x0D, exramsize, 0, 1);
                 }
 
                 // Star Fox/Star Wing RAM fix
-                else if(stringTitle.Contains("STAR FOX") || stringTitle.Contains("STAR WING"))
+                else if(StringTitle.Contains("STAR FOX") || StringTitle.Contains("STAR WING"))
                 {
                     exramsize[0] = 0x06;
                 }
             }
 
-            return exramsize;
+            ByteExRAMSize = exramsize[0];
+
+            StringRAMSize = "No";
+
+            if (ByteSRAMSize > 0x00)
+            {
+                StringRAMSize = "Yes (" + Math.Pow(2, ByteSRAMSize) + " kByte)";
+            }
+
+            else if (ByteExRAMSize > 0x00)
+            {
+                StringRAMSize = "Yes (" + Math.Pow(2, ByteExRAMSize) + " kByte)";
+            }
         }
 
-        public static int CalculateFileSize(byte[] sourceROM)
+        private void CalculateFileSize()
         {
-            int filesize = (sourceROM.Length * 8) / 1048576;
-            return filesize;
+            int filesize = (SourceROM.Length * 8) / 1048576;
+            CalculatedFileSize = filesize;
         }
 
-        public static byte[] ReadCountryCode(byte[] sourceROMHeader, bool isBSROM)
+        private void GetCountry()
         {
             byte[] country = new byte[1];
 
-            if (isBSROM) { country[0] = 0x00; } else { Buffer.BlockCopy(sourceROMHeader, 0x29, country, 0, 1); }
+            if (IsBSROM) { country[0] = 0x00; } else { Buffer.BlockCopy(SourceROMHeader, 0x29, country, 0, 1); }
 
-            return country;
+            ByteCountry = country[0];
+
+            switch (ByteCountry)
+            {
+                case 0: StringCountry = "Japan"; StringRegion = "NTSC"; break;
+                case 1: StringCountry = "USA"; StringRegion = "NTSC"; break;
+                case 2: StringCountry = "Europe/Oceania/Asia"; StringRegion = "PAL"; break;
+                case 3: StringCountry = "Sweden/Scandinavia"; StringRegion = "PAL"; break;
+                case 4: StringCountry = "Finland"; StringRegion = "PAL"; break;
+                case 5: StringCountry = "Denmark"; StringRegion = "PAL"; break;
+                case 6: StringCountry = "France"; StringRegion = "SECAM (PAL-like, 50 Hz)"; break;
+                case 7: StringCountry = "Netherlands"; StringRegion = "PAL"; break;
+                case 8: StringCountry = "Spain"; StringRegion = "PAL"; break;
+                case 9: StringCountry = "Germany/Austria/Switzerland"; StringRegion = "PAL"; break;
+                case 10: StringCountry = "China/Hong Kong"; StringRegion = "PAL"; break;
+                case 11: StringCountry = "Indonesia"; StringRegion = "PAL"; break;
+                case 12: StringCountry = "South Korea"; StringRegion = "NTSC"; break;
+                case 13: StringCountry = "Common (?)"; StringRegion = "?"; break;
+                case 14: StringCountry = "Canada"; StringRegion = "NTSC"; break;
+                case 15: StringCountry = "Brazil"; StringRegion = "PAL-M (NTSC-like, 60 Hz)"; break;
+                case 16: StringCountry = "Australia"; StringRegion = "PAL"; break;
+                case 17: StringCountry = "Other variation"; StringRegion = "?"; break;
+                case 18: StringCountry = "Other variation"; StringRegion = "?"; break;
+                case 19: StringCountry = "Other variation"; StringRegion = "?"; break;
+                default: StringCountry = "Unknown"; StringRegion = "?"; break;
+            }
         }
 
-        public static int ReadCompanyCode(byte[] sourceROMHeader)
+        private void GetCompany()
         {
             byte[] company = new byte[1];
             int companyCode = -1;
 
-            Buffer.BlockCopy(sourceROMHeader, 0x2A, company, 0, 1);
+            Buffer.BlockCopy(SourceROMHeader, 0x2A, company, 0, 1);
 
             if (company[0] != 0x33)
             {
                 companyCode = ((company[0] >> 4) & 0x0F) * 36 + (company[0] & 0x0F);
-                return companyCode;
+                IntCompany = companyCode;
             }
 
             else
             {
                 company = new byte[2];
 
-                Buffer.BlockCopy(sourceROMHeader, 0x00, company, 0, 2);
+                Buffer.BlockCopy(SourceROMHeader, 0x00, company, 0, 2);
 
                 if(company[0] > 0x39)
                 {
@@ -458,13 +690,350 @@ namespace Advanced_SNES_ROM_Utility
                     companyCode = company[0] * 36 + company[1];
                 }
 
-                return companyCode;
+                IntCompany = companyCode;
+            }
+
+            string companyString = "0x" + IntCompany.ToString("X4");
+
+            switch (companyString)
+            {
+                case "0x0001": StringCompany = "Nintendo"; break;
+                case "0x0002": StringCompany = "Rocket Games/Ajinomoto"; break;
+                case "0x0003": StringCompany = "Imagineer-Zoom"; break;
+                case "0x0004": StringCompany = "Gray Matter"; break;
+                case "0x0005": StringCompany = "Zamuse"; break;
+                case "0x0006": StringCompany = "Falcom"; break;
+                case "0x0008": StringCompany = "Capcom"; break;
+                case "0x0009": StringCompany = "Hot B Co."; break;
+                case "0x000A": StringCompany = "Jaleco"; break;
+                case "0x000B": StringCompany = "Coconuts Japan"; break;
+                case "0x000C": StringCompany = "Coconuts Japan/G.X.Media"; break;
+                case "0x000D": StringCompany = "Micronet"; break;
+                case "0x000E": StringCompany = "Technos"; break;
+                case "0x000F": StringCompany = "Mebio Software"; break;
+                case "0x0010": StringCompany = "Shouei System"; break;
+                case "0x0011": StringCompany = "Starfish"; break;
+                case "0x0013": StringCompany = "Mitsui Fudosan/Dentsu"; break;
+                case "0x0015": StringCompany = "Warashi Inc."; break;
+                case "0x0017": StringCompany = "Nowpro"; break;
+                case "0x0019": StringCompany = "Game Village"; break;
+                case "0x001A": StringCompany = "IE Institute"; break;
+                case "0x0024": StringCompany = "Banarex"; break;
+                case "0x0025": StringCompany = "Starfish"; break;
+                case "0x0026": StringCompany = "Infocom"; break;
+                case "0x0027": StringCompany = "Electronic Arts Japan"; break;
+                case "0x0029": StringCompany = "Cobra Team"; break;
+                case "0x002A": StringCompany = "Human/Field"; break;
+                case "0x002B": StringCompany = "KOEI"; break;
+                case "0x002C": StringCompany = "Hudson Soft"; break;
+                case "0x002D": StringCompany = "S.C.P./Game Village"; break;
+                case "0x002E": StringCompany = "Yanoman"; break;
+                case "0x0030": StringCompany = "Tecmo Products"; break;
+                case "0x0031": StringCompany = "Japan Glary Business"; break;
+                case "0x0032": StringCompany = "Forum/OpenSystem"; break;
+                case "0x0033": StringCompany = "Virgin Games (Japan)"; break;
+                case "0x0034": StringCompany = "SMDE"; break;
+                case "0x0035": StringCompany = "Yojigen"; break;
+                case "0x0037": StringCompany = "Daikokudenki"; break;
+                case "0x003D": StringCompany = "Creatures Inc."; break;
+                case "0x003E": StringCompany = "TDK Deep Impresion"; break;
+                case "0x0048": StringCompany = "Destination Software/KSS"; break;
+                case "0x0049": StringCompany = "Sunsoft/Tokai Engineering"; break;
+                case "0x004A": StringCompany = "POW (Planning Office Wada)/VR 1 Japan"; break;
+                case "0x004B": StringCompany = "Micro World"; break;
+                case "0x004D": StringCompany = "San-X"; break;
+                case "0x004E": StringCompany = "Enix"; break;
+                case "0x004F": StringCompany = "Loriciel/Electro Brain"; break;
+                case "0x0050": StringCompany = "Kemco Japan"; break;
+                case "0x0051": StringCompany = "Seta Co.,Ltd."; break;
+                case "0x0052": StringCompany = "Culture Brain"; break;
+                case "0x0053": StringCompany = "Irem Corp."; break;
+                case "0x0054": StringCompany = "Palsoft"; break;
+                case "0x0055": StringCompany = "Visit Co., Ltd."; break;
+                case "0x0056": StringCompany = "Intec"; break;
+                case "0x0057": StringCompany = "System Sacom"; break;
+                case "0x0058": StringCompany = "Poppo"; break;
+                case "0x0059": StringCompany = "Ubisoft Japan"; break;
+                case "0x005B": StringCompany = "Media Works"; break;
+                case "0x005C": StringCompany = "NEC InterChannel"; break;
+                case "0x005D": StringCompany = "Tam"; break;
+                case "0x005E": StringCompany = "Gajin/Jordan"; break;
+                case "0x005F": StringCompany = "Smilesoft"; break;
+                case "0x0062": StringCompany = "Mediakite"; break;
+                case "0x006C": StringCompany = "Viacom"; break;
+                case "0x006D": StringCompany = "Carrozzeria"; break;
+                case "0x006E": StringCompany = "Dynamic"; break;
+                case "0x0070": StringCompany = "Magifact"; break;
+                case "0x0071": StringCompany = "Hect"; break;
+                case "0x0072": StringCompany = "Codemasters"; break;
+                case "0x0073": StringCompany = "Taito/GAGA Communications"; break;
+                case "0x0074": StringCompany = "Laguna"; break;
+                case "0x0075": StringCompany = "Telstar Fun & Games/Event/Taito"; break;
+                case "0x0077": StringCompany = "Arcade Zone Ltd."; break;
+                case "0x0078": StringCompany = "Entertainment International/Empire Software"; break;
+                case "0x0079": StringCompany = "Loriciel"; break;
+                case "0x007A": StringCompany = "Gremlin Graphics"; break;
+                case "0x0090": StringCompany = "Seika Corp."; break;
+                case "0x0091": StringCompany = "UBI SOFT Entertainment Software"; break;
+                case "0x0092": StringCompany = "Sunsoft US"; break;
+                case "0x0094": StringCompany = "Life Fitness"; break;
+                case "0x0096": StringCompany = "System 3"; break;
+                case "0x0097": StringCompany = "Spectrum Holobyte"; break;
+                case "0x0099": StringCompany = "Irem"; break;
+                case "0x009B": StringCompany = "Raya Systems"; break;
+                case "0x009C": StringCompany = "Renovation Products"; break;
+                case "0x009D": StringCompany = "Malibu Games"; break;
+                case "0x009F": StringCompany = "Eidos/U.S. Gold"; break;
+                case "0x00A0": StringCompany = "Playmates Interactive"; break;
+                case "0x00A3": StringCompany = "Fox Interactive"; break;
+                case "0x00A4": StringCompany = "Time Warner Interactive"; break;
+                case "0x00AA": StringCompany = "Disney Interactive"; break;
+                case "0x00AC": StringCompany = "Black Pearl"; break;
+                case "0x00AE": StringCompany = "Advanced Productions"; break;
+                case "0x00B1": StringCompany = "GT Interactive"; break;
+                case "0x00B2": StringCompany = "RARE"; break;
+                case "0x00B3": StringCompany = "Crave Entertainment"; break;
+                case "0x00B4": StringCompany = "Absolute Entertainment"; break;
+                case "0x00B5": StringCompany = "Acclaim"; break;
+                case "0x00B6": StringCompany = "Activision"; break;
+                case "0x00B7": StringCompany = "American Sammy"; break;
+                case "0x00B8": StringCompany = "Take 2/GameTek"; break;
+                case "0x00B9": StringCompany = "Hi Tech"; break;
+                case "0x00BA": StringCompany = "LJN Ltd."; break;
+                case "0x00BC": StringCompany = "Mattel"; break;
+                case "0x00BE": StringCompany = "Mindscape/Red Orb Entertainment"; break;
+                case "0x00BF": StringCompany = "Romstar"; break;
+                case "0x00C0": StringCompany = "Taxan"; break;
+                case "0x00C1": StringCompany = "Midway/Tradewest"; break;
+                case "0x00C3": StringCompany = "American Softworks Corp."; break;
+                case "0x00C4": StringCompany = "Majesco Sales Inc."; break;
+                case "0x00C5": StringCompany = "3DO"; break;
+                case "0x00C8": StringCompany = "Hasbro"; break;
+                case "0x00C9": StringCompany = "NewKidCo"; break;
+                case "0x00CA": StringCompany = "Telegames"; break;
+                case "0x00CB": StringCompany = "Metro3D"; break;
+                case "0x00CD": StringCompany = "Vatical Entertainment"; break;
+                case "0x00CE": StringCompany = "LEGO Media"; break;
+                case "0x00D0": StringCompany = "Xicat Interactive"; break;
+                case "0x00D1": StringCompany = "Cryo Interactive"; break;
+                case "0x00D4": StringCompany = "Red Storm Entertainment"; break;
+                case "0x00D5": StringCompany = "Microids"; break;
+                case "0x00D7": StringCompany = "Conspiracy/Swing"; break;
+                case "0x00D8": StringCompany = "Titus"; break;
+                case "0x00D9": StringCompany = "Virgin Interactive"; break;
+                case "0x00DA": StringCompany = "Maxis"; break;
+                case "0x00DC": StringCompany = "LucasArts Entertainment"; break;
+                case "0x00DF": StringCompany = "Ocean"; break;
+                case "0x00E1": StringCompany = "Electronic Arts"; break;
+                case "0x00E3": StringCompany = "Laser Beam"; break;
+                case "0x00E6": StringCompany = "Elite Systems"; break;
+                case "0x00E7": StringCompany = "Electro Brain"; break;
+                case "0x00E8": StringCompany = "The Learning Company"; break;
+                case "0x00E9": StringCompany = "BBC"; break;
+                case "0x00EB": StringCompany = "Software 2000"; break;
+                case "0x00ED": StringCompany = "BAM! Entertainment"; break;
+                case "0x00EE": StringCompany = "Studio 3"; break;
+                case "0x00F2": StringCompany = "Classified Games"; break;
+                case "0x00F4": StringCompany = "TDK Mediactive"; break;
+                case "0x00F6": StringCompany = "DreamCatcher"; break;
+                case "0x00F7": StringCompany = "JoWood Produtions"; break;
+                case "0x00F8": StringCompany = "SEGA"; break;
+                case "0x00F9": StringCompany = "Wannado Edition"; break;
+                case "0x00FA": StringCompany = "LSP (Light & Shadow Prod.)"; break;
+                case "0x00FB": StringCompany = "ITE Media"; break;
+                case "0x00FC": StringCompany = "Infogrames"; break;
+                case "0x00FD": StringCompany = "Interplay"; break;
+                case "0x00FE": StringCompany = "JVC (US)"; break;
+                case "0x00FF": StringCompany = "Parker Brothers"; break;
+                case "0x0101": StringCompany = "SCI (Sales Curve Interactive)/Storm"; break;
+                case "0x0104": StringCompany = "THQ Software"; break;
+                case "0x0105": StringCompany = "Accolade Inc."; break;
+                case "0x0106": StringCompany = "Triffix Entertainment"; break;
+                case "0x0108": StringCompany = "Microprose Software"; break;
+                case "0x0109": StringCompany = "Universal Interactive/Sierra/Simon & Schuster"; break;
+                case "0x010B": StringCompany = "Kemco"; break;
+                case "0x010C": StringCompany = "Rage Software"; break;
+                case "0x010D": StringCompany = "Encore"; break;
+                case "0x010F": StringCompany = "Zoo"; break;
+                case "0x0110": StringCompany = "Kiddinx"; break;
+                case "0x0111": StringCompany = "Simon & Schuster Interactive"; break;
+                case "0x0112": StringCompany = "Asmik Ace Entertainment Inc./AIA"; break;
+                case "0x0113": StringCompany = "Empire Interactive"; break;
+                case "0x0116": StringCompany = "Jester Interactive"; break;
+                case "0x0118": StringCompany = "Rockstar Games"; break;
+                case "0x0119": StringCompany = "Scholastic"; break;
+                case "0x011A": StringCompany = "Ignition Entertainment"; break;
+                case "0x011B": StringCompany = "Summitsoft"; break;
+                case "0x011C": StringCompany = "Stadlbauer"; break;
+                case "0x0120": StringCompany = "Misawa"; break;
+                case "0x0121": StringCompany = "Teichiku"; break;
+                case "0x0122": StringCompany = "Namco Ltd."; break;
+                case "0x0123": StringCompany = "LOZC"; break;
+                case "0x0124": StringCompany = "KOEI"; break;
+                case "0x0126": StringCompany = "Tokuma Shoten Intermedia"; break;
+                case "0x0127": StringCompany = "Tsukuda Original"; break;
+                case "0x0128": StringCompany = "DATAM-Polystar"; break;
+                case "0x012B": StringCompany = "Bullet-Proof Software"; break;
+                case "0x012C": StringCompany = "Vic Tokai Inc."; break;
+                case "0x012E": StringCompany = "Character Soft"; break;
+                case "0x012F": StringCompany = "I'Max"; break;
+                case "0x0130": StringCompany = "Saurus"; break;
+                case "0x0133": StringCompany = "General Entertainment"; break;
+                case "0x0136": StringCompany = "I'Max"; break;
+                case "0x0137": StringCompany = "Success"; break;
+                case "0x0139": StringCompany = "SEGA Japan"; break;
+                case "0x0144": StringCompany = "Takara"; break;
+                case "0x0145": StringCompany = "Chun Soft"; break;
+                case "0x0146": StringCompany = "Video System Co., Ltd./McO'River"; break;
+                case "0x0147": StringCompany = "BEC"; break;
+                case "0x0149": StringCompany = "Varie"; break;
+                case "0x014A": StringCompany = "Yonezawa/S'pal"; break;
+                case "0x014B": StringCompany = "Kaneko"; break;
+                case "0x014D": StringCompany = "Victor Interactive Software/Pack-in-Video"; break;
+                case "0x014E": StringCompany = "Nichibutsu/Nihon Bussan"; break;
+                case "0x014F": StringCompany = "Tecmo"; break;
+                case "0x0150": StringCompany = "Imagineer"; break;
+                case "0x0153": StringCompany = "Nova"; break;
+                case "0x0154": StringCompany = "Den'Z"; break;
+                case "0x0155": StringCompany = "Bottom Up"; break;
+                case "0x0157": StringCompany = "TGL (Technical Group Laboratory)"; break;
+                case "0x0159": StringCompany = "Hasbro Japan"; break;
+                case "0x015B": StringCompany = "Marvelous Entertainment"; break;
+                case "0x015D": StringCompany = "Keynet Inc."; break;
+                case "0x015E": StringCompany = "Hands-On Entertainment"; break;
+                case "0x0168": StringCompany = "Telenet"; break;
+                case "0x0169": StringCompany = "Hori"; break;
+                case "0x016C": StringCompany = "Konami"; break;
+                case "0x016D": StringCompany = "K.Amusement Leasing Co."; break;
+                case "0x016E": StringCompany = "Kawada"; break;
+                case "0x016F": StringCompany = "Takara"; break;
+                case "0x0171": StringCompany = "Technos Japan Corp."; break;
+                case "0x0172": StringCompany = "JVC (Europe/Japan)/Victor Musical Industries"; break;
+                case "0x0174": StringCompany = "Toei Animation"; break;
+                case "0x0175": StringCompany = "Toho"; break;
+                case "0x0177": StringCompany = "Namco"; break;
+                case "0x0178": StringCompany = "Media Rings Corp."; break;
+                case "0x0179": StringCompany = "J-Wing"; break;
+                case "0x017B": StringCompany = "Pioneer LDC"; break;
+                case "0x017C": StringCompany = "KID"; break;
+                case "0x017D": StringCompany = "Mediafactory"; break;
+                case "0x0181": StringCompany = "Infogrames Hudson"; break;
+                case "0x018C": StringCompany = "Acclaim Japan"; break;
+                case "0x018D": StringCompany = "ASCII Co./Nexoft"; break;
+                case "0x018E": StringCompany = "Bandai"; break;
+                case "0x0190": StringCompany = "Enix"; break;
+                case "0x0192": StringCompany = "HAL Laboratory/Halken"; break;
+                case "0x0193": StringCompany = "SNK"; break;
+                case "0x0195": StringCompany = "Pony Canyon Hanbai"; break;
+                case "0x0196": StringCompany = "Culture Brain"; break;
+                case "0x0197": StringCompany = "Sunsoft"; break;
+                case "0x0198": StringCompany = "Toshiba EMI"; break;
+                case "0x0199": StringCompany = "Sony Imagesoft"; break;
+                case "0x019B": StringCompany = "Sammy"; break;
+                case "0x019C": StringCompany = "Magical"; break;
+                case "0x019D": StringCompany = "Visco"; break;
+                case "0x019F": StringCompany = "Compile"; break;
+                case "0x01A1": StringCompany = "MTO Inc."; break;
+                case "0x01A3": StringCompany = "Sunrise Interactive"; break;
+                case "0x01A5": StringCompany = "Global A Entertainment"; break;
+                case "0x01A6": StringCompany = "Fuuki"; break;
+                case "0x01B0": StringCompany = "Taito"; break;
+                case "0x01B2": StringCompany = "Kemco"; break;
+                case "0x01B3": StringCompany = "Square"; break;
+                case "0x01B4": StringCompany = "Tokuma Shoten"; break;
+                case "0x01B5": StringCompany = "Data East"; break;
+                case "0x01B6": StringCompany = "Tonkin House"; break;
+                case "0x01B8": StringCompany = "KOEI"; break;
+                case "0x01BA": StringCompany = "Konami/Ultra/Palcom"; break;
+                case "0x01BB": StringCompany = "NTVIC/VAP"; break;
+                case "0x01BC": StringCompany = "Use Co., Ltd."; break;
+                case "0x01BD": StringCompany = "Meldac"; break;
+                case "0x01BE": StringCompany = "Pony Canyon (Japan)/FCI (US)"; break;
+                case "0x01BF": StringCompany = "Angel/Sotsu Agency/Sunrise"; break;
+                case "0x01C0": StringCompany = "Yumedia/Aroma Co., Ltd."; break;
+                case "0x01C3": StringCompany = "Boss"; break;
+                case "0x01C4": StringCompany = "Axela/Crea-Tech"; break;
+                case "0x01C5": StringCompany = "Sekaibunka-Sha/Sumire kobo/Marigul Management Inc."; break;
+                case "0x01C6": StringCompany = "Konami Computer Entertainment Osaka"; break;
+                case "0x01C9": StringCompany = "Enterbrain"; break;
+                case "0x01D4": StringCompany = "Taito/Disco"; break;
+                case "0x01D5": StringCompany = "Sofel"; break;
+                case "0x01D6": StringCompany = "Quest Corp."; break;
+                case "0x01D7": StringCompany = "Sigma"; break;
+                case "0x01D8": StringCompany = "Ask Kodansha"; break;
+                case "0x01DA": StringCompany = "Naxat"; break;
+                case "0x01DB": StringCompany = "Copya System"; break;
+                case "0x01DC": StringCompany = "Capcom Co., Ltd."; break;
+                case "0x01DD": StringCompany = "Banpresto"; break;
+                case "0x01DE": StringCompany = "TOMY"; break;
+                case "0x01DF": StringCompany = "Acclaim/LJN Japan"; break;
+                case "0x01E1": StringCompany = "NCS"; break;
+                case "0x01E2": StringCompany = "Human Entertainment"; break;
+                case "0x01E3": StringCompany = "Altron"; break;
+                case "0x01E4": StringCompany = "Jaleco"; break;
+                case "0x01E5": StringCompany = "Gaps Inc."; break;
+                case "0x01EB": StringCompany = "Elf"; break;
+                case "0x01F8": StringCompany = "Jaleco"; break;
+                case "0x01FA": StringCompany = "Yutaka"; break;
+                case "0x01FB": StringCompany = "Varie"; break;
+                case "0x01FC": StringCompany = "T&ESoft"; break;
+                case "0x01FD": StringCompany = "Epoch Co., Ltd."; break;
+                case "0x01FF": StringCompany = "Athena"; break;
+                case "0x0200": StringCompany = "Asmik"; break;
+                case "0x0201": StringCompany = "Natsume"; break;
+                case "0x0202": StringCompany = "King Records"; break;
+                case "0x0203": StringCompany = "Atlus"; break;
+                case "0x0204": StringCompany = "Epic/Sony Records (Japan)"; break;
+                case "0x0206": StringCompany = "IGS (Information Global Service)"; break;
+                case "0x0208": StringCompany = "Chatnoir"; break;
+                case "0x0209": StringCompany = "Right Stuff"; break;
+                case "0x020B": StringCompany = "NTT COMWARE"; break;
+                case "0x020D": StringCompany = "Spike"; break;
+                case "0x020E": StringCompany = "Konami Computer Entertainment Tokyo"; break;
+                case "0x020F": StringCompany = "Alphadream Corp."; break;
+                case "0x0211": StringCompany = "Sting"; break;
+                case "0x021C": StringCompany = "A Wave"; break;
+                case "0x021D": StringCompany = "Motown Software"; break;
+                case "0x021E": StringCompany = "Left Field Entertainment"; break;
+                case "0x021F": StringCompany = "Extreme Entertainment Group"; break;
+                case "0x0220": StringCompany = "TecMagik"; break;
+                case "0x0225": StringCompany = "Cybersoft"; break;
+                case "0x0227": StringCompany = "Psygnosis"; break;
+                case "0x022A": StringCompany = "Davidson/Western Tech."; break;
+                case "0x022B": StringCompany = "Unlicensed"; break;
+                case "0x0230": StringCompany = "The Game Factory Europe"; break;
+                case "0x0231": StringCompany = "Hip Games"; break;
+                case "0x0232": StringCompany = "Aspyr"; break;
+                case "0x0235": StringCompany = "Mastiff"; break;
+                case "0x0236": StringCompany = "iQue"; break;
+                case "0x0237": StringCompany = "Digital Tainment Pool"; break;
+                case "0x0238": StringCompany = "XS Games"; break;
+                case "0x0239": StringCompany = "Daiwon"; break;
+                case "0x0241": StringCompany = "PCCW Japan"; break;
+                case "0x0244": StringCompany = "KiKi Co. Ltd."; break;
+                case "0x0245": StringCompany = "Open Sesame Inc."; break;
+                case "0x0246": StringCompany = "Sims"; break;
+                case "0x0247": StringCompany = "Broccoli"; break;
+                case "0x0248": StringCompany = "Avex"; break;
+                case "0x0249": StringCompany = "D3 Publisher"; break;
+                case "0x024B": StringCompany = "Konami Computer Entertainment Japan"; break;
+                case "0x024D": StringCompany = "Square-Enix"; break;
+                case "0x024E": StringCompany = "KSG"; break;
+                case "0x024F": StringCompany = "Micott & Basara Inc."; break;
+                case "0x0251": StringCompany = "Orbital Media"; break;
+                case "0x0262": StringCompany = "The Game Factory USA"; break;
+                case "0x0265": StringCompany = "Treasure"; break;
+                case "0x0266": StringCompany = "Aruze"; break;
+                case "0x0267": StringCompany = "Ertain"; break;
+                case "0x0268": StringCompany = "SNK Playmore"; break;
+                case "0x0299": StringCompany = "Yojigen"; break;
+                default: StringCompany = "Unknown"; break;
             }
         }
 
-        public static byte[] CalculateChecksum(byte[] sourceROM, uint offset, int intROMSize, int calcFileSize, byte romType, bool isBSROM)
+        private void CalculateChecksum()
         {
-            uint offsetChksm = offset + 0x2C;
+            uint offsetChksm = ROMHeaderOffset + 0x2C;
             ulong checksum = 0;
             uint multiplier = 1;
             byte[] byteChksm = new byte[2];
@@ -477,54 +1046,54 @@ namespace Advanced_SNES_ROM_Utility
             clearSum[3] = 0x00;
 
             // Make a copy with clean checksum of the ROM for independent calculation
-            byte[] noChecksumSourceROM = new byte[sourceROM.Length];
-            Buffer.BlockCopy(sourceROM, 0, noChecksumSourceROM, 0, sourceROM.Length);
+            byte[] noChecksumSourceROM = new byte[SourceROM.Length];
+            Buffer.BlockCopy(SourceROM, 0, noChecksumSourceROM, 0, SourceROM.Length);
             Buffer.BlockCopy(clearSum, 0, noChecksumSourceROM, (int)offsetChksm, clearSum.Length);
 
             // For BS-X ROMs fill header with 0x00
-            if (isBSROM)
+            if (IsBSROM)
             {
                 byte[] clearBSHeader = new byte [48] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-                Buffer.BlockCopy(clearBSHeader, 0, noChecksumSourceROM, (int)offset, clearBSHeader.Length);
+                Buffer.BlockCopy(clearBSHeader, 0, noChecksumSourceROM, (int)ROMHeaderOffset, clearBSHeader.Length);
             }
 
             // Some Hacks may have an odd size in their header, so we should fix that by taking the right value
-            if (intROMSize < calcFileSize)
+            if (IntROMSize < CalculatedFileSize)
             {
-                intROMSize = 1;
+                IntROMSize = 1;
 
-                while (intROMSize < calcFileSize)
+                while (IntROMSize < CalculatedFileSize)
                 {
-                    intROMSize *= 2;
+                    IntROMSize *= 2;
                 }
             }
 
             // Mirror ROM if neccessary | not working for Momotarou Dentetsu Happy and Tengai Makyou Zero / Tengai Makyou Zero - Shounen Jump no Shou (3 MByte ROMs with Special Chip + RAM + SRAM)
-            if ((intROMSize > calcFileSize) && romType != 0xF5 && romType != 0xF9)
+            if ((IntROMSize > CalculatedFileSize) && ByteROMType != 0xF5 && ByteROMType != 0xF9)
             {
                 try
                 {
                     // Create new ROM for mirroring
-                    byte[] mirroredROM = new byte[(intROMSize * 131072)];
+                    byte[] mirroredROM = new byte[(IntROMSize * 131072)];
 
                     int ctr = 0;
-                    int romSize1 = intROMSize;
+                    int romSize1 = IntROMSize;
 
                     // Get size of ROM #1
                     do
                     {
-                        ctr = romSize1 / calcFileSize;
+                        ctr = romSize1 / CalculatedFileSize;
                         romSize1 /= 2;
                     }
 
                     while (ctr > 1);
 
                     // Get size of ROM #2 and its multiplier
-                    int romSize2 = calcFileSize - romSize1;
-                    int romRest = intROMSize - romSize1;
+                    int romSize2 = CalculatedFileSize - romSize1;
+                    int romRest = IntROMSize - romSize1;
                     int romSize2Multiplicator = romRest / romSize2;
                 
                     //Debugging
@@ -552,7 +1121,7 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             // Momotarou Dentetsu Happy fix | This didn't work with expanded ROM: else if (calcFileSize == 24 && romType == 0xF5)
-            else if (intROMSize == 32 && romType == 0xF5)
+            else if (IntROMSize == 32 && ByteROMType == 0xF5)
             {
                 multiplier = 2;
             }
@@ -578,27 +1147,28 @@ namespace Advanced_SNES_ROM_Utility
                 Array.Reverse(byteChksm);
             }
 
-            return byteChksm;
+            CalcChksm = byteChksm;
         }
-        public static byte[] CalculateInverseChecksum(byte[] calcChksm)
+        private void CalculateInverseChecksum()
         {
             UInt16 calcInvChksm = 0;
             byte[] byteInvChksm = new byte[2];
 
             // Calculate inverse checksum (XOR with 0xFFFF)
-            calcInvChksm = BitConverter.ToUInt16(calcChksm, 0);
+            calcInvChksm = BitConverter.ToUInt16(CalcChksm, 0);
             calcInvChksm ^= 0xFFFF;
 
             // Return checksum as byte[]
             byteInvChksm = BitConverter.GetBytes(calcInvChksm);
 
-            return byteInvChksm;
+            CalcInvChksm = byteInvChksm;
         }
-        public static byte[] ReadChecksum(byte[] sourceROMHeader)
+
+        private void GetChecksum()
         {
             byte[] checksum = new byte[2];
 
-            Buffer.BlockCopy(sourceROMHeader, 0x2E, checksum, 0, 2);
+            Buffer.BlockCopy(SourceROMHeader, 0x2E, checksum, 0, 2);
 
             // Return checksum as big endian byte[]
             if (BitConverter.IsLittleEndian)
@@ -606,13 +1176,14 @@ namespace Advanced_SNES_ROM_Utility
                 Array.Reverse(checksum);
             }
 
-            return checksum;
+            ReadChksm = checksum;
         }
-        public static byte[] ReadInverseChecksum(byte[] sourceROMHeader)
+
+        private void GetInverseChecksum()
         {
             byte[] checksum = new byte[2];
 
-            Buffer.BlockCopy(sourceROMHeader, 0x2C, checksum, 0, 2);
+            Buffer.BlockCopy(SourceROMHeader, 0x2C, checksum, 0, 2);
 
             // Return checksum as big endian byte[]
             if (BitConverter.IsLittleEndian)
@@ -620,475 +1191,60 @@ namespace Advanced_SNES_ROM_Utility
                 Array.Reverse(checksum);
             }
 
-            return checksum;
+            ReadInvChksm = checksum;
         }
-        public static byte[] ReadVersion(byte[] sourceROMHeader)
+
+        private void GetVersion()
         {
             byte[] version = new byte[1];
 
-            Buffer.BlockCopy(sourceROMHeader, 0x2B, version, 0, 1);
+            Buffer.BlockCopy(SourceROMHeader, 0x2B, version, 0, 1);
 
-            return version;
+            ByteVersion = version[0];
+
+            StringVersion = "1." + ByteVersion;
         }
-        public static string CalculateCrc32Hash(byte[] sourceROM)
+
+        private void CalculateCrc32Hash()
         {
             Crc32 crc32 = new Crc32();
             string hash = null;
 
-            foreach (byte singleByte in crc32.ComputeHash(sourceROM))
+            foreach (byte singleByte in crc32.ComputeHash(SourceROM))
             {
                 hash += singleByte.ToString("X2").ToUpper();
             }
 
-            return hash;
+            CRC32Hash = hash;
         }
-        public static void SwapBin(byte[] sourceROM, String romSavePath, String romName)
+
+        public void FixChecksum()
         {
-            // Make a copy of the ROM for swapping
-            byte[] swappedSourceROM = new byte[sourceROM.Length];
-            Buffer.BlockCopy(sourceROM, 0, swappedSourceROM, 0, sourceROM.Length);
+            byte[] checksumFixedROM = new byte[SourceROM.Length];
+            byte[] newChksm = new byte[2];
+            byte[] newInvChksm = new byte[2];
+            byte[] newChksmSequence = new byte[4];
+            uint offset = ROMHeaderOffset + 0x2C;
 
-            // List of adresses to be swapped
-            List<int> swapSrcAdds = new List<int> { 65536, 131072, 262144, 524288, 393216, 196608, 786432, 589824, 458752, 851968, 720896, 917504 };
-            List<int> swapDstAdds = new List<int> { 262144, 524288, 65536, 131072, 589824, 786432, 196608, 393216, 851968, 458752, 917504, 720896 };
+            newChksm = CalcChksm;
+            newInvChksm = CalcInvChksm;
 
-            // Number of bytes to be swapped on each address - (64Kb [8Mbit = 64Kb x 16])
-            int swapSize = 65536;
-
-            // Do the swap thing
-            int swapDstAddCtr = 0;
-
-            foreach (int swapSrcAdd in swapSrcAdds)
+            // Reverse checksum for inserting
+            if (BitConverter.IsLittleEndian)
             {
-                Buffer.BlockCopy(sourceROM, swapSrcAdd, swappedSourceROM, swapDstAdds[swapDstAddCtr], swapSize);
-                swapDstAddCtr++;
+                Array.Reverse(newChksm);
+                Array.Reverse(newInvChksm);
             }
 
-            // Save swapped file
-            File.WriteAllBytes(@romSavePath + @"\" + romName + "_[swapped]" + ".bin", swappedSourceROM);
-            MessageBox.Show("File successfully swapped!\n\nFile saved to: '" + @romSavePath + @"\" + romName + "_[swapped]" + ".bin'\n\nIn case there was a header, it has been removed!");
-        }
-        public static void Deinterlave(byte[] sourceROM, byte[] sourceROMSMCHeader, int calcFileSize, String romSavePath, String romName)
-        {
-            byte[] ufoTitle = new byte[8];
-            byte[] gdTitle = new byte[14];
+            newChksmSequence[0] = newInvChksm[0];
+            newChksmSequence[1] = newInvChksm[1];
+            newChksmSequence[2] = newChksm[0];
+            newChksmSequence[3] = newChksm[1];
 
-            bool ufo = false;   // Super UFO
-            bool gd = false;    // Game Doctor SF
+            Buffer.BlockCopy(SourceROM, 0, checksumFixedROM, 0, SourceROM.Length);
+            Buffer.BlockCopy(newChksmSequence, 0, checksumFixedROM, (int)offset, newChksmSequence.Length);
 
-            // Analyze SMC header
-            if (sourceROMSMCHeader != null)
-            {
-                Buffer.BlockCopy(sourceROMSMCHeader, 8, ufoTitle, 0, 8);
-                Buffer.BlockCopy(sourceROMSMCHeader, 0, gdTitle, 0, 14);
-
-                if (Encoding.ASCII.GetString(ufoTitle).Equals("SUPERUFO"))
-                {
-                    ufo = true;
-                }
-
-                if (Encoding.ASCII.GetString(gdTitle).Equals("GAME DOCTOR SF"))
-                {
-                    gd = true;
-                }
-            }
-           
-            // If there is no header or header is not Super UFO or Game Doctor, ask user if he wants to proceed
-            else if ((!ufo && !gd) || sourceROMSMCHeader == null)
-            {
-                DialogResult dialogResult = new DialogResult();
-                Form2 chooseCopier = new Form2();
-                dialogResult = chooseCopier.ShowDialog();
-
-                if (dialogResult == DialogResult.OK)
-                {
-                    // Set Game Doctor SF as copier
-                    gd = true;
-                }
-
-                else if (dialogResult == DialogResult.Yes)
-                {
-                    // Set Super UFO as copier
-                    ufo = true;
-                }
-
-                else if (dialogResult == DialogResult.Cancel)
-                {
-                    // If user don't wants to proceed, stop this function
-                    return;
-                }
-            }
-
-            byte[] deinterleavedROM = new byte[sourceROM.Length];   // Empty byte array for deinterleaved ROM
-
-            int chunkSize = 32768;  // Number of bytes for each chunk
-            int chunkItems = sourceROM.Length / chunkSize;    // Number of chunks
-
-            // In some special cases of 20, 24 or 48 MBit ROMs, deinterleaving must be done by following one of these pattern
-            int[] deintpattern = null;
-
-            if (!ufo && calcFileSize == 20)
-            {
-                // Array with deinterleaving pattern for 20 MBit ROMs which were NOT dumped with Super UFO
-                deintpattern = new int[] { 1,   3,   5,   7,   9,  11,  13,  15,  17,  19,  21,  23,  25,  27,  29,
-                                          31,  33,  35,  37,  39,  41,  43,  45,  47,  49,  51,  53,  55,  57,  59,
-                                          61,  63,  65,  67,  69,  71,  73,  75,  77,  79,  64,  66,  68,  70,  72,
-                                          74,  76,  78,  32,  34,  36,  38,  40,  42,  44,  46,  48,  50,  52,  54,
-                                          56,  58,  60,  62,   0,   2,   4,   6,   8,  10,  12,  14,  16,  18,  20,
-                                          22,  24,  26,  28,  30 };
-            }
-
-            else if (!ufo && calcFileSize == 24)
-            {
-                // Array with deinterleaving pattern for 24 MBit ROMs which were NOT dumped with Super UFO
-                deintpattern = new int[] { 1,   3,   5,   7,   9,  11,  13,  15,  17,  19,  21,  23,  25,  27,  29,
-                                          31,  33,  35,  37,  39,  41,  43,  45,  47,  49,  51,  53,  55,  57,  59,
-                                          61,  63,  65,  67,  69,  71,  73,  75,  77,  79,  81,  83,  85,  87,  89,
-                                          91,  93,  95,  64,  66,  68,  70,  72,  74,  76,  78,  80,  82,  84,  86,
-                                          88,  90,  92,  94,   0,   2,   4,   6,   8,  10,  12,  14,  16,  18,  20,
-                                          22,  24,  26,  28,  30,  32,  34,  36,  38,  40,  42,  44,  46,  48,  50,
-                                          52,  54,  56,  58,  60,  62 };
-            }
-
-            else if (gd && calcFileSize == 48)
-            {
-                // Array with deinterleaving pattern for 48 MBit ROMs which were dumped WITH Super Game Doctor
-                deintpattern = new int[] { 129, 131, 133, 135, 137, 139, 141, 143, 145, 147, 149, 151, 153, 155, 157,
-                                           159, 161, 163, 165, 167, 169, 171, 173, 175, 177, 179, 181, 183, 185, 187,
-                                           189, 191, 128, 130, 132, 134, 136, 138, 140, 142, 144, 146, 148, 150, 152,
-                                           154, 156, 158, 160, 162, 164, 166, 168, 170, 172, 174, 176, 178, 180, 182,
-                                           184, 186, 188, 190,   1,   3,   5,   7,   9,  11,  13,  15,  17,  19,  21,
-                                            23,  25,  27,  29,  31,  33,  35,  37,  39,  41,  43,  45,  47,  49,  51,
-                                            53,  55,  57,  59,  61,  63,  65,  67,  69,  71,  73,  75,  77,  79,  81,
-                                            83,  85,  87,  89,  91,  93,  95,  97,  99, 101, 103, 105, 107, 109, 111,
-                                           113, 115, 117, 119, 121, 123, 125, 127,   0,   2,   4,   6,   8,  10,  12,
-                                            14,  16,  18,  20,  22,  24,  26,  28,  30,  32,  34,  36,  38,  40,  42,
-                                            44,  46,  48,  50,  52,  54,  56,  58,  60,  62,  64,  66,  68,  70,  72,
-                                            74,  76,  78,  80,  82,  84,  86,  88,  90,  92,  94,  96,  98, 100, 102,
-                                           104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126 };
-            }
-
-            if (deintpattern != null)
-            {
-                for (int chunkCtr = 0; chunkCtr < chunkItems; chunkCtr++)
-                {
-                    Buffer.BlockCopy(sourceROM, chunkCtr * chunkSize, deinterleavedROM, deintpattern[chunkCtr] * chunkSize, chunkSize);
-                }
-            }
-
-            // If no special case is detectetd, take the standard deinterleaving algorithm
-            else
-            {
-                int even = 0;
-                int odd = 1;
-
-                for (int chunkCtr = 0; chunkCtr < chunkItems; chunkCtr++)
-                {
-                    int sourcePos = chunkCtr * chunkSize;
-                    int destPos = 0;
-
-                    if ((chunkCtr * chunkSize) < (calcFileSize * 131072) / 2)
-                    {
-                        destPos = odd * chunkSize;
-
-                        Buffer.BlockCopy(sourceROM, sourcePos, deinterleavedROM, destPos, chunkSize);
-
-                        odd += 2;
-                    }
-
-                    else
-                    {
-                        destPos = even * chunkSize;
-
-                        Buffer.BlockCopy(sourceROM, sourcePos, deinterleavedROM, destPos, chunkSize);
-
-                        even += 2;
-                    }
-                }
-            }
-
-            // Save deinterleaved file
-            string identifier = "_[deinterleaved]";
-
-            if (gd)
-            {
-                identifier = "_[GD_deinterleaved]";
-            }
-
-            else if (ufo)
-            {
-                identifier = "_[UFO_deinterleaved]";
-            }
-
-            File.WriteAllBytes(@romSavePath + @"\" + romName + identifier + ".sfc", deinterleavedROM);
-            MessageBox.Show("File successfully deinterleaved!\n\nFile saved to: '" + @romSavePath + @"\" + romName + identifier + ".sfc'\n\nIn case there was a header, it has been removed!");
-        }
-        public static bool UnlockRegion(byte[] sourceROM, byte[] sourceROMSMCHeader, bool unlock, string romSavePath, string romName, string region)
-        {
-            List<byte[]> lockingCodes = new List<byte[]>();
-            List<byte[]> unlockingCodes = new List<byte[]>();
-            List<bool[]> lockingCodePattern = new List<bool[]>();
-
-            byte[] regionFixedSourceROM = null;
-
-            if(unlock)
-            {
-                regionFixedSourceROM = new byte[sourceROM.Length];
-                Buffer.BlockCopy(sourceROM, 0, regionFixedSourceROM, 0, sourceROM.Length);
-            }
-
-
-            // Load bad codes into list
-            if (region.Equals("PAL"))
-            {
-                // Bad codes in PAL games
-                byte[] lockingCode01 = { 0xad, 0x3f, 0x21, 0x29, 0x10, 0x00, 0xd0 }; lockingCodes.Add(lockingCode01);
-                byte[] lockingCode02 = { 0xad, 0x3f, 0x21, 0x89, 0x10, 0x00, 0xd0 }; lockingCodes.Add(lockingCode02);
-                byte[] lockingCode03 = { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xcf, 0xbd, 0xff, 0x00, 0xf0 }; lockingCodes.Add(lockingCode03);
-                byte[] lockingCode04 = { 0xad, 0x3f, 0x21, 0x89, 0x10, 0xd0 }; lockingCodes.Add(lockingCode04);
-                byte[] lockingCode05 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0xd0 }; lockingCodes.Add(lockingCode05);
-                byte[] lockingCode06 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0x00, 0xd0 }; lockingCodes.Add(lockingCode06);
-                byte[] lockingCode07 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x00, 0xc9, 0x00, 0xf0 }; lockingCodes.Add(lockingCode07);
-                byte[] lockingCode08 = { 0xa2, 0x18, 0x01, 0xbd, 0x27, 0x20, 0x89, 0x10, 0x00, 0xf0, 0x01 }; lockingCodes.Add(lockingCode08);
-                byte[] lockingCode09 = { 0xaf, 0x3f, 0x21, 0x00, 0x89, 0x10, 0x00 }; lockingCodes.Add(lockingCode09);                           // Asterix & Obelix
-                byte[] lockingCode10 = { 0xaf, 0x3f, 0x21, 0x00, 0xc2, 0x20, 0x29, 0x10, 0x00 }; lockingCodes.Add(lockingCode10);               // 90 Minutes - European Prime Goal
-                byte[] lockingCode11 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0xc2 }; lockingCodes.Add(lockingCode11);                           // California Games 2
-                byte[] lockingCode12 = { 0xad, 0x3f, 0x21, 0x29, 0x10, 0x85, 0x62, 0xc2 }; lockingCodes.Add(lockingCode12);                     // Dirt Racer
-
-                // Good codes for PAL games
-                byte[] unlockingCode01 = { 0xad, 0x3f, 0x21, 0x29, 0x10, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode01);
-                byte[] unlockingCode02 = { 0xa9, 0x10, 0x00, 0x89, 0x10, 0x00, 0xd0 }; unlockingCodes.Add(unlockingCode02);
-                byte[] unlockingCode03 = { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xcf, 0xbd, 0xff, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode03);
-                byte[] unlockingCode04 = { 0xad, 0x3f, 0x21, 0x89, 0x10, 0x80 }; unlockingCodes.Add(unlockingCode04);
-                byte[] unlockingCode05 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0x80 }; unlockingCodes.Add(unlockingCode05);
-                byte[] unlockingCode06 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0x00, 0xea, 0xea }; unlockingCodes.Add(unlockingCode06);
-                byte[] unlockingCode07 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x00, 0xc9, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode07);
-                byte[] unlockingCode08 = { 0xa2, 0x18, 0x01, 0xbd, 0x27, 0x20, 0x89, 0x10, 0x00, 0xea, 0xea }; unlockingCodes.Add(unlockingCode08);
-                byte[] unlockingCode09 = { 0xaf, 0x3f, 0x21, 0x00, 0xA9, 0x10, 0x00 }; unlockingCodes.Add(unlockingCode09);
-                byte[] unlockingCode10 = { 0xaf, 0x3f, 0x21, 0x00, 0xc2, 0x20, 0xa9, 0x10, 0x00 }; unlockingCodes.Add(unlockingCode10);
-                byte[] unlockingCode11 = { 0xaf, 0x3f, 0x21, 0x00, 0xa9, 0x10, 0xc2 }; unlockingCodes.Add(unlockingCode11);
-                byte[] unlockingCode12 = { 0xad, 0x3f, 0x21, 0xa9, 0x10, 0x85, 0x62, 0xc2 }; unlockingCodes.Add(unlockingCode12);
-
-                // Pattern for PAL games
-                bool[] lockingCodePattern01 = { false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern01);
-                bool[] lockingCodePattern02 = { false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern02);
-                bool[] lockingCodePattern03 = { false, false, false, false, false, false, false, false, true, false }; lockingCodePattern.Add(lockingCodePattern03);
-                bool[] lockingCodePattern04 = { false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern04);
-                bool[] lockingCodePattern05 = { false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern05);
-                bool[] lockingCodePattern06 = { false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern06);
-                bool[] lockingCodePattern07 = { false, false, false, false, false, true, false, true, false }; lockingCodePattern.Add(lockingCodePattern07);
-                bool[] lockingCodePattern08 = { false, false, false, false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern08);
-                bool[] lockingCodePattern09 = { false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern09);
-                bool[] lockingCodePattern10 = { false, false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern10);
-                bool[] lockingCodePattern11 = { false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern11);
-                bool[] lockingCodePattern12 = { false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern12);
-            }
-
-            else
-            {
-                // Bad codes in NTSC games
-                byte[] lockingCode20 = { 0x3f, 0x21, 0x29, 0x10, 0xf0 }; lockingCodes.Add(lockingCode20);
-                byte[] lockingCode21 = { 0x3f, 0x21, 0x89, 0x10, 0xf0 }; lockingCodes.Add(lockingCode21);
-                byte[] lockingCode22 = { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xd0 }; lockingCodes.Add(lockingCode22);
-                byte[] lockingCode23 = { 0xad, 0x3f, 0x21, 0x89, 0x10, 0xd0 }; lockingCodes.Add(lockingCode23);
-                byte[] lockingCode24 = { 0x3f, 0x21, 0x29, 0x10, 0x00, 0xf0 }; lockingCodes.Add(lockingCode24);
-                byte[] lockingCode25 = { 0x3f, 0x21, 0x89, 0x10, 0x00, 0xf0 }; lockingCodes.Add(lockingCode25);
-                byte[] lockingCode26 = { 0x3f, 0x21, 0x29, 0x10, 0x00, 0xd0 }; lockingCodes.Add(lockingCode26);
-                byte[] lockingCode27 = { 0x3f, 0x21, 0x89, 0x10, 0x00, 0xd0 }; lockingCodes.Add(lockingCode27);
-                byte[] lockingCode28 = { 0x3f, 0x21, 0x89, 0x10, 0xc2, 0x00, 0xf0 }; lockingCodes.Add(lockingCode28);
-                byte[] lockingCode29 = { 0x3f, 0x21, 0x89, 0x10, 0xc2, 0x00, 0xd0 }; lockingCodes.Add(lockingCode29);
-                byte[] lockingCode30 = { 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x10, 0xf0 }; lockingCodes.Add(lockingCode30);
-                byte[] lockingCode31 = { 0x3f, 0x21, 0x89, 0x10, 0xc9, 0x10, 0xf0 }; lockingCodes.Add(lockingCode31);
-                byte[] lockingCode32 = { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x00, 0xf0 }; lockingCodes.Add(lockingCode32);
-                byte[] lockingCode33 = { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x00, 0xd0 }; lockingCodes.Add(lockingCode33);
-                byte[] lockingCode34 = { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x10, 0xd0 }; lockingCodes.Add(lockingCode34);
-                byte[] lockingCode35 = { 0x3f, 0x21, 0x29, 0x10, 0xcf, 0x00, 0x00, 0x80, 0xf0 }; lockingCodes.Add(lockingCode35);
-                byte[] lockingCode36 = { 0xad, 0x3f, 0x21, 0x8d, 0x00, 0x00, 0x29, 0x10, 0x8d }; lockingCodes.Add(lockingCode36);
-                byte[] lockingCode37 = { 0x3f, 0x21, 0x00, 0x29, 0x10, 0xf0 }; lockingCodes.Add(lockingCode37);
-                byte[] lockingCode38 = { 0x3f, 0x21, 0x00, 0x89, 0x10, 0xf0 }; lockingCodes.Add(lockingCode38);
-                byte[] lockingCode39 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0xd0 }; lockingCodes.Add(lockingCode39);
-                byte[] lockingCode40 = { 0xaf, 0x3f, 0x21, 0x00, 0x89, 0x10, 0xd0 }; lockingCodes.Add(lockingCode40);
-                byte[] lockingCode41 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0x00, 0xf0 }; lockingCodes.Add(lockingCode41);
-                byte[] lockingCode42 = { 0xaf, 0x3f, 0x21, 0x00, 0x89, 0x10, 0x00, 0xf0 }; lockingCodes.Add(lockingCode42);
-                byte[] lockingCode43 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x00, 0xc9, 0x00, 0xf0 }; lockingCodes.Add(lockingCode43);
-                byte[] lockingCode44 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0x80, 0x2d, 0x00, 0x1b }; lockingCodes.Add(lockingCode44);
-                byte[] lockingCode45 = { 0x3f, 0x21, 0x00, 0x89, 0x10, 0xc2, 0x00, 0xf0 }; lockingCodes.Add(lockingCode45);
-                byte[] lockingCode46 = { 0xaf, 0x3f, 0x21, 0x00, 0x00, 0x00, 0x29, 0x10, 0x00, 0xd0 }; lockingCodes.Add(lockingCode46);
-                byte[] lockingCode47 = { 0x3f, 0x21, 0xc2, 0x00, 0x29, 0x10, 0x00, 0xf0 }; lockingCodes.Add(lockingCode47);
-                byte[] lockingCode48 = { 0x3f, 0x21, 0xc2, 0x00, 0x29, 0x10, 0x00, 0xd0 }; lockingCodes.Add(lockingCode48);
-                byte[] lockingCode49 = { 0xaf, 0x3f, 0x21, 0xea, 0x89, 0x10, 0x00, 0xd0 }; lockingCodes.Add(lockingCode49);
-                byte[] lockingCode50 = { 0xa2, 0x18, 0x01, 0xbd, 0x27, 0x20, 0x89, 0x10, 0x00, 0xd0, 0x01 }; lockingCodes.Add(lockingCode50);
-                byte[] lockingCode51 = { 0x29, 0x10, 0x00, 0xa2, 0x00, 0x00, 0xc9, 0x10, 0x00, 0xd0 }; lockingCodes.Add(lockingCode51);
-                byte[] lockingCode52 = { 0xad, 0x3f, 0x21, 0x29, 0x0f }; lockingCodes.Add(lockingCode52);       // Dezaemon - Kaite Tsukutte Asoberu
-                byte[] lockingCode53 = { 0xad, 0x39, 0xb5, 0xd0, 0x1a, 0x22 }; lockingCodes.Add(lockingCode53);     // Earthbound
-                byte[] lockingCode54 = { 0x1a, 0x8f, 0xf0, 0x7f, 0x31, 0xcf, 0xf0 }; lockingCodes.Add(lockingCode54);   // Earthbound
-                byte[] lockingCode55 = { 0x1a, 0x8f, 0xf0, 0x7f, 0x32, 0xcf, 0xf0 }; lockingCodes.Add(lockingCode55);   // Earthbound
-                byte[] lockingCode56 = { 0x1a, 0x8f, 0xf0, 0x7f, 0x31, 0xcf, 0xf0 }; lockingCodes.Add(lockingCode56);   // Earthbound
-                byte[] lockingCode57 = { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xef, 0xf2, 0xfd, 0xc3, 0xf0 }; lockingCodes.Add(lockingCode57);     // Earthbound
-                byte[] lockingCode58 = { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0xef, 0x38, 0xf2, 0xfd, 0xc3, 0xf0 }; lockingCodes.Add(lockingCode58);   // Earthbound
-                byte[] lockingCode59 = { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xef, 0xef, 0xff, 0xc1 }; lockingCodes.Add(lockingCode59);     // Earthbound
-
-                // Good codes for NTSC games
-                byte[] unlockingCode20 = { 0x3f, 0x21, 0x29, 0x10, 0x80 }; unlockingCodes.Add(unlockingCode20);
-                byte[] unlockingCode21 = { 0x3f, 0x21, 0x89, 0x10, 0x80 }; unlockingCodes.Add(unlockingCode21);
-                byte[] unlockingCode22 = { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xea, 0xea }; unlockingCodes.Add(unlockingCode22);
-                byte[] unlockingCode23 = { 0xad, 0x3f, 0x21, 0x89, 0x10, 0xea, 0xea }; unlockingCodes.Add(unlockingCode23);         // Could also be 0xad, 0x3f, 0x21, 0x89, 0x10, 0x80 but uCON64 uses (ea ea)
-                byte[] unlockingCode24 = { 0x3f, 0x21, 0x29, 0x10, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode24);
-                byte[] unlockingCode25 = { 0x3f, 0x21, 0x89, 0x10, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode25);
-                byte[] unlockingCode26 = { 0x3f, 0x21, 0x29, 0x10, 0x00, 0xea, 0xea }; unlockingCodes.Add(unlockingCode26);
-                byte[] unlockingCode27 = { 0x3f, 0x21, 0x89, 0x10, 0x00, 0xea, 0xea }; unlockingCodes.Add(unlockingCode27);
-                byte[] unlockingCode28 = { 0x3f, 0x21, 0x89, 0x10, 0xc2, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode28);
-                byte[] unlockingCode29 = { 0x3f, 0x21, 0x89, 0x10, 0xc2, 0x00, 0xea, 0xea }; unlockingCodes.Add(unlockingCode29);
-                byte[] unlockingCode30 = { 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x10, 0x80 }; unlockingCodes.Add(unlockingCode30);
-                byte[] unlockingCode31 = { 0x3f, 0x21, 0x89, 0x10, 0xc9, 0x10, 0x80 }; unlockingCodes.Add(unlockingCode31);
-                byte[] unlockingCode32 = { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x00, 0xea, 0xea }; unlockingCodes.Add(unlockingCode32);
-                byte[] unlockingCode33 = { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode33);
-                byte[] unlockingCode34 = { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x10, 0xea, 0xea }; unlockingCodes.Add(unlockingCode34);
-                byte[] unlockingCode35 = { 0x3f, 0x21, 0x29, 0x10, 0xcf, 0x00, 0x00, 0x80, 0x80 }; unlockingCodes.Add(unlockingCode35);
-                byte[] unlockingCode36 = { 0xad, 0x3f, 0x21, 0x8d, 0x00, 0x00, 0x29, 0x00, 0x8d }; unlockingCodes.Add(unlockingCode36);
-                byte[] unlockingCode37 = { 0x3f, 0x21, 0x00, 0x29, 0x10, 0x80 }; unlockingCodes.Add(unlockingCode37);
-                byte[] unlockingCode38 = { 0x3f, 0x21, 0x00, 0x89, 0x10, 0x80 }; unlockingCodes.Add(unlockingCode38);
-                byte[] unlockingCode39 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0xea, 0xea }; unlockingCodes.Add(unlockingCode39);
-                byte[] unlockingCode40 = { 0xaf, 0x3f, 0x21, 0x00, 0x89, 0x10, 0xea, 0xea }; unlockingCodes.Add(unlockingCode40);
-                byte[] unlockingCode41 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode41);
-                byte[] unlockingCode42 = { 0xaf, 0x3f, 0x21, 0x00, 0x89, 0x10, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode42);
-                byte[] unlockingCode43 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x00, 0xc9, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode43);
-                byte[] unlockingCode44 = { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x00, 0x80, 0x2d, 0x00, 0x1b }; unlockingCodes.Add(unlockingCode44);
-                byte[] unlockingCode45 = { 0x3f, 0x21, 0x00, 0x89, 0x10, 0xc2, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode45);
-                byte[] unlockingCode46 = { 0xaf, 0x3f, 0x21, 0x00, 0x00, 0x00, 0x29, 0x10, 0x00, 0xea, 0xea }; unlockingCodes.Add(unlockingCode46);
-                byte[] unlockingCode47 = { 0x3f, 0x21, 0xc2, 0x00, 0x29, 0x10, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode47);
-                byte[] unlockingCode48 = { 0x3f, 0x21, 0xc2, 0x00, 0x29, 0x10, 0x00, 0xea, 0xea }; unlockingCodes.Add(unlockingCode48);
-                byte[] unlockingCode49 = { 0xa9, 0x00, 0x00, 0xea, 0x89, 0x10, 0x00, 0xd0 }; unlockingCodes.Add(unlockingCode49);
-                byte[] unlockingCode50 = { 0xa2, 0x18, 0x01, 0xbd, 0x27, 0x20, 0x89, 0x10, 0x00, 0xea, 0xea }; unlockingCodes.Add(unlockingCode50);
-                byte[] unlockingCode51 = { 0x29, 0x10, 0x00, 0xa2, 0x00, 0x00, 0xc9, 0x10, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode51);
-                byte[] unlockingCode52 = { 0xad, 0x3f, 0x21, 0x29, 0xff }; unlockingCodes.Add(unlockingCode52);       // Dezaemon - Kaite Tsukutte Asoberu
-                byte[] unlockingCode53 = { 0xad, 0x39, 0xb5, 0xea, 0xea, 0x22 }; unlockingCodes.Add(unlockingCode53);       // Earthbound
-                byte[] unlockingCode54 = { 0x1a, 0x8f, 0xf0, 0x7f, 0x30, 0xcf, 0xf0 }; unlockingCodes.Add(unlockingCode54);     // Earthbound
-                byte[] unlockingCode55 = { 0x1a, 0x8f, 0xf0, 0x7f, 0x30, 0xcf, 0xf0 }; unlockingCodes.Add(unlockingCode55);     // Earthbound
-                byte[] unlockingCode56 = { 0x1a, 0x8f, 0xf0, 0x7f, 0x30, 0xcf, 0xf0 }; unlockingCodes.Add(unlockingCode56);     // Earthbound
-                byte[] unlockingCode57 = { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xea, 0xa9, 0x00, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode57);       // Earthbound
-                byte[] unlockingCode58 = { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xea, 0xa9, 0x00, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode58);     // Earthbound
-                byte[] unlockingCode59 = { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xea, 0xa9, 0x00, 0x00 }; unlockingCodes.Add(unlockingCode59);       // Earthbound
-
-
-                // Pattern for NTSC games
-                bool[] lockingCodePattern20 = { false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern20);
-                bool[] lockingCodePattern21 = { false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern21);
-                bool[] lockingCodePattern22 = { false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern22);
-                bool[] lockingCodePattern23 = { false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern23);
-                bool[] lockingCodePattern24 = { false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern24);
-                bool[] lockingCodePattern25 = { false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern25);
-                bool[] lockingCodePattern26 = { false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern26);
-                bool[] lockingCodePattern27 = { false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern27);
-                bool[] lockingCodePattern28 = { false, false, false, false, false, true, false }; lockingCodePattern.Add(lockingCodePattern28);
-                bool[] lockingCodePattern29 = { false, false, false, false, false, true, false }; lockingCodePattern.Add(lockingCodePattern29);
-                bool[] lockingCodePattern30 = { false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern30);
-                bool[] lockingCodePattern31 = { false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern31);
-                bool[] lockingCodePattern32 = { false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern32);
-                bool[] lockingCodePattern33 = { false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern33);
-                bool[] lockingCodePattern34 = { false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern34);
-                bool[] lockingCodePattern35 = { false, false, false, false, false, true, true, false, false }; lockingCodePattern.Add(lockingCodePattern35);
-                bool[] lockingCodePattern36 = { false, false, false, false, true, true, false, false, false }; lockingCodePattern.Add(lockingCodePattern36);
-                bool[] lockingCodePattern37 = { false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern37);
-                bool[] lockingCodePattern38 = { false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern38);
-                bool[] lockingCodePattern39 = { false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern39);
-                bool[] lockingCodePattern40 = { false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern40);
-                bool[] lockingCodePattern41 = { false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern41);
-                bool[] lockingCodePattern42 = { false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern42);
-                bool[] lockingCodePattern43 = { false, false, false, false, false, true, false, true, false }; lockingCodePattern.Add(lockingCodePattern43);
-                bool[] lockingCodePattern44 = { false, false, false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern44);
-                bool[] lockingCodePattern45 = { false, false, false, false, false, false, true, false }; lockingCodePattern.Add(lockingCodePattern45);
-                bool[] lockingCodePattern46 = { false, false, false, false, true, true, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern46);
-                bool[] lockingCodePattern47 = { false, false, false, true, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern47);
-                bool[] lockingCodePattern48 = { false, false, false, true, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern48);
-                bool[] lockingCodePattern49 = { false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern49);
-                bool[] lockingCodePattern50 = { false, false, false, false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern50);
-                bool[] lockingCodePattern51 = { false, false, false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern51);
-                bool[] lockingCodePattern52 = { false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern52);
-                bool[] lockingCodePattern53 = { false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern53);
-                bool[] lockingCodePattern54 = { false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern54);
-                bool[] lockingCodePattern55 = { false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern55);
-                bool[] lockingCodePattern56 = { false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern56);
-                bool[] lockingCodePattern57 = { false, false, false, false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern57);
-                bool[] lockingCodePattern58 = { false, false, false, false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern58);
-                bool[] lockingCodePattern59 = { false, false, false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern59);
-            }
-
-            bool foundBadCode = false;
-            int index = 0;
-
-            foreach (byte[] lockingCode in lockingCodes)
-            {
-                byte[] unlockingCode = unlockingCodes[index];
-                bool[] lockingPattern = lockingCodePattern[index];
-
-                int offset = -1;
-                int c = sourceROM.Length - lockingCode.Length + 1;
-                int j;
-
-                for (int i = 0; i < c; i++)
-                {
-                    if (sourceROM[i] != lockingCode[0])
-                    {
-                        continue;
-                    }
-
-                    for (j = lockingCode.Length - 1; j >= 1 && sourceROM[i + j] == lockingCode[j] || lockingPattern[j]; j--)
-                    {
-                        if (lockingPattern[j])
-                        {
-                            unlockingCode[j] = sourceROM[i + j];
-                        }
-                    }
-                    
-                    if (j == 0)
-                    {
-                        offset = i;
-                        foundBadCode = true;
-
-                        // If bad code was found replace it with good code
-                        if (foundBadCode && unlock)
-                        {
-                            Buffer.BlockCopy(unlockingCode, 0, regionFixedSourceROM, offset, unlockingCode.Length);
-                        }
-
-                        // If only check is needed, tell that bad code was found in ROM and leave
-                        else if (foundBadCode && !unlock)
-                        {
-                            return true;
-                        }
-                    }
-                }
-
-                index++;
-            }
-
-            // Save file if found bad codes and unlocking is enabled
-            if (foundBadCode && unlock)
-            {
-                // Save region free file with header
-                if (sourceROMSMCHeader != null)
-                {
-                    byte[] regionFixedHeaderedROM = new byte[sourceROMSMCHeader.Length + regionFixedSourceROM.Length];
-
-                    Buffer.BlockCopy(sourceROMSMCHeader, 0, regionFixedHeaderedROM, 0, sourceROMSMCHeader.Length);
-                    Buffer.BlockCopy(regionFixedSourceROM, 0, regionFixedHeaderedROM, sourceROMSMCHeader.Length, regionFixedSourceROM.Length);
-
-                    File.WriteAllBytes(@romSavePath + @"\" + romName + "_[region_free]" + ".sfc", regionFixedHeaderedROM);
-                }
-
-                else
-                {
-                    // Save region free file without header
-                    File.WriteAllBytes(@romSavePath + @"\" + romName + "_[region_free]" + ".sfc", regionFixedSourceROM);
-                }
-
-                MessageBox.Show("Region lock successfully removed!\n\nFile saved to: '" + @romSavePath + @"\" + romName + "_[region_free]" + ".sfc'");
-
-                return true;
-            }
-
-            return false;
+            SourceROM = checksumFixedROM;
         }
     }
 }

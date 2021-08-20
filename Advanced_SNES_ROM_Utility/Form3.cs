@@ -17,13 +17,13 @@ namespace Advanced_SNES_ROM_Utility
         private string romNameCopy = null;
         private string romTitleCopy = null;
         private byte[] romByteTitleCopy = null;
-        private byte[] romCountryRegionCopy = null;
+        private byte romCountryRegionCopy;
         private string romVersionCopy = null;
         private int intROMSizeCopy = 0;
         private int calcFileSizeCopy = 0;
         private bool isBROMCopy = false;
 
-        public Form3(byte[] sourceROM, byte[] sourceROMSMCHeader, uint romHeaderOffset, string title, byte[] byteTitle, string version, byte[] country, string company, int intROMSize, int calcFileSize, string romSavePath, string romName, bool isBSROM)
+        public Form3(byte[] sourceROM, byte[] sourceROMSMCHeader, uint romHeaderOffset, string title, byte[] byteTitle, string version, byte country, string company, int intROMSize, int calcFileSize, string romSavePath, string romName, bool isBSROM)
         {
             InitializeComponent();
 
@@ -75,7 +75,7 @@ namespace Advanced_SNES_ROM_Utility
             comboBoxChangeCountryRegion.ValueMember = "Id";
 
             // Don't know why, but SelectedValue doesn't work here, so we have to use a little trick
-            int selectedCompanyRegion = country[0];
+            int selectedCompanyRegion = country;
 
             if (selectedCompanyRegion > 12)
             {
@@ -461,7 +461,7 @@ namespace Advanced_SNES_ROM_Utility
             byte[] byteArrayCountryRegion = new byte[1];
             byteArrayCountryRegion[0] = byteCountryRegion;
 
-            if (romCountryRegionCopy[0] != byteArrayCountryRegion[0])
+            if (romCountryRegionCopy != byteArrayCountryRegion[0])
             {
                 Buffer.BlockCopy(byteArrayCountryRegion, 0, editedROM, (int)romHeaderOffsetCopy + 0x29, 1);             // Set new country & region
                 madeChange = true;
