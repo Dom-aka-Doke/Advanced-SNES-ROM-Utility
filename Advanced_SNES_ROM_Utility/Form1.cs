@@ -87,11 +87,11 @@ namespace Advanced_SNES_ROM_Utility
                 if (autoFixROMSize)
                 {
                     // Some Hacks may have an odd size in their header, so we should fix that by taking the right value
-                    if ((sourceROM.IntROMSize < sourceROM.CalculatedFileSize) && !sourceROM.IsBSROM)
+                    if ((sourceROM.IntROMSize < sourceROM.IntCalcFileSize) && !sourceROM.IsBSROM)
                     {
                         sourceROM.IntROMSize = 1;
 
-                        while (sourceROM.IntROMSize < sourceROM.CalculatedFileSize)
+                        while (sourceROM.IntROMSize < sourceROM.IntCalcFileSize)
                         {
                             sourceROM.IntROMSize *= 2;
                         }
@@ -112,7 +112,7 @@ namespace Advanced_SNES_ROM_Utility
                         }
 
                         // Set new ROM size value
-                        Buffer.BlockCopy(byteArrayROMSizeValue, 0, sourceROM.SourceROM, (int)sourceROM.ROMHeaderOffset + 0x27, 1);
+                        Buffer.BlockCopy(byteArrayROMSizeValue, 0, sourceROM.SourceROM, (int)sourceROM.UIntROMHeaderOffset + 0x27, 1);
                     }
                 }
 
@@ -134,16 +134,16 @@ namespace Advanced_SNES_ROM_Utility
                 }
 
                 // Check if ROM can be expanded
-                if (sourceROM.CalculatedFileSize < 32)
+                if (sourceROM.IntCalcFileSize < 32)
                 {
                     List<comboBoxExpandROMList> list = new List<comboBoxExpandROMList>();
 
-                    if (sourceROM.CalculatedFileSize < 1) { list.Add(new comboBoxExpandROMList { Id = 1, Name = "1 Mbit (128 kByte) | 27C1001" }); };
-                    if (sourceROM.CalculatedFileSize < 2) { list.Add(new comboBoxExpandROMList { Id = 2, Name = "2 Mbit (256 kByte) | 27C2001" }); };
-                    if (sourceROM.CalculatedFileSize < 4) { list.Add(new comboBoxExpandROMList { Id = 4, Name = "4 Mbit (512 kByte) | 274001" }); };
-                    if (sourceROM.CalculatedFileSize < 8) { list.Add(new comboBoxExpandROMList { Id = 8, Name = "8 Mbit (1 MByte) | 27C801" }); };
+                    if (sourceROM.IntCalcFileSize < 1) { list.Add(new comboBoxExpandROMList { Id = 1, Name = "1 Mbit (128 kByte) | 27C1001" }); };
+                    if (sourceROM.IntCalcFileSize < 2) { list.Add(new comboBoxExpandROMList { Id = 2, Name = "2 Mbit (256 kByte) | 27C2001" }); };
+                    if (sourceROM.IntCalcFileSize < 4) { list.Add(new comboBoxExpandROMList { Id = 4, Name = "4 Mbit (512 kByte) | 274001" }); };
+                    if (sourceROM.IntCalcFileSize < 8) { list.Add(new comboBoxExpandROMList { Id = 8, Name = "8 Mbit (1 MByte) | 27C801" }); };
                     //if (sourceROM.CalcFileSize < 12) { list.Add(new comboBoxExpandROMList { Id = 12, Name = "12 Mbit (1,5 MByte)" }); };
-                    if (sourceROM.CalculatedFileSize < 16) { list.Add(new comboBoxExpandROMList { Id = 16, Name = "16 Mbit (2 MByte) | 27C160" }); };
+                    if (sourceROM.IntCalcFileSize < 16) { list.Add(new comboBoxExpandROMList { Id = 16, Name = "16 Mbit (2 MByte) | 27C160" }); };
                     //if (sourceROM.CalcFileSize < 20) { list.Add(new comboBoxExpandROMList { Id = 20, Name = "20 Mbit (2,5 MByte)" }); };
                     //if (sourceROM.CalcFileSize < 24) { list.Add(new comboBoxExpandROMList { Id = 24, Name = "24 Mbit (3 MByte)" }); };
                     //if (sourceROM.CalcFileSize < 28) { list.Add(new comboBoxExpandROMList { Id = 28, Name = "28 Mbit (3,5 MByte)" }); };
@@ -158,15 +158,15 @@ namespace Advanced_SNES_ROM_Utility
                 }
 
                 // Check if ROM can be splittet
-                if (sourceROM.CalculatedFileSize > 1)
+                if (sourceROM.IntCalcFileSize > 1)
                 {
                     List<comboBoxSplitROMList> list = new List<comboBoxSplitROMList>();
 
-                    if (sourceROM.CalculatedFileSize % 32 == 0 && sourceROM.CalculatedFileSize > 32) { list.Add(new comboBoxSplitROMList { Id = 32, Name = "32 Mbit (4 MByte) | 27C322" }); };
-                    if (sourceROM.CalculatedFileSize % 16 == 0 && sourceROM.CalculatedFileSize > 16) { list.Add(new comboBoxSplitROMList { Id = 16, Name = "16 Mbit (2 MByte) | 27C160" }); };
-                    if (sourceROM.CalculatedFileSize % 8 == 0 && sourceROM.CalculatedFileSize > 8) { list.Add(new comboBoxSplitROMList { Id = 8, Name = "8 Mbit (1 MByte) | 27C801" }); };
-                    if (sourceROM.CalculatedFileSize % 4 == 0 && sourceROM.CalculatedFileSize > 4) { list.Add(new comboBoxSplitROMList { Id = 4, Name = "4 Mbit (512 kByte) | 27C4001" }); };
-                    if (sourceROM.CalculatedFileSize % 2 == 0 && sourceROM.CalculatedFileSize > 2) { list.Add(new comboBoxSplitROMList { Id = 2, Name = "2 Mbit (256 kByte) | 27C2001" }); };
+                    if (sourceROM.IntCalcFileSize % 32 == 0 && sourceROM.IntCalcFileSize > 32) { list.Add(new comboBoxSplitROMList { Id = 32, Name = "32 Mbit (4 MByte) | 27C322" }); };
+                    if (sourceROM.IntCalcFileSize % 16 == 0 && sourceROM.IntCalcFileSize > 16) { list.Add(new comboBoxSplitROMList { Id = 16, Name = "16 Mbit (2 MByte) | 27C160" }); };
+                    if (sourceROM.IntCalcFileSize % 8 == 0 && sourceROM.IntCalcFileSize > 8) { list.Add(new comboBoxSplitROMList { Id = 8, Name = "8 Mbit (1 MByte) | 27C801" }); };
+                    if (sourceROM.IntCalcFileSize % 4 == 0 && sourceROM.IntCalcFileSize > 4) { list.Add(new comboBoxSplitROMList { Id = 4, Name = "4 Mbit (512 kByte) | 27C4001" }); };
+                    if (sourceROM.IntCalcFileSize % 2 == 0 && sourceROM.IntCalcFileSize > 2) { list.Add(new comboBoxSplitROMList { Id = 2, Name = "2 Mbit (256 kByte) | 27C2001" }); };
                     list.Add(new comboBoxSplitROMList { Id = 1, Name = "1 Mbit (128 kByte) | 27C1001" });
 
                     comboBoxSplitROM.DataSource = list;
@@ -199,6 +199,15 @@ namespace Advanced_SNES_ROM_Utility
 
         private void ButtonAddHeader_Click(object sender, EventArgs e)
         {
+            // Create empty header
+            sourceROM.UIntSMCHeader = 512;
+            sourceROM.SourceROMSMCHeader = new byte[512];
+
+            foreach (byte singleByte in sourceROM.SourceROMSMCHeader)
+            {
+                sourceROM.SourceROMSMCHeader[singleByte] = 0x00;
+            }
+
             saveWithHeader = true;
             buttonAddHeader.Enabled = false;
             buttonRemoveHeader.Enabled = true;
@@ -206,6 +215,10 @@ namespace Advanced_SNES_ROM_Utility
 
         private void ButtonRemoveHeader_Click(object sender, EventArgs e)
         {
+            // Remove existing header
+            sourceROM.UIntSMCHeader = 0;
+            sourceROM.SourceROMSMCHeader = null;
+
             saveWithHeader = false;
             buttonAddHeader.Enabled = true;
             buttonRemoveHeader.Enabled = false;
@@ -299,13 +312,16 @@ namespace Advanced_SNES_ROM_Utility
 
         private void buttonDeinterleave_Click(object sender, EventArgs e)
         {
-            sourceROM.Deinterlave(sourceROM.SourceROM, sourceROM.SourceROMSMCHeader, sourceROM.CalculatedFileSize, sourceROM.ROMSavePath, sourceROM.ROMName);
+            sourceROM.Deinterlave();
             buttonDeinterleave.Enabled = false;
+            // Must add something for displaying correct buttons after deinterleaving
+            sourceROM.Initialize();
+            RefreshLabelsAndButtons();
         }
 
         private void buttonEdit_Click(object sender, EventArgs e)
         {
-            Form3 editROMInformation = new Form3(sourceROM.SourceROM, sourceROM.SourceROMSMCHeader, sourceROM.ROMHeaderOffset, sourceROM.StringTitle, sourceROM.ByteArrayTitle, sourceROM.StringVersion, sourceROM.ByteCountry, sourceROM.StringCompany, sourceROM.IntROMSize, sourceROM.CalculatedFileSize, sourceROM.ROMSavePath, sourceROM.ROMName, sourceROM.IsBSROM);
+            Form3 editROMInformation = new Form3(sourceROM.SourceROM, sourceROM.SourceROMSMCHeader, sourceROM.UIntROMHeaderOffset, sourceROM.StringTitle, sourceROM.ByteArrayTitle, sourceROM.StringVersion, sourceROM.ByteCountry, sourceROM.StringCompany, sourceROM.IntROMSize, sourceROM.IntCalcFileSize, sourceROM.ROMSavePath, sourceROM.ROMName, sourceROM.IsBSROM);
             editROMInformation.Show();
         }
 
@@ -318,18 +334,6 @@ namespace Advanced_SNES_ROM_Utility
         {
             if (saveWithHeader)
             {
-                // Create header if there's none
-                if (sourceROM.SMCHeader == 0)
-                {
-                    sourceROM.SMCHeader = 512;
-                    sourceROM.SourceROMSMCHeader = new byte[512];
-
-                    foreach (byte singleByte in sourceROM.SourceROMSMCHeader)
-                    {
-                        sourceROM.SourceROMSMCHeader[singleByte] = 0x00;
-                    }
-                }
-
                 // Merge header with ROM
                 byte[] haderedROM = new byte[sourceROM.SourceROMSMCHeader.Length + sourceROM.SourceROM.Length];
 
@@ -339,9 +343,6 @@ namespace Advanced_SNES_ROM_Utility
                 // Write to file
                 File.WriteAllBytes(filepath, haderedROM);
                 MessageBox.Show(message);
-
-                // Create source ROM for initializing
-                sourceROM.SourceROM = haderedROM;
             }
 
             else
@@ -364,22 +365,22 @@ namespace Advanced_SNES_ROM_Utility
             labelGetROMType.Text = sourceROM.StringROMType;
             labelGetROMSize.Text = sourceROM.StringROMSize;
             labelGetSRAM.Text = sourceROM.StringRAMSize;
-            labelGetFileSize.Text = sourceROM.CalculatedFileSize.ToString() + " Mbit (" + ((float)sourceROM.CalculatedFileSize / 8) + " MByte)";
+            labelGetFileSize.Text = sourceROM.IntCalcFileSize.ToString() + " Mbit (" + ((float)sourceROM.IntCalcFileSize / 8) + " MByte)";
             labelGetSMCHeader.Text = sourceROM.StringSMCHeader;
             labelGetROMSpeed.Text = sourceROM.StringROMSpeed;
             labelGetCountry.Text = sourceROM.StringCountry;
             labelGetRegion.Text = sourceROM.StringRegion;
             labelGetCompany.Text = sourceROM.StringCompany;
-            labelGetIntChksm.Text = BitConverter.ToString(sourceROM.ReadChksm).Replace("-", "");
-            labelGetIntInvChksm.Text = BitConverter.ToString(sourceROM.ReadInvChksm).Replace("-", "");
-            labelGetCalcChksm.Text = BitConverter.ToString(sourceROM.CalcChksm).Replace("-", "");
-            labelGetCalcInvChksm.Text = BitConverter.ToString(sourceROM.CalcInvChksm).Replace("-", "");
+            labelGetIntChksm.Text = BitConverter.ToString(sourceROM.ByteArrayChecksum).Replace("-", "");
+            labelGetIntInvChksm.Text = BitConverter.ToString(sourceROM.ByteArrayInvChecksum).Replace("-", "");
+            labelGetCalcChksm.Text = BitConverter.ToString(sourceROM.ByteArrayCalcChecksum).Replace("-", "");
+            labelGetCalcInvChksm.Text = BitConverter.ToString(sourceROM.ByteArrayCalcInvChecksum).Replace("-", "");
             labelGetVersion.Text = sourceROM.StringVersion;
             labelGetCRC32Chksm.Text = sourceROM.CRC32Hash;
 
             // Set buttons
-            if (sourceROM.SMCHeader == 0) { buttonAddHeader.Enabled = true; buttonRemoveHeader.Enabled = false; saveWithHeader = true; } else { buttonAddHeader.Enabled = false; buttonRemoveHeader.Enabled = true; saveWithHeader = false; }
-            if (!sourceROM.ReadChksm.SequenceEqual(sourceROM.CalcChksm)) { buttonFixChksm.Enabled = true; }
+            if (sourceROM.UIntSMCHeader == 0) { buttonAddHeader.Enabled = true; buttonRemoveHeader.Enabled = false; saveWithHeader = true; } else { buttonAddHeader.Enabled = false; buttonRemoveHeader.Enabled = true; saveWithHeader = false; }
+            if (!sourceROM.ByteArrayChecksum.SequenceEqual(sourceROM.ByteArrayCalcChecksum)) { buttonFixChksm.Enabled = true; }
         }
 
         private void toolStripMenuItemAutoFixROM_Click(object sender, EventArgs e)

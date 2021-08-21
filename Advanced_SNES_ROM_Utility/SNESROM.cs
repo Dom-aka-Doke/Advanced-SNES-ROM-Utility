@@ -16,15 +16,15 @@ namespace Advanced_SNES_ROM_Utility
         public byte[] SourceROMHeader;
         public byte[] SourceROMSMCHeader;
 
-        public byte[] ReadChksm;
-        public byte[] ReadInvChksm;
-        public byte[] CalcChksm;
-        public byte[] CalcInvChksm;
+        public byte[] ByteArrayChecksum;
+        public byte[] ByteArrayInvChecksum;
+        public byte[] ByteArrayCalcChecksum;
+        public byte[] ByteArrayCalcInvChecksum;
 
-        public uint ROMHeaderOffset;
-        public uint SMCHeader;
+        public uint UIntROMHeaderOffset;
+        public uint UIntSMCHeader;
         public int IntROMSize;
-        public int CalculatedFileSize;
+        public int IntCalcFileSize;
         public string CRC32Hash;
 
         public bool IsNewHeader;
@@ -105,27 +105,37 @@ namespace Advanced_SNES_ROM_Utility
         private void GetSMCHeader()
         {
             // Calculate size of header
-            SMCHeader = (uint)SourceROM.Length % 1024;
+            uint existingSMCHeader = 0;
 
-            if (SMCHeader == 0)
+            if (SourceROMSMCHeader != null)
+            {
+                existingSMCHeader = (uint)SourceROMSMCHeader.Length;
+            }
+
+            UIntSMCHeader = (uint)(SourceROM.Length + existingSMCHeader) % 1024;
+
+            if (UIntSMCHeader == 0)
             {
                 StringSMCHeader = "No";
             }
 
-            else if (SMCHeader > 0)
+            else if (UIntSMCHeader > 0)
             {
                 StringSMCHeader = "Malformed";
 
-                SourceROMSMCHeader = new byte[SMCHeader];
-                byte[] newSourceROM = new byte[SourceROM.Length - SMCHeader];
+                if (SourceROMSMCHeader == null)
+                {
+                    SourceROMSMCHeader = new byte[UIntSMCHeader];
+                    byte[] newSourceROM = new byte[SourceROM.Length - UIntSMCHeader];
 
-                Buffer.BlockCopy(SourceROM, 0, SourceROMSMCHeader, 0, (int)SMCHeader);
-                Buffer.BlockCopy(SourceROM, (int)SMCHeader, newSourceROM, 0, newSourceROM.Length);
+                    Buffer.BlockCopy(SourceROM, 0, SourceROMSMCHeader, 0, (int)UIntSMCHeader);
+                    Buffer.BlockCopy(SourceROM, (int)UIntSMCHeader, newSourceROM, 0, newSourceROM.Length);
 
-                SourceROM = newSourceROM;
+                    SourceROM = newSourceROM;
+                }
             }
 
-            if (SMCHeader == 512)
+            if (UIntSMCHeader == 512)
             {
                 StringSMCHeader = "Yes";
             }
@@ -134,7 +144,7 @@ namespace Advanced_SNES_ROM_Utility
         private void GetROMHeader()
         {
             // Initialize with most likely values
-            ROMHeaderOffset = 0x7FB0;
+            UIntROMHeaderOffset = 0x7FB0;
             IsBSROM = false;
 
             int mapModeScoreLoROM = GetMapModeScore(SourceROM, 0x7FB0, false);
@@ -146,7 +156,7 @@ namespace Advanced_SNES_ROM_Utility
 
             if (mapModeScoreLoROM >= mapModeScoreHiROM && mapModeScoreLoROM >= mapModeScoreExLoROM && mapModeScoreLoROM >= mapModeScoreExHiROM)
             {
-                ROMHeaderOffset = 0x7FB0;
+                UIntROMHeaderOffset = 0x7FB0;
 
                 if (mapModeScoreBSLoROM > mapModeScoreLoROM)
                 {
@@ -156,7 +166,7 @@ namespace Advanced_SNES_ROM_Utility
 
             else if (mapModeScoreHiROM >= mapModeScoreExLoROM && mapModeScoreHiROM >= mapModeScoreExHiROM)
             {
-                ROMHeaderOffset = 0xFFB0;
+                UIntROMHeaderOffset = 0xFFB0;
 
                 if (mapModeScoreBSHiROM > mapModeScoreHiROM)
                 {
@@ -166,17 +176,17 @@ namespace Advanced_SNES_ROM_Utility
 
             else if (mapModeScoreExLoROM >= mapModeScoreExHiROM)
             {
-                ROMHeaderOffset = 0x407FB0;
+                UIntROMHeaderOffset = 0x407FB0;
             }
 
             else
             {
-                ROMHeaderOffset = 0x40FFB0;
+                UIntROMHeaderOffset = 0x40FFB0;
             }
 
             // Load header
             SourceROMHeader = new byte[80];
-            Buffer.BlockCopy(SourceROM, (int)ROMHeaderOffset, SourceROMHeader, 0, 80);
+            Buffer.BlockCopy(SourceROM, (int)UIntROMHeaderOffset, SourceROMHeader, 0, 80);
         }
 
         public static int GetMapModeScore(byte[] sourceROM, uint offset, bool isBSROM)
@@ -403,15 +413,15 @@ namespace Advanced_SNES_ROM_Utility
             switch (ByteMapMode)
             {
                 case 0x20: StringMapMode = "LoROM"; break;
-                case 0x21: StringMapMode = "HiROM"; if (ROMHeaderOffset == 0x7FB0) { IsInterleaved = true; }; break;
+                case 0x21: StringMapMode = "HiROM"; if (UIntROMHeaderOffset == 0x7FB0) { IsInterleaved = true; }; break;
                 case 0x22: StringMapMode = "LoROM (SDD-1)"; break;
                 case 0x23: StringMapMode = "LoROM (SA-1)"; break;
-                case 0x25: StringMapMode = "ExHiROM"; if (ROMHeaderOffset == 0x7FB0) { IsInterleaved = true; }; break;
+                case 0x25: StringMapMode = "ExHiROM"; if (UIntROMHeaderOffset == 0x7FB0) { IsInterleaved = true; }; break;
                 case 0x30: StringMapMode = "LoROM"; break;
-                case 0x31: StringMapMode = "HiROM"; if (ROMHeaderOffset == 0x7FB0) { IsInterleaved = true; }; break;
+                case 0x31: StringMapMode = "HiROM"; if (UIntROMHeaderOffset == 0x7FB0) { IsInterleaved = true; }; break;
                 case 0x32: StringMapMode = "ExLoROM"; break;
                 case 0x33: StringMapMode = "LoROM (SA-1)"; break;
-                case 0x35: StringMapMode = "ExHiROM"; if (ROMHeaderOffset == 0x7FB0) { IsInterleaved = true; }; break;
+                case 0x35: StringMapMode = "ExHiROM"; if (UIntROMHeaderOffset == 0x7FB0) { IsInterleaved = true; }; break;
                 default: StringMapMode = "Unknown"; break;
             }
 
@@ -421,7 +431,7 @@ namespace Advanced_SNES_ROM_Utility
                 StringMapMode = "LoROM";
 
                 // If this ROM is not interleaved set it as not interleaved
-                if (ROMHeaderOffset == 0x7FB0)
+                if (UIntROMHeaderOffset == 0x7FB0)
                 {
                     IsInterleaved = false;
                 }
@@ -609,7 +619,7 @@ namespace Advanced_SNES_ROM_Utility
         private void CalculateFileSize()
         {
             int filesize = (SourceROM.Length * 8) / 1048576;
-            CalculatedFileSize = filesize;
+            IntCalcFileSize = filesize;
         }
 
         private void GetCountry()
@@ -1033,7 +1043,7 @@ namespace Advanced_SNES_ROM_Utility
 
         private void CalculateChecksum()
         {
-            uint offsetChksm = ROMHeaderOffset + 0x2C;
+            uint offsetChksm = UIntROMHeaderOffset + 0x2C;
             ulong checksum = 0;
             uint multiplier = 1;
             byte[] byteChksm = new byte[2];
@@ -1057,22 +1067,22 @@ namespace Advanced_SNES_ROM_Utility
                                                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-                Buffer.BlockCopy(clearBSHeader, 0, noChecksumSourceROM, (int)ROMHeaderOffset, clearBSHeader.Length);
+                Buffer.BlockCopy(clearBSHeader, 0, noChecksumSourceROM, (int)UIntROMHeaderOffset, clearBSHeader.Length);
             }
 
             // Some Hacks may have an odd size in their header, so we should fix that by taking the right value
-            if (IntROMSize < CalculatedFileSize)
+            if (IntROMSize < IntCalcFileSize)
             {
                 IntROMSize = 1;
 
-                while (IntROMSize < CalculatedFileSize)
+                while (IntROMSize < IntCalcFileSize)
                 {
                     IntROMSize *= 2;
                 }
             }
 
             // Mirror ROM if neccessary | not working for Momotarou Dentetsu Happy and Tengai Makyou Zero / Tengai Makyou Zero - Shounen Jump no Shou (3 MByte ROMs with Special Chip + RAM + SRAM)
-            if ((IntROMSize > CalculatedFileSize) && ByteROMType != 0xF5 && ByteROMType != 0xF9)
+            if ((IntROMSize > IntCalcFileSize) && ByteROMType != 0xF5 && ByteROMType != 0xF9)
             {
                 try
                 {
@@ -1085,14 +1095,14 @@ namespace Advanced_SNES_ROM_Utility
                     // Get size of ROM #1
                     do
                     {
-                        ctr = romSize1 / CalculatedFileSize;
+                        ctr = romSize1 / IntCalcFileSize;
                         romSize1 /= 2;
                     }
 
                     while (ctr > 1);
 
                     // Get size of ROM #2 and its multiplier
-                    int romSize2 = CalculatedFileSize - romSize1;
+                    int romSize2 = IntCalcFileSize - romSize1;
                     int romRest = IntROMSize - romSize1;
                     int romSize2Multiplicator = romRest / romSize2;
                 
@@ -1147,7 +1157,7 @@ namespace Advanced_SNES_ROM_Utility
                 Array.Reverse(byteChksm);
             }
 
-            CalcChksm = byteChksm;
+            ByteArrayCalcChecksum = byteChksm;
         }
         private void CalculateInverseChecksum()
         {
@@ -1155,13 +1165,13 @@ namespace Advanced_SNES_ROM_Utility
             byte[] byteInvChksm = new byte[2];
 
             // Calculate inverse checksum (XOR with 0xFFFF)
-            calcInvChksm = BitConverter.ToUInt16(CalcChksm, 0);
+            calcInvChksm = BitConverter.ToUInt16(ByteArrayCalcChecksum, 0);
             calcInvChksm ^= 0xFFFF;
 
             // Return checksum as byte[]
             byteInvChksm = BitConverter.GetBytes(calcInvChksm);
 
-            CalcInvChksm = byteInvChksm;
+            ByteArrayCalcInvChecksum = byteInvChksm;
         }
 
         private void GetChecksum()
@@ -1176,7 +1186,7 @@ namespace Advanced_SNES_ROM_Utility
                 Array.Reverse(checksum);
             }
 
-            ReadChksm = checksum;
+            ByteArrayChecksum = checksum;
         }
 
         private void GetInverseChecksum()
@@ -1191,7 +1201,7 @@ namespace Advanced_SNES_ROM_Utility
                 Array.Reverse(checksum);
             }
 
-            ReadInvChksm = checksum;
+            ByteArrayInvChecksum = checksum;
         }
 
         private void GetVersion()
