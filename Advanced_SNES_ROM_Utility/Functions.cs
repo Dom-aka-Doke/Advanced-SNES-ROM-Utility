@@ -10,11 +10,10 @@ namespace Advanced_SNES_ROM_Utility
     {
         public void FixChecksum()
         {
-            byte[] checksumFixedROM = new byte[SourceROM.Length];
+            uint offset = UIntROMHeaderOffset + 0x2C;
             byte[] newChksm = new byte[2];
             byte[] newInvChksm = new byte[2];
             byte[] newChksmSequence = new byte[4];
-            uint offset = UIntROMHeaderOffset + 0x2C;
 
             newChksm = ByteArrayCalcChecksum;
             newInvChksm = ByteArrayCalcInvChecksum;
@@ -31,10 +30,7 @@ namespace Advanced_SNES_ROM_Utility
             newChksmSequence[2] = newChksm[0];
             newChksmSequence[3] = newChksm[1];
 
-            Buffer.BlockCopy(SourceROM, 0, checksumFixedROM, 0, SourceROM.Length);
-            Buffer.BlockCopy(newChksmSequence, 0, checksumFixedROM, (int)offset, newChksmSequence.Length);
-
-            SourceROM = checksumFixedROM;
+            Buffer.BlockCopy(newChksmSequence, 0, SourceROM, (int)offset, newChksmSequence.Length);
         }
 
         public void SwapBin(byte[] sourceROM, string romSavePath, string romName)

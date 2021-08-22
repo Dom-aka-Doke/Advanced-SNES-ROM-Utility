@@ -25,7 +25,6 @@ namespace Advanced_SNES_ROM_Utility
             comboBoxSplitROM.Enabled = false;
             comboBoxExpandROM.Enabled = false;
             buttonEdit.Enabled = false;
-            textBoxROMName.Text = "Select a ROM File!";
 
             // Get the right settings for option menu
             if (Properties.Settings.Default.AutoFixIntROMSize) { toolStripMenuItemAutoFixROM.Checked = true; } else { toolStripMenuItemAutoFixROM.Checked = false; }
@@ -33,7 +32,7 @@ namespace Advanced_SNES_ROM_Utility
 
         // Get option settings
         bool autoFixROMSize = Properties.Settings.Default.AutoFixIntROMSize;
-        bool saveWithHeader = false;
+        bool saveWithHeader;
 
         // Create empty ROM
         SNESROM sourceROM;
@@ -49,8 +48,8 @@ namespace Advanced_SNES_ROM_Utility
             // If successfully selected a ROM file...
             if (selectROMDialog.ShowDialog() == DialogResult.OK)
             {
-                // Reset labels
-                labelSRAM.Text = "(S)RAM";
+                // Might get obsolete
+                buttonEdit.Enabled = true;
 
                 // Clear content of combo boxes and disable
                 comboBoxExpandROM.DataSource = null;
@@ -60,28 +59,8 @@ namespace Advanced_SNES_ROM_Utility
                 comboBoxExpandROM.Enabled = false;
                 comboBoxSplitROM.Enabled = false;
 
-                // Disable all buttons on new load
-                buttonSave.Enabled = false;
-                buttonSaveAs.Enabled = false;
-                buttonAddHeader.Enabled = false;
-                buttonRemoveHeader.Enabled = false;
-                buttonExpandROM.Enabled = false;
-                buttonSplitROM.Enabled = false;
-                buttonDeinterleave.Enabled = false;
-                buttonFixChksm.Enabled = false;
-                buttonFixRegion.Enabled = false;
-                buttonSwapBinROM.Enabled = false;
-                buttonEdit.Enabled = true;
-
                 // Create new ROM
                 sourceROM = new SNESROM(@selectROMDialog.FileName);
-
-                // Set path into label
-                textBoxROMName.Text = @selectROMDialog.FileName;
-
-                // Enable buttons for saving
-                buttonSave.Enabled = true;
-                buttonSaveAs.Enabled = true;
 
                 // If option auto fix ROM size is enabled
                 if (autoFixROMSize)
@@ -116,23 +95,6 @@ namespace Advanced_SNES_ROM_Utility
                     }
                 }
 
-                // Set (S)RAM information
-                if (sourceROM.ByteSRAMSize > 0x00)
-                {
-                    labelSRAM.Text = "SRAM";
-                }
-
-                else if (sourceROM.ByteExRAMSize > 0x00)
-                {
-                    labelSRAM.Text = "RAM";
-                }
-
-                // Check if ROM is swappable
-                if (sourceROM.SourceROM.Length % 1048576 == 0)
-                {
-                    buttonSwapBinROM.Enabled = true;
-                }
-
                 // Check if ROM can be expanded
                 if (sourceROM.IntCalcFileSize < 32)
                 {
@@ -157,6 +119,12 @@ namespace Advanced_SNES_ROM_Utility
                     comboBoxExpandROM.Enabled = true;
                 }
 
+                else
+                {
+                    buttonExpandROM.Enabled = false;
+                    comboBoxExpandROM.Enabled = false;
+                }
+
                 // Check if ROM can be splittet
                 if (sourceROM.IntCalcFileSize > 1)
                 {
@@ -177,20 +145,21 @@ namespace Advanced_SNES_ROM_Utility
                     comboBoxSplitROM.Enabled = true;
                 }
 
+                else
+                {
+                    buttonSplitROM.Enabled = false;
+                    comboBoxSplitROM.Enabled = false;
+                }
+
                 // Check if ROM contains region locks
                 if(sourceROM.UnlockRegion(sourceROM.SourceROM, sourceROM.SourceROMSMCHeader, false, sourceROM.ROMSavePath, sourceROM.ROMName, sourceROM.StringRegion))
                 {
                     buttonFixRegion.Enabled = true;
                 }
 
-                // Check if ROM is interleaved
-                if (sourceROM.IsInterleaved)
+                else
                 {
-                    // Disable not needed buttons
-                    buttonAddHeader.Enabled = false;
-                    buttonSwapBinROM.Enabled = false;
-                    buttonDeinterleave.Enabled = true;
-                    buttonFixChksm.Enabled = false;
+                    buttonFixRegion.Enabled = false;
                 }
 
                 RefreshLabelsAndButtons();
@@ -208,9 +177,8 @@ namespace Advanced_SNES_ROM_Utility
                 sourceROM.SourceROMSMCHeader[singleByte] = 0x00;
             }
 
-            saveWithHeader = true;
-            buttonAddHeader.Enabled = false;
-            buttonRemoveHeader.Enabled = true;
+            sourceROM.Initialize();
+            RefreshLabelsAndButtons();
         }
 
         private void ButtonRemoveHeader_Click(object sender, EventArgs e)
@@ -219,9 +187,8 @@ namespace Advanced_SNES_ROM_Utility
             sourceROM.UIntSMCHeader = 0;
             sourceROM.SourceROMSMCHeader = null;
 
-            saveWithHeader = false;
-            buttonAddHeader.Enabled = true;
-            buttonRemoveHeader.Enabled = false;
+            sourceROM.Initialize();
+            RefreshLabelsAndButtons();
         }
 
         private void ButtonSwapBinROM_Click(object sender, EventArgs e)
@@ -249,8 +216,6 @@ namespace Advanced_SNES_ROM_Utility
             {
                 sourceROM.SwapBin(sourceROM.SourceROM, sourceROM.ROMSavePath, sourceROM.ROMName);
             }
-            
-            //buttonSwapBinROM.Enabled = false;
         }
 
         private void ButtonExpandROM_Click(object sender, EventArgs e)
@@ -268,10 +233,6 @@ namespace Advanced_SNES_ROM_Utility
 
             // Save file without header
             File.WriteAllBytes(@sourceROM.ROMSavePath + @"\" + sourceROM.ROMName + "_[expanded]" + ".bin", expandedROM);
-
-            //buttonExpandROM.Enabled = false;
-            //comboBoxExpandROM.Enabled = false;
-
             MessageBox.Show("ROM successfully expanded!\n\nFile saved to: '" + @sourceROM.ROMSavePath + @"\" + sourceROM.ROMName + "_[expanded]" + ".bin'\n\nIn case there was a header, it has been removed!");
         }
 
@@ -291,9 +252,6 @@ namespace Advanced_SNES_ROM_Utility
                 File.WriteAllBytes(@sourceROM.ROMSavePath + @"\" + romChunkName + "_[split]" + ".bin", splitROM);
                 MessageBox.Show("ROM successfully splittet!\n\nFile saved to: '" + @sourceROM.ROMSavePath + @"\" + romChunkName + "_[split]" + ".bin'\n\nIn case there was a header, it has been removed!");
             }
-
-            //buttonSplitROM.Enabled = false;
-            //comboBoxSplitROM.Enabled = false;
         }
 
         private void ButtonFixChksm_Click(object sender, EventArgs e)
@@ -301,7 +259,6 @@ namespace Advanced_SNES_ROM_Utility
             sourceROM.FixChecksum();
             sourceROM.Initialize();
             RefreshLabelsAndButtons();
-            buttonFixChksm.Enabled = false;
         }
 
         private void buttonFixRegion_Click(object sender, EventArgs e)
@@ -314,7 +271,6 @@ namespace Advanced_SNES_ROM_Utility
         {
             sourceROM.Deinterlave();
             buttonDeinterleave.Enabled = false;
-            // Must add something for displaying correct buttons after deinterleaving
             sourceROM.Initialize();
             RefreshLabelsAndButtons();
         }
@@ -360,11 +316,13 @@ namespace Advanced_SNES_ROM_Utility
         private void RefreshLabelsAndButtons()
         {
             // Set labels
+            textBoxROMName.Text = sourceROM.ROMPath;
             labelGetTitle.Text = sourceROM.StringTitle;
             labelGetMapMode.Text = sourceROM.StringMapMode;
             labelGetROMType.Text = sourceROM.StringROMType;
             labelGetROMSize.Text = sourceROM.StringROMSize;
             labelGetSRAM.Text = sourceROM.StringRAMSize;
+            labelSRAM.Text = "(S)RAM"; if (sourceROM.ByteSRAMSize > 0x00) { labelSRAM.Text = "SRAM"; } else if (sourceROM.ByteExRAMSize > 0x00) { labelSRAM.Text = "RAM"; }
             labelGetFileSize.Text = sourceROM.IntCalcFileSize.ToString() + " Mbit (" + ((float)sourceROM.IntCalcFileSize / 8) + " MByte)";
             labelGetSMCHeader.Text = sourceROM.StringSMCHeader;
             labelGetROMSpeed.Text = sourceROM.StringROMSpeed;
@@ -379,8 +337,12 @@ namespace Advanced_SNES_ROM_Utility
             labelGetCRC32Chksm.Text = sourceROM.CRC32Hash;
 
             // Set buttons
-            if (sourceROM.UIntSMCHeader == 0) { buttonAddHeader.Enabled = true; buttonRemoveHeader.Enabled = false; saveWithHeader = true; } else { buttonAddHeader.Enabled = false; buttonRemoveHeader.Enabled = true; saveWithHeader = false; }
-            if (!sourceROM.ByteArrayChecksum.SequenceEqual(sourceROM.ByteArrayCalcChecksum)) { buttonFixChksm.Enabled = true; }
+            if (!buttonSave.Enabled) { buttonSave.Enabled = true; }
+            if (!buttonSaveAs.Enabled) { buttonSaveAs.Enabled = true; }
+            if (sourceROM.SourceROMSMCHeader == null) { buttonAddHeader.Enabled = true; buttonRemoveHeader.Enabled = false; saveWithHeader = false; } else { buttonAddHeader.Enabled = false; buttonRemoveHeader.Enabled = true; saveWithHeader = true; }
+            if (sourceROM.SourceROM.Length % 1048576 == 0) { buttonSwapBinROM.Enabled = true; } else { buttonSwapBinROM.Enabled = false; }
+            if (sourceROM.IsInterleaved) { buttonDeinterleave.Enabled = true; buttonFixChksm.Enabled = false; return; } else { buttonDeinterleave.Enabled = false; }
+            if (!sourceROM.ByteArrayChecksum.SequenceEqual(sourceROM.ByteArrayCalcChecksum)) { buttonFixChksm.Enabled = true; } else { buttonFixChksm.Enabled = false; }
         }
 
         private void toolStripMenuItemAutoFixROM_Click(object sender, EventArgs e)
