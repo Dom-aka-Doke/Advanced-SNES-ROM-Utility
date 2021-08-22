@@ -8,9 +8,9 @@ namespace Advanced_SNES_ROM_Utility
 {
     public partial class SNESROM
     {
-        public string ROMPath;
         public string ROMName;
-        public string ROMSavePath;
+        public string ROMFullPath;
+        public string ROMFolder;
 
         public byte[] SourceROM;
         public byte[] SourceROMHeader;
@@ -59,13 +59,13 @@ namespace Advanced_SNES_ROM_Utility
             // Read ROM
             if (File.Exists(@romPath))
             {
-                ROMPath = @romPath;
+                ROMFullPath = @romPath;
 
                 try
                 {
-                    ROMName = Path.GetFileNameWithoutExtension(ROMPath);
-                    ROMSavePath = Path.GetDirectoryName(ROMPath);
-                    SourceROM = File.ReadAllBytes(ROMPath);
+                    ROMName = Path.GetFileNameWithoutExtension(ROMFullPath);
+                    ROMFolder = Path.GetDirectoryName(ROMFullPath);
+                    SourceROM = File.ReadAllBytes(ROMFullPath);
 
                     // Initialize ROM
                     Initialize();

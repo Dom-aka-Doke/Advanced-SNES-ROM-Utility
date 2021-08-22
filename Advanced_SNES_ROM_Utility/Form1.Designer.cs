@@ -121,6 +121,7 @@
             // 
             // buttonSwapBinROM
             // 
+            this.buttonSwapBinROM.Enabled = false;
             this.buttonSwapBinROM.Location = new System.Drawing.Point(13, 425);
             this.buttonSwapBinROM.Name = "buttonSwapBinROM";
             this.buttonSwapBinROM.Size = new System.Drawing.Size(516, 23);
@@ -377,6 +378,7 @@
             // 
             // buttonRemoveHeader
             // 
+            this.buttonRemoveHeader.Enabled = false;
             this.buttonRemoveHeader.Location = new System.Drawing.Point(274, 396);
             this.buttonRemoveHeader.Name = "buttonRemoveHeader";
             this.buttonRemoveHeader.Size = new System.Drawing.Size(255, 23);
@@ -387,6 +389,7 @@
             // 
             // buttonAddHeader
             // 
+            this.buttonAddHeader.Enabled = false;
             this.buttonAddHeader.Location = new System.Drawing.Point(13, 396);
             this.buttonAddHeader.Name = "buttonAddHeader";
             this.buttonAddHeader.Size = new System.Drawing.Size(255, 23);
@@ -479,6 +482,7 @@
             // 
             // buttonSplitROM
             // 
+            this.buttonSplitROM.Enabled = false;
             this.buttonSplitROM.Location = new System.Drawing.Point(13, 485);
             this.buttonSplitROM.Name = "buttonSplitROM";
             this.buttonSplitROM.Size = new System.Drawing.Size(348, 23);
@@ -489,6 +493,7 @@
             // 
             // comboBoxSplitROM
             // 
+            this.comboBoxSplitROM.Enabled = false;
             this.comboBoxSplitROM.FormattingEnabled = true;
             this.comboBoxSplitROM.Location = new System.Drawing.Point(367, 485);
             this.comboBoxSplitROM.Name = "comboBoxSplitROM";
@@ -497,6 +502,7 @@
             // 
             // buttonExpandROM
             // 
+            this.buttonExpandROM.Enabled = false;
             this.buttonExpandROM.Location = new System.Drawing.Point(13, 454);
             this.buttonExpandROM.Name = "buttonExpandROM";
             this.buttonExpandROM.Size = new System.Drawing.Size(348, 23);
@@ -507,6 +513,7 @@
             // 
             // comboBoxExpandROM
             // 
+            this.comboBoxExpandROM.Enabled = false;
             this.comboBoxExpandROM.FormattingEnabled = true;
             this.comboBoxExpandROM.Location = new System.Drawing.Point(367, 454);
             this.comboBoxExpandROM.Name = "comboBoxExpandROM";
@@ -515,6 +522,7 @@
             // 
             // buttonFixChksm
             // 
+            this.buttonFixChksm.Enabled = false;
             this.buttonFixChksm.Location = new System.Drawing.Point(13, 543);
             this.buttonFixChksm.Name = "buttonFixChksm";
             this.buttonFixChksm.Size = new System.Drawing.Size(516, 23);
@@ -525,6 +533,7 @@
             // 
             // buttonFixRegion
             // 
+            this.buttonFixRegion.Enabled = false;
             this.buttonFixRegion.Location = new System.Drawing.Point(13, 573);
             this.buttonFixRegion.Name = "buttonFixRegion";
             this.buttonFixRegion.Size = new System.Drawing.Size(516, 23);
@@ -553,6 +562,7 @@
             // 
             // buttonDeinterleave
             // 
+            this.buttonDeinterleave.Enabled = false;
             this.buttonDeinterleave.Location = new System.Drawing.Point(13, 514);
             this.buttonDeinterleave.Name = "buttonDeinterleave";
             this.buttonDeinterleave.Size = new System.Drawing.Size(516, 23);
@@ -563,6 +573,7 @@
             // 
             // buttonEdit
             // 
+            this.buttonEdit.Enabled = false;
             this.buttonEdit.Location = new System.Drawing.Point(13, 237);
             this.buttonEdit.Name = "buttonEdit";
             this.buttonEdit.Size = new System.Drawing.Size(139, 23);
@@ -625,23 +636,26 @@
             // 
             // buttonSaveAs
             // 
+            this.buttonSaveAs.Enabled = false;
             this.buttonSaveAs.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.save_as_icon;
             this.buttonSaveAs.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonSaveAs.Location = new System.Drawing.Point(448, 57);
-            this.buttonSaveAs.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonSaveAs.Margin = new System.Windows.Forms.Padding(2);
             this.buttonSaveAs.Name = "buttonSaveAs";
             this.buttonSaveAs.Size = new System.Drawing.Size(80, 23);
             this.buttonSaveAs.TabIndex = 54;
             this.buttonSaveAs.Text = "Save As";
             this.buttonSaveAs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.buttonSaveAs.UseVisualStyleBackColor = true;
+            this.buttonSaveAs.Click += new System.EventHandler(this.buttonSaveAs_Click);
             // 
             // buttonSave
             // 
+            this.buttonSave.Enabled = false;
             this.buttonSave.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.save_icon;
             this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonSave.Location = new System.Drawing.Point(448, 29);
-            this.buttonSave.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonSave.Margin = new System.Windows.Forms.Padding(2);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(80, 23);
             this.buttonSave.TabIndex = 53;

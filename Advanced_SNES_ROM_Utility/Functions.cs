@@ -8,6 +8,28 @@ namespace Advanced_SNES_ROM_Utility
 {
     public partial class SNESROM
     {
+        public void AddHeader()
+        {
+            // Create empty header
+            UIntSMCHeader = 512;
+            SourceROMSMCHeader = new byte[512];
+
+            foreach (byte singleByte in SourceROMSMCHeader)
+            {
+                SourceROMSMCHeader[singleByte] = 0x00;
+            }
+
+            Initialize();
+        }
+
+        public void RemoveHeader()
+        {
+            // Remove existing header
+            SourceROMSMCHeader = null;
+
+            Initialize();
+        }
+
         public void FixChecksum()
         {
             uint offset = UIntROMHeaderOffset + 0x2C;
@@ -31,6 +53,8 @@ namespace Advanced_SNES_ROM_Utility
             newChksmSequence[3] = newChksm[1];
 
             Buffer.BlockCopy(newChksmSequence, 0, SourceROM, (int)offset, newChksmSequence.Length);
+
+            Initialize();
         }
 
         public void SwapBin(byte[] sourceROM, string romSavePath, string romName)
@@ -200,9 +224,10 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             SourceROM = deinterleavedROM;
+            Initialize();
         }
 
-        public bool UnlockRegion(byte[] sourceROM, byte[] sourceROMSMCHeader, bool unlock, string romSavePath, string romName, string region)
+        public bool UnlockRegion(bool unlock)
         {
             List<byte[]> lockingCodes = new List<byte[]>();
             List<byte[]> unlockingCodes = new List<byte[]>();
@@ -212,13 +237,13 @@ namespace Advanced_SNES_ROM_Utility
 
             if (unlock)
             {
-                regionFixedSourceROM = new byte[sourceROM.Length];
-                Buffer.BlockCopy(sourceROM, 0, regionFixedSourceROM, 0, sourceROM.Length);
+                regionFixedSourceROM = new byte[SourceROM.Length];
+                Buffer.BlockCopy(SourceROM, 0, regionFixedSourceROM, 0, SourceROM.Length);
             }
 
 
             // Load bad codes into list
-            if (region.Equals("PAL"))
+            if (StringRegion.Equals("PAL"))
             {
                 // Bad codes in PAL games
                 byte[] lockingCode01 = { 0xad, 0x3f, 0x21, 0x29, 0x10, 0x00, 0xd0 }; lockingCodes.Add(lockingCode01);
@@ -306,6 +331,7 @@ namespace Advanced_SNES_ROM_Utility
                 byte[] lockingCode57 = { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xef, 0xf2, 0xfd, 0xc3, 0xf0 }; lockingCodes.Add(lockingCode57);     // Earthbound
                 byte[] lockingCode58 = { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0xef, 0x38, 0xf2, 0xfd, 0xc3, 0xf0 }; lockingCodes.Add(lockingCode58);   // Earthbound
                 byte[] lockingCode59 = { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xef, 0xef, 0xff, 0xc1 }; lockingCodes.Add(lockingCode59);     // Earthbound
+                byte[] lockingCode60 = { 0xad, 0xff, 0x1f, 0xd0, 0x06, 0x22, 0x64, 0x5f, 0xc0, 0x80, 0x04, 0x22, 0x00, 0x8a, 0x0f, 0xc2, 0x30, 0xab, 0x2b, 0x7a, 0xfa, 0x68, 0x40 }; lockingCodes.Add(lockingCode60);     // Cooly Skunk
 
                 // Good codes for NTSC games
                 byte[] unlockingCode20 = { 0x3f, 0x21, 0x29, 0x10, 0x80 }; unlockingCodes.Add(unlockingCode20);
@@ -348,6 +374,7 @@ namespace Advanced_SNES_ROM_Utility
                 byte[] unlockingCode57 = { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xea, 0xa9, 0x00, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode57);       // Earthbound
                 byte[] unlockingCode58 = { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xea, 0xa9, 0x00, 0x00, 0x80 }; unlockingCodes.Add(unlockingCode58);     // Earthbound
                 byte[] unlockingCode59 = { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xea, 0xa9, 0x00, 0x00 }; unlockingCodes.Add(unlockingCode59);       // Earthbound
+                byte[] unlockingCode60 = { 0xea, 0xea, 0xea, 0xea, 0xea, 0x22, 0x64, 0x5f, 0xc0, 0x80, 0x04, 0xea, 0xea, 0xea, 0xea, 0xc2, 0x30, 0xab, 0x2b, 0x7a, 0xfa, 0x68, 0x40 }; unlockingCodes.Add(unlockingCode60);       //  Cooly Skunk
 
 
                 // Pattern for NTSC games
@@ -391,6 +418,7 @@ namespace Advanced_SNES_ROM_Utility
                 bool[] lockingCodePattern57 = { false, false, false, false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern57);
                 bool[] lockingCodePattern58 = { false, false, false, false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern58);
                 bool[] lockingCodePattern59 = { false, false, false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern59);
+                bool[] lockingCodePattern60 = { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false }; lockingCodePattern.Add(lockingCodePattern60);
             }
 
             bool foundBadCode = false;
@@ -402,21 +430,21 @@ namespace Advanced_SNES_ROM_Utility
                 bool[] lockingPattern = lockingCodePattern[index];
 
                 int offset = -1;
-                int c = sourceROM.Length - lockingCode.Length + 1;
+                int c = SourceROM.Length - lockingCode.Length + 1;
                 int j;
 
                 for (int i = 0; i < c; i++)
                 {
-                    if (sourceROM[i] != lockingCode[0])
+                    if (SourceROM[i] != lockingCode[0])
                     {
                         continue;
                     }
 
-                    for (j = lockingCode.Length - 1; j >= 1 && sourceROM[i + j] == lockingCode[j] || lockingPattern[j]; j--)
+                    for (j = lockingCode.Length - 1; j >= 1 && SourceROM[i + j] == lockingCode[j] || lockingPattern[j]; j--)
                     {
                         if (lockingPattern[j])
                         {
-                            unlockingCode[j] = sourceROM[i + j];
+                            unlockingCode[j] = SourceROM[i + j];
                         }
                     }
 
@@ -445,25 +473,8 @@ namespace Advanced_SNES_ROM_Utility
             // Save file if found bad codes and unlocking is enabled
             if (foundBadCode && unlock)
             {
-                // Save region free file with header
-                if (sourceROMSMCHeader != null)
-                {
-                    byte[] regionFixedHeaderedROM = new byte[sourceROMSMCHeader.Length + regionFixedSourceROM.Length];
-
-                    Buffer.BlockCopy(sourceROMSMCHeader, 0, regionFixedHeaderedROM, 0, sourceROMSMCHeader.Length);
-                    Buffer.BlockCopy(regionFixedSourceROM, 0, regionFixedHeaderedROM, sourceROMSMCHeader.Length, regionFixedSourceROM.Length);
-
-                    File.WriteAllBytes(@romSavePath + @"\" + romName + "_[region_free]" + ".sfc", regionFixedHeaderedROM);
-                }
-
-                else
-                {
-                    // Save region free file without header
-                    File.WriteAllBytes(@romSavePath + @"\" + romName + "_[region_free]" + ".sfc", regionFixedSourceROM);
-                }
-
-                MessageBox.Show("Region lock successfully removed!\n\nFile saved to: '" + @romSavePath + @"\" + romName + "_[region_free]" + ".sfc'");
-
+                SourceROM = regionFixedSourceROM;
+                Initialize();
                 return true;
             }
 
