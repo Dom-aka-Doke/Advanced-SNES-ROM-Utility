@@ -3,6 +3,8 @@ using System.Windows.Forms;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Advanced_SNES_ROM_Utility
 {
@@ -20,6 +22,9 @@ namespace Advanced_SNES_ROM_Utility
         bool autoFixROMSize = Properties.Settings.Default.AutoFixIntROMSize;
         bool saveWithHeader;
 
+        // Create combo box for selecting country and region
+        List<comboBoxCountryRegionList> listCountryRegion = new List<comboBoxCountryRegionList>();
+
         // Create empty ROM
         SNESROM sourceROM;
 
@@ -34,9 +39,6 @@ namespace Advanced_SNES_ROM_Utility
             // If successfully selected a ROM file...
             if (selectROMDialog.ShowDialog() == DialogResult.OK)
             {
-                // Might get obsolete
-                buttonEdit.Enabled = true;
-
                 // Clear content of combo boxes and disable
                 comboBoxExpandROM.DataSource = null;
                 comboBoxSplitROM.DataSource = null;
@@ -48,38 +50,32 @@ namespace Advanced_SNES_ROM_Utility
                 // Create new ROM
                 sourceROM = new SNESROM(@selectROMDialog.FileName);
 
-                // If option auto fix ROM size is enabled
-                if (autoFixROMSize)
-                {
-                    // Some Hacks may have an odd size in their header, so we should fix that by taking the right value
-                    if ((sourceROM.IntROMSize < sourceROM.IntCalcFileSize) && !sourceROM.IsBSROM)
-                    {
-                        sourceROM.IntROMSize = 1;
+                // Initialize combo box for country and region
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 0, Name = "Japan | NTSC" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 1, Name = "USA | NTSC" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 2, Name = "Europe/Oceania/Asia | PAL" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 3, Name = "Sweden/Scandinavia | PAL" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 4, Name = "Finland | PAL" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 5, Name = "Denmark | PAL" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 6, Name = "France | SECAM (PAL-like, 50 Hz)" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 7, Name = "Netherlands | PAL" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 8, Name = "Spain | PAL" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 9, Name = "Germany/Austria/Switzerland | PAL" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 10, Name = "China/Hong Kong | PAL" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 11, Name = "Indonesia | PAL" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 12, Name = "South Korea | NTSC" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 14, Name = "Canada | NTSC" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 15, Name = "Brazil | PAL-M (NTSC-like, 60 Hz)" });
+                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 16, Name = "Australia | PAL" });
 
-                        while (sourceROM.IntROMSize < sourceROM.IntCalcFileSize)
-                        {
-                            sourceROM.IntROMSize *= 2;
-                        }
+                comboBoxCountryRegion.DataSource = listCountryRegion;
+                comboBoxCountryRegion.DisplayMember = "Name";
+                comboBoxCountryRegion.ValueMember = "Id";
 
-                        byte byteROMSizeValue = Convert.ToByte(sourceROM.IntROMSize);
-                        byte[] byteArrayROMSizeValue = new byte[1];
-                        byteArrayROMSizeValue[0] = byteROMSizeValue;
+                int selectedCompanyRegion = sourceROM.ByteCountry;
+                if (selectedCompanyRegion > 12) { selectedCompanyRegion--; }
 
-                        switch (byteArrayROMSizeValue[0])
-                        {
-                            case 0x01: byteArrayROMSizeValue[0] = 0x07; break;
-                            case 0x02: byteArrayROMSizeValue[0] = 0x08; break;
-                            case 0x04: byteArrayROMSizeValue[0] = 0x09; break;
-                            case 0x08: byteArrayROMSizeValue[0] = 0x0A; break;
-                            case 0x10: byteArrayROMSizeValue[0] = 0x0B; break;
-                            case 0x20: byteArrayROMSizeValue[0] = 0x0C; break;
-                            case 0x40: byteArrayROMSizeValue[0] = 0x0D; break;
-                        }
-
-                        // Set new ROM size value
-                        Buffer.BlockCopy(byteArrayROMSizeValue, 0, sourceROM.SourceROM, (int)sourceROM.UIntROMHeaderOffset + 0x27, 1);
-                    }
-                }
+                comboBoxCountryRegion.SelectedIndex = selectedCompanyRegion;
 
                 // Check if ROM can be expanded
                 if (sourceROM.IntCalcFileSize < 32)
@@ -148,7 +144,21 @@ namespace Advanced_SNES_ROM_Utility
                     buttonFixRegion.Enabled = false;
                 }
 
+                // Enable / disable text and combo boxes
+                if (!textBoxTitle.Enabled) { textBoxTitle.Enabled = true; }
+                if (sourceROM.IsBSROM) { textBoxTitle.MaxLength = 16; comboBoxCountryRegion.Enabled = false; } else { textBoxTitle.MaxLength = 21; comboBoxCountryRegion.Enabled = true; }
+                if (!textBoxVersion.Enabled) { textBoxVersion.Enabled = true; }
+
+                // Load values into labels and enable / disable buttons
                 RefreshLabelsAndButtons();
+
+                // If option auto fix ROM size is enabled
+                if (autoFixROMSize && (sourceROM.IntROMSize < sourceROM.IntCalcFileSize) && !sourceROM.IsBSROM)
+                {
+                    buttonFixROMSize.PerformClick();
+                    sourceROM.Initialize();
+                    RefreshLabelsAndButtons();
+                }
             }
         }
 
@@ -247,10 +257,37 @@ namespace Advanced_SNES_ROM_Utility
             buttonFixRegion.Enabled = false;
         }
 
-        private void buttonEdit_Click(object sender, EventArgs e)
+        private void buttonFixROMSize_Click(object sender, EventArgs e)
         {
-            Form3 editROMInformation = new Form3(sourceROM.SourceROM, sourceROM.SourceROMSMCHeader, sourceROM.UIntROMHeaderOffset, sourceROM.StringTitle, sourceROM.ByteArrayTitle, sourceROM.StringVersion, sourceROM.ByteCountry, sourceROM.StringCompany, sourceROM.IntROMSize, sourceROM.IntCalcFileSize, sourceROM.ROMFolder, sourceROM.ROMName, sourceROM.IsBSROM);
-            editROMInformation.Show();
+            if ((sourceROM.IntROMSize < sourceROM.IntCalcFileSize) && !sourceROM.IsBSROM)
+            {
+                sourceROM.IntROMSize = 1;
+
+                while (sourceROM.IntROMSize < sourceROM.IntCalcFileSize)
+                {
+                    sourceROM.IntROMSize *= 2;
+                }
+
+                byte byteROMSizeValue = Convert.ToByte(sourceROM.IntROMSize);
+                byte[] byteArrayROMSizeValue = new byte[1];
+                byteArrayROMSizeValue[0] = byteROMSizeValue;
+
+                switch (byteArrayROMSizeValue[0])
+                {
+                    case 0x01: byteArrayROMSizeValue[0] = 0x07; break;
+                    case 0x02: byteArrayROMSizeValue[0] = 0x08; break;
+                    case 0x04: byteArrayROMSizeValue[0] = 0x09; break;
+                    case 0x08: byteArrayROMSizeValue[0] = 0x0A; break;
+                    case 0x10: byteArrayROMSizeValue[0] = 0x0B; break;
+                    case 0x20: byteArrayROMSizeValue[0] = 0x0C; break;
+                    case 0x40: byteArrayROMSizeValue[0] = 0x0D; break;
+                }
+
+                Buffer.BlockCopy(byteArrayROMSizeValue, 0, sourceROM.SourceROM, (int)sourceROM.UIntROMHeaderOffset + 0x27, 1);
+
+                sourceROM.Initialize();
+                RefreshLabelsAndButtons();
+            }
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -299,11 +336,82 @@ namespace Advanced_SNES_ROM_Utility
             MessageBox.Show(message);
         }
 
+        private void textBoxGetTitle_TextChanged(object sender, EventArgs e)
+        {
+            if (sourceROM.StringTitle.Trim() != textBoxTitle.Text.Trim())
+            {
+                byte[] byteArrayTitle = new byte[21] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+                if (sourceROM.IsBSROM) { byteArrayTitle = new byte[16] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 }; }
+
+                Encoding newEncodedTitle = Encoding.GetEncoding(932);
+                byte[] newByteTitleTemp = newEncodedTitle.GetBytes(textBoxTitle.Text.Trim());
+
+                int newByteTitleTempLenght = newByteTitleTemp.Length;
+
+                if (newByteTitleTemp.Length > byteArrayTitle.Length) { newByteTitleTempLenght = byteArrayTitle.Length; }
+
+                Buffer.BlockCopy(newByteTitleTemp, 0, byteArrayTitle, 0, newByteTitleTempLenght);
+
+                Buffer.BlockCopy(byteArrayTitle, 0, sourceROM.SourceROM, (int)sourceROM.UIntROMHeaderOffset + 0x10, byteArrayTitle.Length);
+
+                sourceROM.Initialize();
+                RefreshLabelsAndButtons();
+            }
+        }
+
+        private void textBoxGetVersion_Leave(object sender, EventArgs e)
+        {
+            if (sourceROM.StringVersion != "" && sourceROM.StringVersion.Trim() != textBoxVersion.Text.Trim())
+            {
+                string versionPattern = @"^([1]\.)([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|2[5][0-5])$";
+
+                if (Regex.IsMatch(textBoxVersion.Text.Trim(), versionPattern))
+                {
+                    byte[] byteArrayVersion = new byte[1];
+                    string[] splitVersion = textBoxVersion.Text.Split('.');
+                    int intVersion = Int16.Parse(splitVersion[1]);
+                    byteArrayVersion = BitConverter.GetBytes(intVersion);
+
+                    Buffer.BlockCopy(byteArrayVersion, 0, sourceROM.SourceROM, (int)sourceROM.UIntROMHeaderOffset + 0x2B, 1);
+
+                    sourceROM.Initialize();
+                    RefreshLabelsAndButtons();
+                }
+
+                else
+                {
+                    textBoxVersion.Text = sourceROM.StringVersion;
+                    MessageBox.Show("Enter version number between 1.0 and 1.255");
+                }
+            }
+        }
+
+        private void comboBoxCountryRegion_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!comboBoxCountryRegion.Enabled || comboBoxCountryRegion.SelectedIndex < 0) { return; }
+
+            int selectedCountryRegion = (int)comboBoxCountryRegion.SelectedValue;
+            byte byteCountryRegion = Convert.ToByte(selectedCountryRegion);
+            byte[] byteArrayCountryRegion = new byte[1];
+            byteArrayCountryRegion[0] = byteCountryRegion;
+
+            if (sourceROM.ByteCountry != byteArrayCountryRegion[0])
+            {
+                Buffer.BlockCopy(byteArrayCountryRegion, 0, sourceROM.SourceROM, (int)sourceROM.UIntROMHeaderOffset + 0x29, 1);
+
+                sourceROM.Initialize();
+                RefreshLabelsAndButtons();
+            }
+        }
+
         private void RefreshLabelsAndButtons()
         {
-            // Set labels
+            // Set text boxes
             textBoxROMName.Text = sourceROM.ROMFullPath;
-            labelGetTitle.Text = sourceROM.StringTitle;
+            textBoxTitle.Text = sourceROM.StringTitle.Trim();
+            textBoxVersion.Text = sourceROM.StringVersion;
+
+            // Set labels
             labelGetMapMode.Text = sourceROM.StringMapMode;
             labelGetROMType.Text = sourceROM.StringROMType;
             labelGetROMSize.Text = sourceROM.StringROMSize;
@@ -312,14 +420,11 @@ namespace Advanced_SNES_ROM_Utility
             labelGetFileSize.Text = sourceROM.IntCalcFileSize.ToString() + " Mbit (" + ((float)sourceROM.IntCalcFileSize / 8) + " MByte)";
             labelGetSMCHeader.Text = sourceROM.StringSMCHeader;
             labelGetROMSpeed.Text = sourceROM.StringROMSpeed;
-            labelGetCountry.Text = sourceROM.StringCountry;
-            labelGetRegion.Text = sourceROM.StringRegion;
             labelGetCompany.Text = sourceROM.StringCompany;
             labelGetIntChksm.Text = BitConverter.ToString(sourceROM.ByteArrayChecksum).Replace("-", "");
             labelGetIntInvChksm.Text = BitConverter.ToString(sourceROM.ByteArrayInvChecksum).Replace("-", "");
             labelGetCalcChksm.Text = BitConverter.ToString(sourceROM.ByteArrayCalcChecksum).Replace("-", "");
             labelGetCalcInvChksm.Text = BitConverter.ToString(sourceROM.ByteArrayCalcInvChecksum).Replace("-", "");
-            labelGetVersion.Text = sourceROM.StringVersion;
             labelGetCRC32Chksm.Text = sourceROM.CRC32Hash;
 
             // Set buttons
@@ -327,6 +432,7 @@ namespace Advanced_SNES_ROM_Utility
             if (!buttonSaveAs.Enabled) { buttonSaveAs.Enabled = true; }
             if (sourceROM.SourceROMSMCHeader == null) { buttonAddHeader.Enabled = true; buttonRemoveHeader.Enabled = false; saveWithHeader = false; } else { buttonAddHeader.Enabled = false; buttonRemoveHeader.Enabled = true; saveWithHeader = true; }
             if (sourceROM.SourceROM.Length % 1048576 == 0) { buttonSwapBinROM.Enabled = true; } else { buttonSwapBinROM.Enabled = false; }
+            if ((sourceROM.IntROMSize < sourceROM.IntCalcFileSize) && !sourceROM.IsBSROM) { buttonFixROMSize.Enabled = true; } else { buttonFixROMSize.Enabled = false; }
             if (sourceROM.IsInterleaved) { buttonDeinterleave.Enabled = true; buttonFixChksm.Enabled = false; return; } else { buttonDeinterleave.Enabled = false; }
             if (!sourceROM.ByteArrayChecksum.SequenceEqual(sourceROM.ByteArrayCalcChecksum)) { buttonFixChksm.Enabled = true; } else { buttonFixChksm.Enabled = false; }
         }
@@ -355,14 +461,6 @@ namespace Advanced_SNES_ROM_Utility
 
             // Save settings
             Properties.Settings.Default.Save();
-
-            // Restart Application
-            DialogResult dialogRestart = MessageBox.Show("Change only takes effect after a restart!\nRestart now?", "Restart Application", MessageBoxButtons.YesNo);
-
-            if (dialogRestart == DialogResult.Yes)
-            {
-                Application.Restart();
-            }
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -384,6 +482,12 @@ namespace Advanced_SNES_ROM_Utility
         }
 
         class comboBoxSplitROMList
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+        }
+
+        class comboBoxCountryRegionList
         {
             public int Id { get; set; }
             public string Name { get; set; }

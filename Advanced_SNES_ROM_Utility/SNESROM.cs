@@ -1070,17 +1070,6 @@ namespace Advanced_SNES_ROM_Utility
                 Buffer.BlockCopy(clearBSHeader, 0, noChecksumSourceROM, (int)UIntROMHeaderOffset, clearBSHeader.Length);
             }
 
-            // Some Hacks may have an odd size in their header, so we should fix that by taking the right value
-            if (IntROMSize < IntCalcFileSize)
-            {
-                IntROMSize = 1;
-
-                while (IntROMSize < IntCalcFileSize)
-                {
-                    IntROMSize *= 2;
-                }
-            }
-
             // Mirror ROM if neccessary | not working for Momotarou Dentetsu Happy and Tengai Makyou Zero / Tengai Makyou Zero - Shounen Jump no Shou (3 MByte ROMs with Special Chip + RAM + SRAM)
             if ((IntROMSize > IntCalcFileSize) && ByteROMType != 0xF5 && ByteROMType != 0xF9)
             {

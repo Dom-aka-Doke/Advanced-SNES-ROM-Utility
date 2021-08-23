@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Advanced_SNES_ROM_Utility
@@ -27,11 +24,7 @@ namespace Advanced_SNES_ROM_Utility
         {
             InitializeComponent();
 
-            if (isBSROM) { comboBoxChangeCountryRegion.Enabled = false; textBoxChangeTitle.MaxLength = 16; }
             comboBoxChangeCompany.Enabled = false;
-            textBoxChangeVersion.Enabled = true;
-            checkBoxFixSize.Enabled = false;
-            checkBoxFixSize.Checked = false;
 
             sourceROMCopy = sourceROM;
             sourceROMSMCHeaderCopy = sourceROMSMCHeader;
@@ -45,45 +38,6 @@ namespace Advanced_SNES_ROM_Utility
             intROMSizeCopy = intROMSize;
             calcFileSizeCopy = calcFileSize;
             isBROMCopy = isBSROM;
-
-            // Set original values for editing
-            textBoxChangeTitle.Text = title.Trim();
-            textBoxChangeVersion.Text = version;
-
-            // Load combo box for selecting country & region
-            List<comboBoxChangeCountryRegionList> listCountryRegion = new List<comboBoxChangeCountryRegionList>();
-
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 0, Name = "Japan | NTSC" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 1, Name = "USA | NTSC" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 2, Name = "Europe/Oceania/Asia | PAL" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 3, Name = "Sweden/Scandinavia | PAL" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 4, Name = "Finland | PAL" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 5, Name = "Denmark | PAL" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 6, Name = "France | SECAM (PAL-like, 50 Hz)" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 7, Name = "Netherlands | PAL" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 8, Name = "Spain | PAL" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 9, Name = "Germany/Austria/Switzerland | PAL" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 10, Name = "China/Hong Kong | PAL" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 11, Name = "Indonesia | PAL" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 12, Name = "South Korea | NTSC" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 14, Name = "Canada | NTSC" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 15, Name = "Brazil | PAL-M (NTSC-like, 60 Hz)" });
-            listCountryRegion.Add(new comboBoxChangeCountryRegionList { Id = 16, Name = "Australia | PAL" });
-
-            comboBoxChangeCountryRegion.DataSource = listCountryRegion;
-            comboBoxChangeCountryRegion.DisplayMember = "Name";
-            comboBoxChangeCountryRegion.ValueMember = "Id";
-
-            // Don't know why, but SelectedValue doesn't work here, so we have to use a little trick
-            int selectedCompanyRegion = country;
-
-            if (selectedCompanyRegion > 12)
-            {
-                selectedCompanyRegion--;
-            }
-
-            // Pre-select country & region information
-            comboBoxChangeCountryRegion.SelectedIndex = selectedCompanyRegion;
 
             // Load combo box for selecting company
             List<comboBoxChangeCompanyList> listCompany = new List<comboBoxChangeCompanyList>();
@@ -427,147 +381,11 @@ namespace Advanced_SNES_ROM_Utility
             comboBoxChangeCompany.SelectedValue = company;
 
             // Recalculate company code value
-
-            // Debugging
-            //MessageBox.Show("Selected display member: " + comboBoxChangeCompany.Text + "\n\nSelected item value: " + comboBoxChangeCompany.SelectedValue);
-
-            // Some Hacks may have an odd size in their header, so we should fix that by taking the right value
-            if ((intROMSizeCopy < calcFileSizeCopy) && !isBSROM)
-            {
-                intROMSizeCopy = 1;
-
-                while (intROMSizeCopy < calcFileSizeCopy)
-                {
-                    intROMSizeCopy *= 2;
-                }
-
-                checkBoxFixSize.Enabled = true;
-                checkBoxFixSize.Checked = true;
-            }
-        }
-        
-        private void buttonSaveChanges_Click(object sender, EventArgs e)
-        {
-            // Make a copy for editing
-            byte[] editedROM = sourceROMCopy;
-
-            // Reset values for version input checking
-            bool madeChange = false;
-            bool versionIsValid = false;
-
-            // Get selected country & region
-            int selectedCountryRegion = (int)comboBoxChangeCountryRegion.SelectedValue;
-            byte byteCountryRegion = Convert.ToByte(selectedCountryRegion);
-            byte[] byteArrayCountryRegion = new byte[1];
-            byteArrayCountryRegion[0] = byteCountryRegion;
-
-            if (romCountryRegionCopy != byteArrayCountryRegion[0])
-            {
-                Buffer.BlockCopy(byteArrayCountryRegion, 0, editedROM, (int)romHeaderOffsetCopy + 0x29, 1);             // Set new country & region
-                madeChange = true;
-            }
-         
-            // Get new title
-            byte[] byteArrayTitle = new byte[21] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-            if (isBROMCopy) { byteArrayTitle = new byte[16] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 }; }
-
-            Encoding newEncodedTitle = Encoding.GetEncoding(932);                                   //ASCIIEncoding newASCIITitle = new System.Text.ASCIIEncoding();
-            byte[] newByteTitleTemp = newEncodedTitle.GetBytes(textBoxChangeTitle.Text);            //newASCIITitle.GetBytes(textBoxChangeTitle.Text);
-            
-            int newByteTitleTempLenght = newByteTitleTemp.Length;
-
-            if (isBROMCopy && newByteTitleTempLenght > 16) { newByteTitleTempLenght = 16; }
-            if (!isBROMCopy && newByteTitleTempLenght > 21) { newByteTitleTempLenght = 21; }
-
-            Buffer.BlockCopy(newByteTitleTemp, 0, byteArrayTitle, 0, newByteTitleTempLenght);
-
-            if (!romByteTitleCopy.SequenceEqual(byteArrayTitle))
-            {
-                if (isBROMCopy) { Buffer.BlockCopy(byteArrayTitle, 0, editedROM, (int)romHeaderOffsetCopy + 0x10, 16); } else { Buffer.BlockCopy(byteArrayTitle, 0, editedROM, (int)romHeaderOffsetCopy + 0x10, 21); }  // Set new title
-                madeChange = true;
-            }
-
-            // Get new version
-            byte[] byteArrayVersion = new byte[1];
-            string versionPattern = @"^([1]\.)([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|2[5][0-5])$";
-            versionIsValid = Regex.IsMatch(textBoxChangeVersion.Text, versionPattern);
-
-            if (!romVersionCopy.Equals(textBoxChangeVersion.Text) && versionIsValid)
-            {
-                string[] splitVersion = textBoxChangeVersion.Text.Split('.');
-                int intVersion = Int16.Parse(splitVersion[1]);
-                byteArrayVersion = BitConverter.GetBytes(intVersion);
-
-                Buffer.BlockCopy(byteArrayVersion, 0, editedROM, (int)romHeaderOffsetCopy + 0x2B, 1);               // Set new version
-                madeChange = true;
-            }
-
-            // Fix wrong ROM size value
-            if (checkBoxFixSize.Checked)
-            {
-                byte byteROMSizeValue = Convert.ToByte(intROMSizeCopy);
-                byte[] byteArrayROMSizeValue = new byte[1];
-                byteArrayROMSizeValue[0] = byteROMSizeValue;
-
-                switch (byteArrayROMSizeValue[0])
-                {
-                    case 0x01: byteArrayROMSizeValue[0] = 0x07; break;
-                    case 0x02: byteArrayROMSizeValue[0] = 0x08; break;
-                    case 0x04: byteArrayROMSizeValue[0] = 0x09; break;
-                    case 0x08: byteArrayROMSizeValue[0] = 0x0A; break;
-                    case 0x10: byteArrayROMSizeValue[0] = 0x0B; break;
-                    case 0x20: byteArrayROMSizeValue[0] = 0x0C; break;
-                    case 0x40: byteArrayROMSizeValue[0] = 0x0D; break;
-                }
-
-                Buffer.BlockCopy(byteArrayROMSizeValue, 0, editedROM, (int)romHeaderOffsetCopy + 0x27, 1);              // Set new ROM size value
-                madeChange = true;
-            }
-
-            if (madeChange && versionIsValid)
-            {
-                // Save edited file with header
-                if (sourceROMSMCHeaderCopy != null)
-                {
-                    byte[] editedHeaderedROM = new byte[sourceROMSMCHeaderCopy.Length + editedROM.Length];
-
-                    Buffer.BlockCopy(sourceROMSMCHeaderCopy, 0, editedHeaderedROM, 0, sourceROMSMCHeaderCopy.Length);
-                    Buffer.BlockCopy(editedROM, 0, editedHeaderedROM, sourceROMSMCHeaderCopy.Length, editedROM.Length);
-
-                    File.WriteAllBytes(@romSavePathCopy + @"\" + romNameCopy + "_[edited]" + ".sfc", editedHeaderedROM);
-                    MessageBox.Show("ROM successfully edited!\n\nFile saved to: '" + @romSavePathCopy + @"\" + romNameCopy + "_[edited]" + ".sfc'\n\nAnd don't forget to fix checksum!");
-                }
-
-                else
-                {
-                    // Save edited file without header
-                    File.WriteAllBytes(@romSavePathCopy + @"\" + romNameCopy + "_[edited]" + ".sfc", editedROM);
-                    MessageBox.Show("ROM successfully edited!\n\nFile saved to: '" + @romSavePathCopy + @"\" + romNameCopy + "_[edited]" + ".sfc'\n\nAnd don't forget to fix checksum!");
-                }
-
-                this.Close();
-            }
-
-            else if (!versionIsValid)
-            {
-                MessageBox.Show("Enter version number between 1.0 and 1.255");
-            }
-
-            else
-            {
-                MessageBox.Show("No changes have been detected!\n\nPlease press 'Cancel' or [X] to return to main window.");
-            }
         }
 
         private void buttonCancelChages_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        class comboBoxChangeCountryRegionList
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
         }
 
         class comboBoxChangeCompanyList

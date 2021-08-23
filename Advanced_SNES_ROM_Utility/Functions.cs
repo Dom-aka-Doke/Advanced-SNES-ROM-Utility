@@ -11,7 +11,6 @@ namespace Advanced_SNES_ROM_Utility
         public void AddHeader()
         {
             // Create empty header
-            UIntSMCHeader = 512;
             SourceROMSMCHeader = new byte[512];
 
             foreach (byte singleByte in SourceROMSMCHeader)

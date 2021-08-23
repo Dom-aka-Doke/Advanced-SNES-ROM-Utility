@@ -44,17 +44,12 @@
             this.labelCRC32Chksm = new System.Windows.Forms.Label();
             this.labelGetCRC32Chksm = new System.Windows.Forms.Label();
             this.labelTitle = new System.Windows.Forms.Label();
-            this.labelGetTitle = new System.Windows.Forms.Label();
             this.labelSMCHeader = new System.Windows.Forms.Label();
             this.labelCompany = new System.Windows.Forms.Label();
             this.labelCountry = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
-            this.labelRegion = new System.Windows.Forms.Label();
             this.labelGetCompany = new System.Windows.Forms.Label();
-            this.labelGetCountry = new System.Windows.Forms.Label();
-            this.labelGetRegion = new System.Windows.Forms.Label();
             this.labelGetSMCHeader = new System.Windows.Forms.Label();
-            this.labelGetVersion = new System.Windows.Forms.Label();
             this.labelMapMode = new System.Windows.Forms.Label();
             this.labelGetMapMode = new System.Windows.Forms.Label();
             this.labelChksmInf = new System.Windows.Forms.Label();
@@ -80,7 +75,6 @@
             this.labelSRAM = new System.Windows.Forms.Label();
             this.labelGetSRAM = new System.Windows.Forms.Label();
             this.buttonDeinterleave = new System.Windows.Forms.Button();
-            this.buttonEdit = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemAutoFixROM = new System.Windows.Forms.ToolStripMenuItem();
@@ -89,6 +83,10 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonSaveAs = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
+            this.textBoxTitle = new System.Windows.Forms.TextBox();
+            this.textBoxVersion = new System.Windows.Forms.TextBox();
+            this.comboBoxCountryRegion = new System.Windows.Forms.ComboBox();
+            this.buttonFixROMSize = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -122,9 +120,9 @@
             // buttonSwapBinROM
             // 
             this.buttonSwapBinROM.Enabled = false;
-            this.buttonSwapBinROM.Location = new System.Drawing.Point(13, 425);
+            this.buttonSwapBinROM.Location = new System.Drawing.Point(13, 514);
             this.buttonSwapBinROM.Name = "buttonSwapBinROM";
-            this.buttonSwapBinROM.Size = new System.Drawing.Size(516, 23);
+            this.buttonSwapBinROM.Size = new System.Drawing.Size(255, 23);
             this.buttonSwapBinROM.TabIndex = 2;
             this.buttonSwapBinROM.Text = "SwapBin ROM (27C801)";
             this.buttonSwapBinROM.UseVisualStyleBackColor = true;
@@ -229,15 +227,6 @@
             this.labelTitle.TabIndex = 13;
             this.labelTitle.Text = "Title";
             // 
-            // labelGetTitle
-            // 
-            this.labelGetTitle.AutoSize = true;
-            this.labelGetTitle.Location = new System.Drawing.Point(73, 126);
-            this.labelGetTitle.Name = "labelGetTitle";
-            this.labelGetTitle.Size = new System.Drawing.Size(77, 13);
-            this.labelGetTitle.TabIndex = 14;
-            this.labelGetTitle.Text = "- Select ROM -";
-            // 
             // labelSMCHeader
             // 
             this.labelSMCHeader.AutoSize = true;
@@ -268,20 +257,11 @@
             // labelVersion
             // 
             this.labelVersion.AutoSize = true;
-            this.labelVersion.Location = new System.Drawing.Point(10, 215);
+            this.labelVersion.Location = new System.Drawing.Point(10, 198);
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(42, 13);
             this.labelVersion.TabIndex = 18;
             this.labelVersion.Text = "Version";
-            // 
-            // labelRegion
-            // 
-            this.labelRegion.AutoSize = true;
-            this.labelRegion.Location = new System.Drawing.Point(10, 193);
-            this.labelRegion.Name = "labelRegion";
-            this.labelRegion.Size = new System.Drawing.Size(41, 13);
-            this.labelRegion.TabIndex = 19;
-            this.labelRegion.Text = "Region";
             // 
             // labelGetCompany
             // 
@@ -292,24 +272,6 @@
             this.labelGetCompany.TabIndex = 20;
             this.labelGetCompany.Text = "- Select ROM -";
             // 
-            // labelGetCountry
-            // 
-            this.labelGetCountry.AutoSize = true;
-            this.labelGetCountry.Location = new System.Drawing.Point(73, 171);
-            this.labelGetCountry.Name = "labelGetCountry";
-            this.labelGetCountry.Size = new System.Drawing.Size(77, 13);
-            this.labelGetCountry.TabIndex = 21;
-            this.labelGetCountry.Text = "- Select ROM -";
-            // 
-            // labelGetRegion
-            // 
-            this.labelGetRegion.AutoSize = true;
-            this.labelGetRegion.Location = new System.Drawing.Point(73, 193);
-            this.labelGetRegion.Name = "labelGetRegion";
-            this.labelGetRegion.Size = new System.Drawing.Size(77, 13);
-            this.labelGetRegion.TabIndex = 22;
-            this.labelGetRegion.Text = "- Select ROM -";
-            // 
             // labelGetSMCHeader
             // 
             this.labelGetSMCHeader.AutoSize = true;
@@ -318,15 +280,6 @@
             this.labelGetSMCHeader.Size = new System.Drawing.Size(77, 13);
             this.labelGetSMCHeader.TabIndex = 23;
             this.labelGetSMCHeader.Text = "- Select ROM -";
-            // 
-            // labelGetVersion
-            // 
-            this.labelGetVersion.AutoSize = true;
-            this.labelGetVersion.Location = new System.Drawing.Point(73, 215);
-            this.labelGetVersion.Name = "labelGetVersion";
-            this.labelGetVersion.Size = new System.Drawing.Size(77, 13);
-            this.labelGetVersion.TabIndex = 24;
-            this.labelGetVersion.Text = "- Select ROM -";
             // 
             // labelMapMode
             // 
@@ -379,7 +332,7 @@
             // buttonRemoveHeader
             // 
             this.buttonRemoveHeader.Enabled = false;
-            this.buttonRemoveHeader.Location = new System.Drawing.Point(274, 396);
+            this.buttonRemoveHeader.Location = new System.Drawing.Point(278, 395);
             this.buttonRemoveHeader.Name = "buttonRemoveHeader";
             this.buttonRemoveHeader.Size = new System.Drawing.Size(255, 23);
             this.buttonRemoveHeader.TabIndex = 30;
@@ -390,7 +343,7 @@
             // buttonAddHeader
             // 
             this.buttonAddHeader.Enabled = false;
-            this.buttonAddHeader.Location = new System.Drawing.Point(13, 396);
+            this.buttonAddHeader.Location = new System.Drawing.Point(13, 395);
             this.buttonAddHeader.Name = "buttonAddHeader";
             this.buttonAddHeader.Size = new System.Drawing.Size(255, 23);
             this.buttonAddHeader.TabIndex = 31;
@@ -495,7 +448,7 @@
             // 
             this.comboBoxSplitROM.Enabled = false;
             this.comboBoxSplitROM.FormattingEnabled = true;
-            this.comboBoxSplitROM.Location = new System.Drawing.Point(367, 485);
+            this.comboBoxSplitROM.Location = new System.Drawing.Point(371, 485);
             this.comboBoxSplitROM.Name = "comboBoxSplitROM";
             this.comboBoxSplitROM.Size = new System.Drawing.Size(162, 21);
             this.comboBoxSplitROM.TabIndex = 42;
@@ -515,7 +468,7 @@
             // 
             this.comboBoxExpandROM.Enabled = false;
             this.comboBoxExpandROM.FormattingEnabled = true;
-            this.comboBoxExpandROM.Location = new System.Drawing.Point(367, 454);
+            this.comboBoxExpandROM.Location = new System.Drawing.Point(371, 454);
             this.comboBoxExpandROM.Name = "comboBoxExpandROM";
             this.comboBoxExpandROM.Size = new System.Drawing.Size(162, 21);
             this.comboBoxExpandROM.TabIndex = 44;
@@ -523,9 +476,9 @@
             // buttonFixChksm
             // 
             this.buttonFixChksm.Enabled = false;
-            this.buttonFixChksm.Location = new System.Drawing.Point(13, 543);
+            this.buttonFixChksm.Location = new System.Drawing.Point(13, 424);
             this.buttonFixChksm.Name = "buttonFixChksm";
-            this.buttonFixChksm.Size = new System.Drawing.Size(516, 23);
+            this.buttonFixChksm.Size = new System.Drawing.Size(255, 23);
             this.buttonFixChksm.TabIndex = 45;
             this.buttonFixChksm.Text = "Fix Checksum";
             this.buttonFixChksm.UseVisualStyleBackColor = true;
@@ -534,9 +487,9 @@
             // buttonFixRegion
             // 
             this.buttonFixRegion.Enabled = false;
-            this.buttonFixRegion.Location = new System.Drawing.Point(13, 573);
+            this.buttonFixRegion.Location = new System.Drawing.Point(13, 543);
             this.buttonFixRegion.Name = "buttonFixRegion";
-            this.buttonFixRegion.Size = new System.Drawing.Size(516, 23);
+            this.buttonFixRegion.Size = new System.Drawing.Size(520, 23);
             this.buttonFixRegion.TabIndex = 46;
             this.buttonFixRegion.Text = "Region Unlock";
             this.buttonFixRegion.UseVisualStyleBackColor = true;
@@ -563,24 +516,13 @@
             // buttonDeinterleave
             // 
             this.buttonDeinterleave.Enabled = false;
-            this.buttonDeinterleave.Location = new System.Drawing.Point(13, 514);
+            this.buttonDeinterleave.Location = new System.Drawing.Point(278, 514);
             this.buttonDeinterleave.Name = "buttonDeinterleave";
-            this.buttonDeinterleave.Size = new System.Drawing.Size(516, 23);
+            this.buttonDeinterleave.Size = new System.Drawing.Size(255, 23);
             this.buttonDeinterleave.TabIndex = 49;
             this.buttonDeinterleave.Text = "Deinterleave";
             this.buttonDeinterleave.UseVisualStyleBackColor = true;
             this.buttonDeinterleave.Click += new System.EventHandler(this.buttonDeinterleave_Click);
-            // 
-            // buttonEdit
-            // 
-            this.buttonEdit.Enabled = false;
-            this.buttonEdit.Location = new System.Drawing.Point(13, 237);
-            this.buttonEdit.Name = "buttonEdit";
-            this.buttonEdit.Size = new System.Drawing.Size(139, 23);
-            this.buttonEdit.TabIndex = 50;
-            this.buttonEdit.Text = "Edit/Fix ROM Information";
-            this.buttonEdit.UseVisualStyleBackColor = true;
-            this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
             // 
             // menuStrip1
             // 
@@ -664,14 +606,60 @@
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
+            // textBoxTitle
+            // 
+            this.textBoxTitle.Enabled = false;
+            this.textBoxTitle.Location = new System.Drawing.Point(76, 123);
+            this.textBoxTitle.MaxLength = 21;
+            this.textBoxTitle.Name = "textBoxTitle";
+            this.textBoxTitle.Size = new System.Drawing.Size(167, 20);
+            this.textBoxTitle.TabIndex = 55;
+            this.textBoxTitle.TextChanged += new System.EventHandler(this.textBoxGetTitle_TextChanged);
+            // 
+            // textBoxVersion
+            // 
+            this.textBoxVersion.Enabled = false;
+            this.textBoxVersion.Location = new System.Drawing.Point(76, 195);
+            this.textBoxVersion.MaxLength = 5;
+            this.textBoxVersion.Name = "textBoxVersion";
+            this.textBoxVersion.Size = new System.Drawing.Size(45, 20);
+            this.textBoxVersion.TabIndex = 56;
+            this.textBoxVersion.Leave += new System.EventHandler(this.textBoxGetVersion_Leave);
+            // 
+            // comboBoxCountryRegion
+            // 
+            this.comboBoxCountryRegion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxCountryRegion.Enabled = false;
+            this.comboBoxCountryRegion.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.comboBoxCountryRegion.FormattingEnabled = true;
+            this.comboBoxCountryRegion.Location = new System.Drawing.Point(76, 168);
+            this.comboBoxCountryRegion.Name = "comboBoxCountryRegion";
+            this.comboBoxCountryRegion.Size = new System.Drawing.Size(167, 21);
+            this.comboBoxCountryRegion.TabIndex = 57;
+            this.comboBoxCountryRegion.SelectedIndexChanged += new System.EventHandler(this.comboBoxCountryRegion_SelectedIndexChanged);
+            // 
+            // buttonFixROMSize
+            // 
+            this.buttonFixROMSize.Enabled = false;
+            this.buttonFixROMSize.Location = new System.Drawing.Point(278, 424);
+            this.buttonFixROMSize.Name = "buttonFixROMSize";
+            this.buttonFixROMSize.Size = new System.Drawing.Size(255, 23);
+            this.buttonFixROMSize.TabIndex = 58;
+            this.buttonFixROMSize.Text = "Fix Internal ROM Size";
+            this.buttonFixROMSize.UseVisualStyleBackColor = true;
+            this.buttonFixROMSize.Click += new System.EventHandler(this.buttonFixROMSize_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(541, 604);
+            this.ClientSize = new System.Drawing.Size(541, 574);
+            this.Controls.Add(this.buttonFixROMSize);
+            this.Controls.Add(this.comboBoxCountryRegion);
+            this.Controls.Add(this.textBoxVersion);
+            this.Controls.Add(this.textBoxTitle);
             this.Controls.Add(this.buttonSaveAs);
             this.Controls.Add(this.buttonSave);
-            this.Controls.Add(this.buttonEdit);
             this.Controls.Add(this.buttonDeinterleave);
             this.Controls.Add(this.labelGetSRAM);
             this.Controls.Add(this.labelSRAM);
@@ -697,17 +685,12 @@
             this.Controls.Add(this.labelChksmInf);
             this.Controls.Add(this.labelGetMapMode);
             this.Controls.Add(this.labelMapMode);
-            this.Controls.Add(this.labelGetVersion);
             this.Controls.Add(this.labelGetSMCHeader);
-            this.Controls.Add(this.labelGetRegion);
-            this.Controls.Add(this.labelGetCountry);
             this.Controls.Add(this.labelGetCompany);
-            this.Controls.Add(this.labelRegion);
             this.Controls.Add(this.labelVersion);
             this.Controls.Add(this.labelCountry);
             this.Controls.Add(this.labelCompany);
             this.Controls.Add(this.labelSMCHeader);
-            this.Controls.Add(this.labelGetTitle);
             this.Controls.Add(this.labelTitle);
             this.Controls.Add(this.labelGetCRC32Chksm);
             this.Controls.Add(this.labelCRC32Chksm);
@@ -753,17 +736,12 @@
         private System.Windows.Forms.Label labelCRC32Chksm;
         private System.Windows.Forms.Label labelGetCRC32Chksm;
         private System.Windows.Forms.Label labelTitle;
-        private System.Windows.Forms.Label labelGetTitle;
         private System.Windows.Forms.Label labelSMCHeader;
         private System.Windows.Forms.Label labelCompany;
         private System.Windows.Forms.Label labelCountry;
         private System.Windows.Forms.Label labelVersion;
-        private System.Windows.Forms.Label labelRegion;
         private System.Windows.Forms.Label labelGetCompany;
-        private System.Windows.Forms.Label labelGetCountry;
-        private System.Windows.Forms.Label labelGetRegion;
         private System.Windows.Forms.Label labelGetSMCHeader;
-        private System.Windows.Forms.Label labelGetVersion;
         private System.Windows.Forms.Label labelMapMode;
         private System.Windows.Forms.Label labelGetMapMode;
         private System.Windows.Forms.Label labelChksmInf;
@@ -789,7 +767,6 @@
         private System.Windows.Forms.Label labelSRAM;
         private System.Windows.Forms.Label labelGetSRAM;
         private System.Windows.Forms.Button buttonDeinterleave;
-        private System.Windows.Forms.Button buttonEdit;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemAutoFixROM;
@@ -798,6 +775,10 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.Button buttonSaveAs;
+        private System.Windows.Forms.TextBox textBoxTitle;
+        private System.Windows.Forms.TextBox textBoxVersion;
+        private System.Windows.Forms.ComboBox comboBoxCountryRegion;
+        private System.Windows.Forms.Button buttonFixROMSize;
     }
 }
 
