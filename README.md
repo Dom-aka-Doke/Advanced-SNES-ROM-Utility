@@ -1,6 +1,6 @@
 # Advanced-SNES-ROM-Utility
 
-Functions
+# Functions
 
 - Add Header: Adds an empty header
 
