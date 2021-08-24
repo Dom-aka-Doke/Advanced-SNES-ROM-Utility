@@ -1,5 +1,5 @@
 # Advanced-SNES-ROM-Utility
-This is my personal SNES ROM Utility created in spare time! Its code is neither well organized nor sematically beautiful, but seems to work pretty well :D
+
 Functions
 
 - Add Header: Adds an empty header
