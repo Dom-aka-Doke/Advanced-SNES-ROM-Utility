@@ -18,6 +18,9 @@ namespace Advanced_SNES_ROM_Utility
         // Prepare some global variables
         bool saveWithHeader;
 
+        Crc32 savedFileCRC32 = new Crc32();
+        string savedFileHash;
+
         // Create combo box for selecting country and region
         List<comboBoxCountryRegionList> listCountryRegion = new List<comboBoxCountryRegionList>();
 
@@ -45,6 +48,9 @@ namespace Advanced_SNES_ROM_Utility
 
                 // Create new ROM
                 sourceROM = new SNESROM(@selectROMDialog.FileName);
+
+                // Store CRC32 for dirty tracking
+                savedFileHash = GetCRC32FromFile(@selectROMDialog.FileName);
 
                 // Initialize combo box for country and region
                 listCountryRegion.Add(new comboBoxCountryRegionList { Id = 0, Name = "Japan | NTSC" });
@@ -321,6 +327,10 @@ namespace Advanced_SNES_ROM_Utility
                 File.WriteAllBytes(filepath, sourceROM.SourceROM);
             }
 
+            // Store CRC32 for dirty tracking
+            savedFileHash = GetCRC32FromFile(filepath);
+
+            // Show message
             MessageBox.Show(message);
         }
 
@@ -425,6 +435,21 @@ namespace Advanced_SNES_ROM_Utility
             if (!sourceROM.ByteArrayChecksum.SequenceEqual(sourceROM.ByteArrayCalcChecksum)) { buttonFixChksm.Enabled = true; } else { buttonFixChksm.Enabled = false; }
         }
 
+        private string GetCRC32FromFile(string filepath)
+        {
+            string tempFileHash = null;
+
+            using (FileStream fs = File.Open(filepath, FileMode.Open))
+            {
+                foreach (byte b in savedFileCRC32.ComputeHash(fs))
+                {
+                    tempFileHash += b.ToString("x2").ToUpper();
+                }
+            }
+
+            return tempFileHash;
+        }
+
         private void buttonHelp_Click(object sender, EventArgs e)
         {
             Form5 helpForm = new Form5();
@@ -453,6 +478,60 @@ namespace Advanced_SNES_ROM_Utility
         {
             public int Id { get; set; }
             public string Name { get; set; }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (savedFileHash != null && sourceROM.SourceROM != null)
+            {
+                // Generate actual ROM
+                byte[] trackingROM;
+
+                if (saveWithHeader)
+                {
+                    // Merge header with ROM
+                    trackingROM = new byte[sourceROM.SourceROMSMCHeader.Length + sourceROM.SourceROM.Length];
+
+                    Buffer.BlockCopy(sourceROM.SourceROMSMCHeader, 0, trackingROM, 0, sourceROM.SourceROMSMCHeader.Length);
+                    Buffer.BlockCopy(sourceROM.SourceROM, 0, trackingROM, sourceROM.SourceROMSMCHeader.Length, sourceROM.SourceROM.Length);
+                }
+
+                else
+                {
+                    trackingROM = new byte[sourceROM.SourceROM.Length];
+                    Buffer.BlockCopy(sourceROM.SourceROM, 0, trackingROM, 0, sourceROM.SourceROM.Length);
+                }
+
+                Crc32 trackingROMCRC32 = new Crc32();
+                string trackingROMHash = null;
+
+                foreach (byte singleByte in trackingROMCRC32.ComputeHash(trackingROM))
+                {
+                    trackingROMHash += singleByte.ToString("X2").ToUpper();
+                }
+
+                if (savedFileHash != trackingROMHash)
+                {
+                    DialogResult dialogResult = MessageBox.Show("Do you want to save your progress before closing?", "Attention!", MessageBoxButtons.YesNoCancel);
+
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        // Generate ROM, write to file and store copy for dirty tracking
+                        Save(sourceROM.ROMFullPath, "ROM file has successfully been saved to: " + sourceROM.ROMFullPath, saveWithHeader);
+                        e.Cancel = false;
+                    }
+
+                    else if (dialogResult == DialogResult.No)
+                    {
+                        e.Cancel = false;
+                    }
+
+                    else if (dialogResult == DialogResult.Cancel)
+                    {
+                        e.Cancel = true;
+                    }
+                }
+            }
         }
     }
 }

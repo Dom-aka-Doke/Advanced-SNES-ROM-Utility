@@ -675,6 +675,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "Advanced SNES ROM Utility v0.8";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
