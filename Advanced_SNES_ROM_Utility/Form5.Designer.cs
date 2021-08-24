@@ -38,13 +38,13 @@
             this.labelAboutFunctions.AutoSize = true;
             this.labelAboutFunctions.Location = new System.Drawing.Point(12, 9);
             this.labelAboutFunctions.Name = "labelAboutFunctions";
-            this.labelAboutFunctions.Size = new System.Drawing.Size(385, 533);
+            this.labelAboutFunctions.Size = new System.Drawing.Size(385, 442);
             this.labelAboutFunctions.TabIndex = 7;
             this.labelAboutFunctions.Text = resources.GetString("labelAboutFunctions.Text");
             // 
             // buttonManualClose
             // 
-            this.buttonManualClose.Location = new System.Drawing.Point(13, 551);
+            this.buttonManualClose.Location = new System.Drawing.Point(15, 467);
             this.buttonManualClose.Name = "buttonManualClose";
             this.buttonManualClose.Size = new System.Drawing.Size(384, 23);
             this.buttonManualClose.TabIndex = 8;
@@ -56,7 +56,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(408, 583);
+            this.ClientSize = new System.Drawing.Size(408, 499);
             this.Controls.Add(this.buttonManualClose);
             this.Controls.Add(this.labelAboutFunctions);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;

@@ -75,19 +75,14 @@
             this.labelSRAM = new System.Windows.Forms.Label();
             this.labelGetSRAM = new System.Windows.Forms.Label();
             this.buttonDeinterleave = new System.Windows.Forms.Button();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemAutoFixROM = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.manualToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonSaveAs = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.textBoxTitle = new System.Windows.Forms.TextBox();
             this.textBoxVersion = new System.Windows.Forms.TextBox();
             this.comboBoxCountryRegion = new System.Windows.Forms.ComboBox();
             this.buttonFixROMSize = new System.Windows.Forms.Button();
-            this.menuStrip1.SuspendLayout();
+            this.buttonAbout = new System.Windows.Forms.Button();
+            this.buttonHelp = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // openROMFileDialog
@@ -99,7 +94,7 @@
             // 
             // buttonSelectROM
             // 
-            this.buttonSelectROM.Location = new System.Drawing.Point(13, 29);
+            this.buttonSelectROM.Location = new System.Drawing.Point(13, 11);
             this.buttonSelectROM.Name = "buttonSelectROM";
             this.buttonSelectROM.Size = new System.Drawing.Size(430, 23);
             this.buttonSelectROM.TabIndex = 0;
@@ -110,7 +105,7 @@
             // textBoxROMName
             // 
             this.textBoxROMName.Enabled = false;
-            this.textBoxROMName.Location = new System.Drawing.Point(13, 59);
+            this.textBoxROMName.Location = new System.Drawing.Point(13, 41);
             this.textBoxROMName.Name = "textBoxROMName";
             this.textBoxROMName.Size = new System.Drawing.Size(431, 20);
             this.textBoxROMName.TabIndex = 1;
@@ -120,7 +115,7 @@
             // buttonSwapBinROM
             // 
             this.buttonSwapBinROM.Enabled = false;
-            this.buttonSwapBinROM.Location = new System.Drawing.Point(13, 514);
+            this.buttonSwapBinROM.Location = new System.Drawing.Point(13, 496);
             this.buttonSwapBinROM.Name = "buttonSwapBinROM";
             this.buttonSwapBinROM.Size = new System.Drawing.Size(255, 23);
             this.buttonSwapBinROM.TabIndex = 2;
@@ -131,7 +126,7 @@
             // labelCalcChksm
             // 
             this.labelCalcChksm.AutoSize = true;
-            this.labelCalcChksm.Location = new System.Drawing.Point(12, 322);
+            this.labelCalcChksm.Location = new System.Drawing.Point(12, 304);
             this.labelCalcChksm.Name = "labelCalcChksm";
             this.labelCalcChksm.Size = new System.Drawing.Size(57, 13);
             this.labelCalcChksm.TabIndex = 3;
@@ -140,7 +135,7 @@
             // labelGetCalcChksm
             // 
             this.labelGetCalcChksm.AutoSize = true;
-            this.labelGetCalcChksm.Location = new System.Drawing.Point(75, 322);
+            this.labelGetCalcChksm.Location = new System.Drawing.Point(75, 304);
             this.labelGetCalcChksm.Name = "labelGetCalcChksm";
             this.labelGetCalcChksm.Size = new System.Drawing.Size(77, 13);
             this.labelGetCalcChksm.TabIndex = 4;
@@ -149,7 +144,7 @@
             // labelIntChksm
             // 
             this.labelIntChksm.AutoSize = true;
-            this.labelIntChksm.Location = new System.Drawing.Point(12, 300);
+            this.labelIntChksm.Location = new System.Drawing.Point(12, 282);
             this.labelIntChksm.Name = "labelIntChksm";
             this.labelIntChksm.Size = new System.Drawing.Size(42, 13);
             this.labelIntChksm.TabIndex = 5;
@@ -158,7 +153,7 @@
             // labelGetIntChksm
             // 
             this.labelGetIntChksm.AutoSize = true;
-            this.labelGetIntChksm.Location = new System.Drawing.Point(75, 300);
+            this.labelGetIntChksm.Location = new System.Drawing.Point(75, 282);
             this.labelGetIntChksm.Name = "labelGetIntChksm";
             this.labelGetIntChksm.Size = new System.Drawing.Size(77, 13);
             this.labelGetIntChksm.TabIndex = 6;
@@ -167,7 +162,7 @@
             // labelCalcInvChksm
             // 
             this.labelCalcInvChksm.AutoSize = true;
-            this.labelCalcInvChksm.Location = new System.Drawing.Point(251, 322);
+            this.labelCalcInvChksm.Location = new System.Drawing.Point(251, 304);
             this.labelCalcInvChksm.Name = "labelCalcInvChksm";
             this.labelCalcInvChksm.Size = new System.Drawing.Size(94, 13);
             this.labelCalcInvChksm.TabIndex = 7;
@@ -176,7 +171,7 @@
             // labelGetCalcInvChksm
             // 
             this.labelGetCalcInvChksm.AutoSize = true;
-            this.labelGetCalcInvChksm.Location = new System.Drawing.Point(351, 322);
+            this.labelGetCalcInvChksm.Location = new System.Drawing.Point(351, 304);
             this.labelGetCalcInvChksm.Name = "labelGetCalcInvChksm";
             this.labelGetCalcInvChksm.Size = new System.Drawing.Size(77, 13);
             this.labelGetCalcInvChksm.TabIndex = 8;
@@ -185,7 +180,7 @@
             // labelIntInvChksm
             // 
             this.labelIntInvChksm.AutoSize = true;
-            this.labelIntInvChksm.Location = new System.Drawing.Point(251, 300);
+            this.labelIntInvChksm.Location = new System.Drawing.Point(251, 282);
             this.labelIntInvChksm.Name = "labelIntInvChksm";
             this.labelIntInvChksm.Size = new System.Drawing.Size(79, 13);
             this.labelIntInvChksm.TabIndex = 9;
@@ -194,7 +189,7 @@
             // labelGetIntInvChksm
             // 
             this.labelGetIntInvChksm.AutoSize = true;
-            this.labelGetIntInvChksm.Location = new System.Drawing.Point(351, 300);
+            this.labelGetIntInvChksm.Location = new System.Drawing.Point(351, 282);
             this.labelGetIntInvChksm.Name = "labelGetIntInvChksm";
             this.labelGetIntInvChksm.Size = new System.Drawing.Size(77, 13);
             this.labelGetIntInvChksm.TabIndex = 10;
@@ -203,7 +198,7 @@
             // labelCRC32Chksm
             // 
             this.labelCRC32Chksm.AutoSize = true;
-            this.labelCRC32Chksm.Location = new System.Drawing.Point(12, 344);
+            this.labelCRC32Chksm.Location = new System.Drawing.Point(12, 326);
             this.labelCRC32Chksm.Name = "labelCRC32Chksm";
             this.labelCRC32Chksm.Size = new System.Drawing.Size(41, 13);
             this.labelCRC32Chksm.TabIndex = 11;
@@ -212,7 +207,7 @@
             // labelGetCRC32Chksm
             // 
             this.labelGetCRC32Chksm.AutoSize = true;
-            this.labelGetCRC32Chksm.Location = new System.Drawing.Point(75, 344);
+            this.labelGetCRC32Chksm.Location = new System.Drawing.Point(75, 326);
             this.labelGetCRC32Chksm.Name = "labelGetCRC32Chksm";
             this.labelGetCRC32Chksm.Size = new System.Drawing.Size(77, 13);
             this.labelGetCRC32Chksm.TabIndex = 12;
@@ -221,7 +216,7 @@
             // labelTitle
             // 
             this.labelTitle.AutoSize = true;
-            this.labelTitle.Location = new System.Drawing.Point(10, 126);
+            this.labelTitle.Location = new System.Drawing.Point(10, 108);
             this.labelTitle.Name = "labelTitle";
             this.labelTitle.Size = new System.Drawing.Size(27, 13);
             this.labelTitle.TabIndex = 13;
@@ -230,7 +225,7 @@
             // labelSMCHeader
             // 
             this.labelSMCHeader.AutoSize = true;
-            this.labelSMCHeader.Location = new System.Drawing.Point(249, 126);
+            this.labelSMCHeader.Location = new System.Drawing.Point(249, 108);
             this.labelSMCHeader.Name = "labelSMCHeader";
             this.labelSMCHeader.Size = new System.Drawing.Size(68, 13);
             this.labelSMCHeader.TabIndex = 15;
@@ -239,7 +234,7 @@
             // labelCompany
             // 
             this.labelCompany.AutoSize = true;
-            this.labelCompany.Location = new System.Drawing.Point(10, 148);
+            this.labelCompany.Location = new System.Drawing.Point(10, 130);
             this.labelCompany.Name = "labelCompany";
             this.labelCompany.Size = new System.Drawing.Size(51, 13);
             this.labelCompany.TabIndex = 16;
@@ -248,7 +243,7 @@
             // labelCountry
             // 
             this.labelCountry.AutoSize = true;
-            this.labelCountry.Location = new System.Drawing.Point(10, 171);
+            this.labelCountry.Location = new System.Drawing.Point(10, 153);
             this.labelCountry.Name = "labelCountry";
             this.labelCountry.Size = new System.Drawing.Size(43, 13);
             this.labelCountry.TabIndex = 17;
@@ -257,7 +252,7 @@
             // labelVersion
             // 
             this.labelVersion.AutoSize = true;
-            this.labelVersion.Location = new System.Drawing.Point(10, 198);
+            this.labelVersion.Location = new System.Drawing.Point(10, 180);
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(42, 13);
             this.labelVersion.TabIndex = 18;
@@ -266,7 +261,7 @@
             // labelGetCompany
             // 
             this.labelGetCompany.AutoSize = true;
-            this.labelGetCompany.Location = new System.Drawing.Point(73, 148);
+            this.labelGetCompany.Location = new System.Drawing.Point(73, 130);
             this.labelGetCompany.Name = "labelGetCompany";
             this.labelGetCompany.Size = new System.Drawing.Size(77, 13);
             this.labelGetCompany.TabIndex = 20;
@@ -275,7 +270,7 @@
             // labelGetSMCHeader
             // 
             this.labelGetSMCHeader.AutoSize = true;
-            this.labelGetSMCHeader.Location = new System.Drawing.Point(349, 126);
+            this.labelGetSMCHeader.Location = new System.Drawing.Point(349, 108);
             this.labelGetSMCHeader.Name = "labelGetSMCHeader";
             this.labelGetSMCHeader.Size = new System.Drawing.Size(77, 13);
             this.labelGetSMCHeader.TabIndex = 23;
@@ -284,7 +279,7 @@
             // labelMapMode
             // 
             this.labelMapMode.AutoSize = true;
-            this.labelMapMode.Location = new System.Drawing.Point(249, 149);
+            this.labelMapMode.Location = new System.Drawing.Point(249, 131);
             this.labelMapMode.Name = "labelMapMode";
             this.labelMapMode.Size = new System.Drawing.Size(58, 13);
             this.labelMapMode.TabIndex = 25;
@@ -293,7 +288,7 @@
             // labelGetMapMode
             // 
             this.labelGetMapMode.AutoSize = true;
-            this.labelGetMapMode.Location = new System.Drawing.Point(349, 149);
+            this.labelGetMapMode.Location = new System.Drawing.Point(349, 131);
             this.labelGetMapMode.Name = "labelGetMapMode";
             this.labelGetMapMode.Size = new System.Drawing.Size(77, 13);
             this.labelGetMapMode.TabIndex = 26;
@@ -303,7 +298,7 @@
             // 
             this.labelChksmInf.AutoSize = true;
             this.labelChksmInf.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelChksmInf.Location = new System.Drawing.Point(12, 271);
+            this.labelChksmInf.Location = new System.Drawing.Point(12, 253);
             this.labelChksmInf.Name = "labelChksmInf";
             this.labelChksmInf.Size = new System.Drawing.Size(74, 13);
             this.labelChksmInf.TabIndex = 27;
@@ -313,7 +308,7 @@
             // 
             this.labelGeneralInfo.AutoSize = true;
             this.labelGeneralInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelGeneralInfo.Location = new System.Drawing.Point(10, 97);
+            this.labelGeneralInfo.Location = new System.Drawing.Point(10, 79);
             this.labelGeneralInfo.Name = "labelGeneralInfo";
             this.labelGeneralInfo.Size = new System.Drawing.Size(136, 13);
             this.labelGeneralInfo.TabIndex = 28;
@@ -323,7 +318,7 @@
             // 
             this.labelFunctions.AutoSize = true;
             this.labelFunctions.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelFunctions.Location = new System.Drawing.Point(10, 372);
+            this.labelFunctions.Location = new System.Drawing.Point(10, 354);
             this.labelFunctions.Name = "labelFunctions";
             this.labelFunctions.Size = new System.Drawing.Size(69, 13);
             this.labelFunctions.TabIndex = 29;
@@ -332,7 +327,7 @@
             // buttonRemoveHeader
             // 
             this.buttonRemoveHeader.Enabled = false;
-            this.buttonRemoveHeader.Location = new System.Drawing.Point(278, 395);
+            this.buttonRemoveHeader.Location = new System.Drawing.Point(278, 377);
             this.buttonRemoveHeader.Name = "buttonRemoveHeader";
             this.buttonRemoveHeader.Size = new System.Drawing.Size(255, 23);
             this.buttonRemoveHeader.TabIndex = 30;
@@ -343,7 +338,7 @@
             // buttonAddHeader
             // 
             this.buttonAddHeader.Enabled = false;
-            this.buttonAddHeader.Location = new System.Drawing.Point(13, 395);
+            this.buttonAddHeader.Location = new System.Drawing.Point(13, 377);
             this.buttonAddHeader.Name = "buttonAddHeader";
             this.buttonAddHeader.Size = new System.Drawing.Size(255, 23);
             this.buttonAddHeader.TabIndex = 31;
@@ -354,7 +349,7 @@
             // labelROMSize
             // 
             this.labelROMSize.AutoSize = true;
-            this.labelROMSize.Location = new System.Drawing.Point(249, 193);
+            this.labelROMSize.Location = new System.Drawing.Point(249, 175);
             this.labelROMSize.Name = "labelROMSize";
             this.labelROMSize.Size = new System.Drawing.Size(55, 13);
             this.labelROMSize.TabIndex = 32;
@@ -363,7 +358,7 @@
             // labelGetROMSize
             // 
             this.labelGetROMSize.AutoSize = true;
-            this.labelGetROMSize.Location = new System.Drawing.Point(349, 193);
+            this.labelGetROMSize.Location = new System.Drawing.Point(349, 175);
             this.labelGetROMSize.Name = "labelGetROMSize";
             this.labelGetROMSize.Size = new System.Drawing.Size(77, 13);
             this.labelGetROMSize.TabIndex = 33;
@@ -372,7 +367,7 @@
             // labelROMType
             // 
             this.labelROMType.AutoSize = true;
-            this.labelROMType.Location = new System.Drawing.Point(249, 171);
+            this.labelROMType.Location = new System.Drawing.Point(249, 153);
             this.labelROMType.Name = "labelROMType";
             this.labelROMType.Size = new System.Drawing.Size(59, 13);
             this.labelROMType.TabIndex = 34;
@@ -381,7 +376,7 @@
             // labelGetROMType
             // 
             this.labelGetROMType.AutoSize = true;
-            this.labelGetROMType.Location = new System.Drawing.Point(349, 171);
+            this.labelGetROMType.Location = new System.Drawing.Point(349, 153);
             this.labelGetROMType.Name = "labelGetROMType";
             this.labelGetROMType.Size = new System.Drawing.Size(77, 13);
             this.labelGetROMType.TabIndex = 35;
@@ -390,7 +385,7 @@
             // labelFileSize
             // 
             this.labelFileSize.AutoSize = true;
-            this.labelFileSize.Location = new System.Drawing.Point(249, 215);
+            this.labelFileSize.Location = new System.Drawing.Point(249, 197);
             this.labelFileSize.Name = "labelFileSize";
             this.labelFileSize.Size = new System.Drawing.Size(46, 13);
             this.labelFileSize.TabIndex = 36;
@@ -399,7 +394,7 @@
             // labelGetFileSize
             // 
             this.labelGetFileSize.AutoSize = true;
-            this.labelGetFileSize.Location = new System.Drawing.Point(349, 215);
+            this.labelGetFileSize.Location = new System.Drawing.Point(349, 197);
             this.labelGetFileSize.Name = "labelGetFileSize";
             this.labelGetFileSize.Size = new System.Drawing.Size(77, 13);
             this.labelGetFileSize.TabIndex = 37;
@@ -409,7 +404,7 @@
             // 
             this.labelROMInfo.AutoSize = true;
             this.labelROMInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelROMInfo.Location = new System.Drawing.Point(249, 97);
+            this.labelROMInfo.Location = new System.Drawing.Point(249, 79);
             this.labelROMInfo.Name = "labelROMInfo";
             this.labelROMInfo.Size = new System.Drawing.Size(110, 13);
             this.labelROMInfo.TabIndex = 38;
@@ -418,7 +413,7 @@
             // labelROMSpeed
             // 
             this.labelROMSpeed.AutoSize = true;
-            this.labelROMSpeed.Location = new System.Drawing.Point(249, 237);
+            this.labelROMSpeed.Location = new System.Drawing.Point(249, 219);
             this.labelROMSpeed.Name = "labelROMSpeed";
             this.labelROMSpeed.Size = new System.Drawing.Size(66, 13);
             this.labelROMSpeed.TabIndex = 39;
@@ -427,7 +422,7 @@
             // labelGetROMSpeed
             // 
             this.labelGetROMSpeed.AutoSize = true;
-            this.labelGetROMSpeed.Location = new System.Drawing.Point(349, 237);
+            this.labelGetROMSpeed.Location = new System.Drawing.Point(349, 219);
             this.labelGetROMSpeed.Name = "labelGetROMSpeed";
             this.labelGetROMSpeed.Size = new System.Drawing.Size(77, 13);
             this.labelGetROMSpeed.TabIndex = 40;
@@ -436,7 +431,7 @@
             // buttonSplitROM
             // 
             this.buttonSplitROM.Enabled = false;
-            this.buttonSplitROM.Location = new System.Drawing.Point(13, 485);
+            this.buttonSplitROM.Location = new System.Drawing.Point(13, 467);
             this.buttonSplitROM.Name = "buttonSplitROM";
             this.buttonSplitROM.Size = new System.Drawing.Size(348, 23);
             this.buttonSplitROM.TabIndex = 41;
@@ -448,7 +443,7 @@
             // 
             this.comboBoxSplitROM.Enabled = false;
             this.comboBoxSplitROM.FormattingEnabled = true;
-            this.comboBoxSplitROM.Location = new System.Drawing.Point(371, 485);
+            this.comboBoxSplitROM.Location = new System.Drawing.Point(371, 467);
             this.comboBoxSplitROM.Name = "comboBoxSplitROM";
             this.comboBoxSplitROM.Size = new System.Drawing.Size(162, 21);
             this.comboBoxSplitROM.TabIndex = 42;
@@ -456,7 +451,7 @@
             // buttonExpandROM
             // 
             this.buttonExpandROM.Enabled = false;
-            this.buttonExpandROM.Location = new System.Drawing.Point(13, 454);
+            this.buttonExpandROM.Location = new System.Drawing.Point(13, 436);
             this.buttonExpandROM.Name = "buttonExpandROM";
             this.buttonExpandROM.Size = new System.Drawing.Size(348, 23);
             this.buttonExpandROM.TabIndex = 43;
@@ -468,7 +463,7 @@
             // 
             this.comboBoxExpandROM.Enabled = false;
             this.comboBoxExpandROM.FormattingEnabled = true;
-            this.comboBoxExpandROM.Location = new System.Drawing.Point(371, 454);
+            this.comboBoxExpandROM.Location = new System.Drawing.Point(371, 436);
             this.comboBoxExpandROM.Name = "comboBoxExpandROM";
             this.comboBoxExpandROM.Size = new System.Drawing.Size(162, 21);
             this.comboBoxExpandROM.TabIndex = 44;
@@ -476,7 +471,7 @@
             // buttonFixChksm
             // 
             this.buttonFixChksm.Enabled = false;
-            this.buttonFixChksm.Location = new System.Drawing.Point(13, 424);
+            this.buttonFixChksm.Location = new System.Drawing.Point(13, 406);
             this.buttonFixChksm.Name = "buttonFixChksm";
             this.buttonFixChksm.Size = new System.Drawing.Size(255, 23);
             this.buttonFixChksm.TabIndex = 45;
@@ -487,7 +482,7 @@
             // buttonFixRegion
             // 
             this.buttonFixRegion.Enabled = false;
-            this.buttonFixRegion.Location = new System.Drawing.Point(13, 543);
+            this.buttonFixRegion.Location = new System.Drawing.Point(13, 525);
             this.buttonFixRegion.Name = "buttonFixRegion";
             this.buttonFixRegion.Size = new System.Drawing.Size(520, 23);
             this.buttonFixRegion.TabIndex = 46;
@@ -498,7 +493,7 @@
             // labelSRAM
             // 
             this.labelSRAM.AutoSize = true;
-            this.labelSRAM.Location = new System.Drawing.Point(249, 260);
+            this.labelSRAM.Location = new System.Drawing.Point(249, 242);
             this.labelSRAM.Name = "labelSRAM";
             this.labelSRAM.Size = new System.Drawing.Size(44, 13);
             this.labelSRAM.TabIndex = 47;
@@ -507,7 +502,7 @@
             // labelGetSRAM
             // 
             this.labelGetSRAM.AutoSize = true;
-            this.labelGetSRAM.Location = new System.Drawing.Point(349, 260);
+            this.labelGetSRAM.Location = new System.Drawing.Point(349, 242);
             this.labelGetSRAM.Name = "labelGetSRAM";
             this.labelGetSRAM.Size = new System.Drawing.Size(77, 13);
             this.labelGetSRAM.TabIndex = 48;
@@ -516,7 +511,7 @@
             // buttonDeinterleave
             // 
             this.buttonDeinterleave.Enabled = false;
-            this.buttonDeinterleave.Location = new System.Drawing.Point(278, 514);
+            this.buttonDeinterleave.Location = new System.Drawing.Point(278, 496);
             this.buttonDeinterleave.Name = "buttonDeinterleave";
             this.buttonDeinterleave.Size = new System.Drawing.Size(255, 23);
             this.buttonDeinterleave.TabIndex = 49;
@@ -524,64 +519,12 @@
             this.buttonDeinterleave.UseVisualStyleBackColor = true;
             this.buttonDeinterleave.Click += new System.EventHandler(this.buttonDeinterleave_Click);
             // 
-            // menuStrip1
-            // 
-            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.optionsToolStripMenuItem,
-            this.helpToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(541, 24);
-            this.menuStrip1.TabIndex = 52;
-            this.menuStrip1.Text = "menuStrip1";
-            // 
-            // optionsToolStripMenuItem
-            // 
-            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemAutoFixROM});
-            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.optionsToolStripMenuItem.Text = "Options";
-            // 
-            // toolStripMenuItemAutoFixROM
-            // 
-            this.toolStripMenuItemAutoFixROM.CheckOnClick = true;
-            this.toolStripMenuItemAutoFixROM.Name = "toolStripMenuItemAutoFixROM";
-            this.toolStripMenuItemAutoFixROM.Size = new System.Drawing.Size(166, 22);
-            this.toolStripMenuItemAutoFixROM.Text = "Auto fix Rom size";
-            this.toolStripMenuItemAutoFixROM.Click += new System.EventHandler(this.toolStripMenuItemAutoFixROM_Click);
-            // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.manualToolStripMenuItem,
-            this.aboutToolStripMenuItem});
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.helpToolStripMenuItem.Text = "Help";
-            // 
-            // manualToolStripMenuItem
-            // 
-            this.manualToolStripMenuItem.Name = "manualToolStripMenuItem";
-            this.manualToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
-            this.manualToolStripMenuItem.Text = "Manual";
-            this.manualToolStripMenuItem.Click += new System.EventHandler(this.manualToolStripMenuItem_Click);
-            // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
-            this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
             // buttonSaveAs
             // 
             this.buttonSaveAs.Enabled = false;
             this.buttonSaveAs.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.save_as_icon;
             this.buttonSaveAs.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSaveAs.Location = new System.Drawing.Point(448, 57);
+            this.buttonSaveAs.Location = new System.Drawing.Point(448, 39);
             this.buttonSaveAs.Margin = new System.Windows.Forms.Padding(2);
             this.buttonSaveAs.Name = "buttonSaveAs";
             this.buttonSaveAs.Size = new System.Drawing.Size(80, 23);
@@ -596,7 +539,7 @@
             this.buttonSave.Enabled = false;
             this.buttonSave.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.save_icon;
             this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSave.Location = new System.Drawing.Point(448, 29);
+            this.buttonSave.Location = new System.Drawing.Point(448, 11);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(2);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(80, 23);
@@ -609,7 +552,7 @@
             // textBoxTitle
             // 
             this.textBoxTitle.Enabled = false;
-            this.textBoxTitle.Location = new System.Drawing.Point(76, 123);
+            this.textBoxTitle.Location = new System.Drawing.Point(76, 105);
             this.textBoxTitle.MaxLength = 21;
             this.textBoxTitle.Name = "textBoxTitle";
             this.textBoxTitle.Size = new System.Drawing.Size(167, 20);
@@ -619,7 +562,7 @@
             // textBoxVersion
             // 
             this.textBoxVersion.Enabled = false;
-            this.textBoxVersion.Location = new System.Drawing.Point(76, 195);
+            this.textBoxVersion.Location = new System.Drawing.Point(76, 177);
             this.textBoxVersion.MaxLength = 5;
             this.textBoxVersion.Name = "textBoxVersion";
             this.textBoxVersion.Size = new System.Drawing.Size(45, 20);
@@ -632,7 +575,7 @@
             this.comboBoxCountryRegion.Enabled = false;
             this.comboBoxCountryRegion.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.comboBoxCountryRegion.FormattingEnabled = true;
-            this.comboBoxCountryRegion.Location = new System.Drawing.Point(76, 168);
+            this.comboBoxCountryRegion.Location = new System.Drawing.Point(76, 150);
             this.comboBoxCountryRegion.Name = "comboBoxCountryRegion";
             this.comboBoxCountryRegion.Size = new System.Drawing.Size(167, 21);
             this.comboBoxCountryRegion.TabIndex = 57;
@@ -641,7 +584,7 @@
             // buttonFixROMSize
             // 
             this.buttonFixROMSize.Enabled = false;
-            this.buttonFixROMSize.Location = new System.Drawing.Point(278, 424);
+            this.buttonFixROMSize.Location = new System.Drawing.Point(278, 406);
             this.buttonFixROMSize.Name = "buttonFixROMSize";
             this.buttonFixROMSize.Size = new System.Drawing.Size(255, 23);
             this.buttonFixROMSize.TabIndex = 58;
@@ -649,11 +592,33 @@
             this.buttonFixROMSize.UseVisualStyleBackColor = true;
             this.buttonFixROMSize.Click += new System.EventHandler(this.buttonFixROMSize_Click);
             // 
+            // buttonAbout
+            // 
+            this.buttonAbout.Location = new System.Drawing.Point(408, 348);
+            this.buttonAbout.Name = "buttonAbout";
+            this.buttonAbout.Size = new System.Drawing.Size(125, 23);
+            this.buttonAbout.TabIndex = 59;
+            this.buttonAbout.Text = "About";
+            this.buttonAbout.UseVisualStyleBackColor = true;
+            this.buttonAbout.Click += new System.EventHandler(this.buttonAbout_Click);
+            // 
+            // buttonHelp
+            // 
+            this.buttonHelp.Location = new System.Drawing.Point(278, 348);
+            this.buttonHelp.Name = "buttonHelp";
+            this.buttonHelp.Size = new System.Drawing.Size(125, 23);
+            this.buttonHelp.TabIndex = 60;
+            this.buttonHelp.Text = "Help";
+            this.buttonHelp.UseVisualStyleBackColor = true;
+            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(541, 574);
+            this.ClientSize = new System.Drawing.Size(541, 558);
+            this.Controls.Add(this.buttonHelp);
+            this.Controls.Add(this.buttonAbout);
             this.Controls.Add(this.buttonFixROMSize);
             this.Controls.Add(this.comboBoxCountryRegion);
             this.Controls.Add(this.textBoxVersion);
@@ -705,15 +670,11 @@
             this.Controls.Add(this.buttonSwapBinROM);
             this.Controls.Add(this.textBoxROMName);
             this.Controls.Add(this.buttonSelectROM);
-            this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "Advanced SNES ROM Utility v0.8";
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -767,18 +728,14 @@
         private System.Windows.Forms.Label labelSRAM;
         private System.Windows.Forms.Label labelGetSRAM;
         private System.Windows.Forms.Button buttonDeinterleave;
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemAutoFixROM;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem manualToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.Button buttonSaveAs;
         private System.Windows.Forms.TextBox textBoxTitle;
         private System.Windows.Forms.TextBox textBoxVersion;
         private System.Windows.Forms.ComboBox comboBoxCountryRegion;
         private System.Windows.Forms.Button buttonFixROMSize;
+        private System.Windows.Forms.Button buttonAbout;
+        private System.Windows.Forms.Button buttonHelp;
     }
 }
 

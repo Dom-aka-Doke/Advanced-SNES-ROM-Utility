@@ -13,13 +13,9 @@ namespace Advanced_SNES_ROM_Utility
         public Form1()
         {
             InitializeComponent();
-
-            // Get the right settings for option menu
-            if (Properties.Settings.Default.AutoFixIntROMSize) { toolStripMenuItemAutoFixROM.Checked = true; } else { toolStripMenuItemAutoFixROM.Checked = false; }
         }
 
         // Prepare some global variables
-        bool autoFixROMSize = Properties.Settings.Default.AutoFixIntROMSize;
         bool saveWithHeader;
 
         // Create combo box for selecting country and region
@@ -151,14 +147,6 @@ namespace Advanced_SNES_ROM_Utility
 
                 // Load values into labels and enable / disable buttons
                 RefreshLabelsAndButtons();
-
-                // If option auto fix ROM size is enabled
-                if (autoFixROMSize && (sourceROM.IntROMSize < sourceROM.IntCalcFileSize) && !sourceROM.IsBSROM)
-                {
-                    buttonFixROMSize.PerformClick();
-                    sourceROM.Initialize();
-                    RefreshLabelsAndButtons();
-                }
             }
         }
 
@@ -437,42 +425,16 @@ namespace Advanced_SNES_ROM_Utility
             if (!sourceROM.ByteArrayChecksum.SequenceEqual(sourceROM.ByteArrayCalcChecksum)) { buttonFixChksm.Enabled = true; } else { buttonFixChksm.Enabled = false; }
         }
 
-        private void toolStripMenuItemAutoFixROM_Click(object sender, EventArgs e)
+        private void buttonHelp_Click(object sender, EventArgs e)
         {
-            // Change to false
-            if (autoFixROMSize == true)
-            {
-                autoFixROMSize = false;
-                toolStripMenuItemAutoFixROM.Checked = false;
-
-                // Save in settings
-                Properties.Settings.Default.AutoFixIntROMSize = false;
-            }
-
-            // Change to true
-            else if (autoFixROMSize == false)
-            {
-                autoFixROMSize = true;
-                toolStripMenuItemAutoFixROM.Checked = true;
-
-                // Save in settings
-                Properties.Settings.Default.AutoFixIntROMSize = true;
-            }
-
-            // Save settings
-            Properties.Settings.Default.Save();
+            Form5 helpForm = new Form5();
+            helpForm.Show();
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void buttonAbout_Click(object sender, EventArgs e)
         {
-            Form4 openAboutBox = new Form4();
-            openAboutBox.Show();
-        }
-
-        private void manualToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form5 openManualBox = new Form5();
-            openManualBox.Show();
+            Form4 aboutForm = new Form4();
+            aboutForm.Show();
         }
 
         class comboBoxExpandROMList

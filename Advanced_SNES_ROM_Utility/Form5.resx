@@ -151,14 +151,7 @@
                             running on systems with another region (PAL/NTSC lock).
                             Use this function to remove most known region locks.
 
-Options:
-======
-- Auto fix ROM size: If enabled, it automatically fixes a wrong internal ROM
-                                size on any further action. Disables 'Fix internal ROM size'
-                                function under 'Edit/Fix header information'. If you only
-                                want to fix internal ROM size, it should be disabled.
-                                Recommended for fixing some ROM hacks' checksum and
-                                ROM size in only one step!</value>
+- Fix ROM size: Fixes a wrong internal ROM size.</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
