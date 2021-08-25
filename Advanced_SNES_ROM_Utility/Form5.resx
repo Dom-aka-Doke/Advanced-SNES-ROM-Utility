@@ -118,14 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="labelAboutFunctions.Text" xml:space="preserve">
-    <value>Functions:
-========
-- Add Header: Adds an empty header
+    <value>- Add Header: Adds an empty header
 
 - Remove Header: Removes an existing header
 
-- Edit/Fix ROM Information: Change title, country/region, version and fix
-                                            wrong internal ROM size
+- Edit ROM Information: Change title, country / region and version
 
 - SwapBin ROM: Swaps binaries to get a "Close-to-SNES-Mask-ROM"-layout
                             Use 27C801 EPROM(s) and rewire pins as followed:

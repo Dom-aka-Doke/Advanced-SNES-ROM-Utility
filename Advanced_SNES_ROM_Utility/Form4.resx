@@ -118,19 +118,17 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="labelAboutLicense.Text" xml:space="preserve">
-    <value>             This software was developed as freeware and is provided AS IS!
-     The author is not responsible for any damages caused by using this software.
-                          Feel free to share and use it in a non profit way!
-                                                                                        - ©2021 by Dom aka Doke</value>
-  </data>
-  <data name="labelAboutSpeicalThanks.Text" xml:space="preserve">
-    <value>Thanks/credits go out to:
-====================
-- Ice Man for testing, reporting bugs and providing ideas
-- RedScorpion for running the most awesome community on earth
-- All the other people who helped improving this software and like to use it
+    <value>This program is not endorsed or supported by Nintendo
+and the author is not affiliated with any other corporate
+entity.
+This program is freeware and provided „AS IS“…
+The author cannot be held liable for damages of any kind
+arising from ist use or presence.
 
-YOU ARE GREAT!!! THANKS!!!</value>
+Version 0.81
+Public Build --- Aug 25 2021
+©2021 Dom aka Doke
+https://github.com/Dom-aka-Doke</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
