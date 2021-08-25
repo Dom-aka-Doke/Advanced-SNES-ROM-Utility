@@ -441,7 +441,9 @@
             // 
             // comboBoxSplitROM
             // 
+            this.comboBoxSplitROM.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxSplitROM.Enabled = false;
+            this.comboBoxSplitROM.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.comboBoxSplitROM.FormattingEnabled = true;
             this.comboBoxSplitROM.Location = new System.Drawing.Point(371, 467);
             this.comboBoxSplitROM.Name = "comboBoxSplitROM";
@@ -461,7 +463,9 @@
             // 
             // comboBoxExpandROM
             // 
+            this.comboBoxExpandROM.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxExpandROM.Enabled = false;
+            this.comboBoxExpandROM.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.comboBoxExpandROM.FormattingEnabled = true;
             this.comboBoxExpandROM.Location = new System.Drawing.Point(371, 436);
             this.comboBoxExpandROM.Name = "comboBoxExpandROM";
