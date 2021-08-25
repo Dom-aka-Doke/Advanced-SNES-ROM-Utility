@@ -127,9 +127,9 @@
 - SwapBin ROM: Swaps binaries to get a "Close-to-SNES-Mask-ROM"-layout
                             Use 27C801 EPROM(s) and rewire pins as followed:
 
-                            27C801 -&gt; Nintendo Mask ROM
-                                24     -&gt;     31
-                                31     -&gt;     24
+                                   27C801 -&gt; Nintendo Mask ROM
+                                       24     -&gt;     31
+                                       31     -&gt;     24
 
 - Expand ROM: Expands ROM to a specific EPROM size for burning
 
@@ -144,11 +144,11 @@
                           using other functionalities. Please note that some beta or demo
                           ROMs have an odd checksum anyway.
 
+- Fix ROM size: Fixes a wrong internal ROM size.
+
 - Region Unlock: Some games have a copy protection preventing the ROM from
                             running on systems with another region (PAL/NTSC lock).
-                            Use this function to remove most known region locks.
-
-- Fix ROM size: Fixes a wrong internal ROM size.</value>
+                            Use this function to remove most known region locks.</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
