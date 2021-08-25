@@ -56,7 +56,109 @@ namespace Advanced_SNES_ROM_Utility
             Initialize();
         }
 
-        public void SwapBin(byte[] sourceROM, string romSavePath, string romName)
+        public void FixInternalROMSize()
+        {
+            if ((IntROMSize < IntCalcFileSize) && !IsBSROM)
+            {
+                IntROMSize = 1;
+
+                while (IntROMSize < IntCalcFileSize)
+                {
+                    IntROMSize *= 2;
+                }
+
+                byte byteROMSizeValue = Convert.ToByte(IntROMSize);
+                byte[] byteArrayROMSizeValue = new byte[1];
+                byteArrayROMSizeValue[0] = byteROMSizeValue;
+
+                switch (byteArrayROMSizeValue[0])
+                {
+                    case 0x01: byteArrayROMSizeValue[0] = 0x07; break;
+                    case 0x02: byteArrayROMSizeValue[0] = 0x08; break;
+                    case 0x04: byteArrayROMSizeValue[0] = 0x09; break;
+                    case 0x08: byteArrayROMSizeValue[0] = 0x0A; break;
+                    case 0x10: byteArrayROMSizeValue[0] = 0x0B; break;
+                    case 0x20: byteArrayROMSizeValue[0] = 0x0C; break;
+                    case 0x40: byteArrayROMSizeValue[0] = 0x0D; break;
+                }
+
+                Buffer.BlockCopy(byteArrayROMSizeValue, 0, SourceROM, (int)UIntROMHeaderOffset + 0x27, 1);
+
+                Initialize();
+            }
+        }
+
+        public void SetTitle(string newTitle)
+        {
+            Encoding newEncodedTitle = Encoding.GetEncoding(932);
+            byte[] newByteTitleTemp = newEncodedTitle.GetBytes(newTitle);
+
+            byte[] byteArrayTitle = new byte[21] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+            if (IsBSROM) { byteArrayTitle = new byte[16] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 }; }
+
+            int newByteTitleTempLenght = newByteTitleTemp.Length;
+
+            if (newByteTitleTemp.Length > byteArrayTitle.Length) { newByteTitleTempLenght = byteArrayTitle.Length; }
+
+            Buffer.BlockCopy(newByteTitleTemp, 0, byteArrayTitle, 0, newByteTitleTempLenght);
+
+            Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)UIntROMHeaderOffset + 0x10, byteArrayTitle.Length);
+
+            Initialize();
+        }
+
+        public void SetVersion(byte newVersion)
+        {
+            byte[] byteArrayVersion = { newVersion };
+            Buffer.BlockCopy(byteArrayVersion, 0, SourceROM, (int)UIntROMHeaderOffset + 0x2B, 1);
+
+            Initialize();
+        }
+
+        public void SetCountryRegion(byte newCountryRegion)
+        {
+            byte[] byteArrayCountryRegion = { newCountryRegion };
+            Buffer.BlockCopy(byteArrayCountryRegion, 0, SourceROM, (int)UIntROMHeaderOffset + 0x29, 1);
+
+            Initialize();
+        }
+
+        public void SwapBin()
+        {
+            // Check if ROM is multiple of 8 MBit, otherwise swapping is not possible
+            if (SourceROM.Length % 1048576 == 0)
+            {
+                int romChunks = SourceROM.Length / 1048576;
+
+                if (romChunks > 1)
+                {
+                    // Define size for single ROM file (8 Mbit)
+                    int chunkSize = 1048576;
+
+                    for (int index = 0; index < romChunks; index++)
+                    {
+                        string romChunkName = ROMName + "_[" + index + "]";
+                        byte[] sourceROMChunk = new byte[chunkSize];
+
+                        Buffer.BlockCopy(SourceROM, index * chunkSize, sourceROMChunk, 0, chunkSize);
+
+                        SwapBinChunk(sourceROMChunk, romChunkName);
+                    }
+                }
+
+                else
+                {
+                    SwapBinChunk(SourceROM, ROMName);
+                }
+            }
+
+            else
+            {
+                return;
+            }
+        }
+
+        private void SwapBinChunk(byte[] sourceROM, string romName)
         {
             // Make a copy of the ROM for swapping
             byte[] swappedSourceROM = new byte[sourceROM.Length];
@@ -79,8 +181,7 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             // Save swapped file
-            File.WriteAllBytes(@romSavePath + @"\" + romName + "_[swapped]" + ".bin", swappedSourceROM);
-            MessageBox.Show("File successfully swapped!\n\nFile saved to: '" + @romSavePath + @"\" + romName + "_[swapped]" + ".bin'\n\nIn case there was a header, it has been removed!");
+            File.WriteAllBytes(ROMFolder + @"\" + romName + "_[swapped]" + ".bin", swappedSourceROM);
         }
 
         public void Deinterlave()

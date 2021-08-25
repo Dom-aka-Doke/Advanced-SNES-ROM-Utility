@@ -446,13 +446,13 @@ namespace Advanced_SNES_ROM_Utility
             ByteROMType = type[0];
 
             string[] falseDSP1Games = { "Ballz                ",    // Games that are detected as DSP-4 but actually are DSP-1
-                                            "Lock On              ",
-                                            "INDY CAR CHALLENGE   ",
-                                            "SUPER AIR DIVER      ",
-                                            "SUPER AIRDIVER2      ",
-                                            "SUZUKA 8Hours        ",
-                                            "ｴｰｽｦﾈﾗｴ!             ",    // Ace o Nerae!
-                                            "ｿｳｺｳｷﾍｲ ﾎﾞﾄﾑｽﾞ       " };  // Soukou Kihei Votoms - The Battling Road
+                                        "Lock On              ",
+                                        "INDY CAR CHALLENGE   ",
+                                        "SUPER AIR DIVER      ",
+                                        "SUPER AIRDIVER2      ",
+                                        "SUZUKA 8Hours        ",
+                                        "ｴｰｽｦﾈﾗｴ!             ",    // Ace o Nerae!
+                                        "ｿｳｺｳｷﾍｲ ﾎﾞﾄﾑｽﾞ       " };  // Soukou Kihei Votoms - The Battling Road
 
             string[] falseGSU2Games = { "STARFOX2             " };  // Games that are detected as GSU-1 but actually are GSU-2
 
