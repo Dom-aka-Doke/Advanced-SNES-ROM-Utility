@@ -84,8 +84,8 @@ namespace Advanced_SNES_ROM_Utility
             GetSMCHeader();
             GetROMHeader();
             GetTitle();
-            GetROMType();
             GetMapMode();
+            GetROMType();
             GetROMSpeed();
             GetROMSize();
             CheckIsNewHeader();
@@ -93,9 +93,9 @@ namespace Advanced_SNES_ROM_Utility
             GetExRAMSize();
             GetCountry();
             GetCompany();
+            GetVersion();
             GetChecksum();
             GetInverseChecksum();
-            GetVersion();
             CalculateFileSize();
             CalculateChecksum();
             CalculateInverseChecksum();
