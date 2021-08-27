@@ -85,14 +85,14 @@ namespace Advanced_SNES_ROM_Utility
             GetROMHeader();
             GetTitle();
             GetMapMode();
-            GetROMType();
             GetROMSpeed();
+            GetCompany();
             GetROMSize();
+            GetROMType();
             CheckIsNewHeader();
             GetSRAMSize();
             GetExRAMSize();
             GetCountry();
-            GetCompany();
             GetVersion();
             GetChecksum();
             GetInverseChecksum();
@@ -463,7 +463,7 @@ namespace Advanced_SNES_ROM_Utility
                 case 0x02: StringROMType = "ROM+RAM+Battery"; break;
                 case 0x03: if (ByteROMSpeed == 0x30 && !falseDSP1Games.Contains(StringTitle)) { StringROMType = "ROM+DSP4"; } else { StringROMType = "ROM+DSP1"; }; break;
                 case 0x04: StringROMType = "ROM+DSP1+RAM"; break;
-                case 0x05: if (ByteROMSpeed == 0x20) { StringROMType = "ROM+DSP2+RAM+Battery"; } else if (ByteROMSpeed == 0x30 && IntCompany.Equals("0x018E")) { StringROMType = "ROM+DSP3+RAM+Battery"; } else { StringROMType = "ROM+DSP1+RAM+Battery"; }; break;
+                case 0x05: if (ByteROMSpeed == 0x20) { StringROMType = "ROM+DSP2+RAM+Battery"; } else if (ByteROMSpeed == 0x30 && IntCompany == 0x018E) { StringROMType = "ROM+DSP3+RAM+Battery"; } else { StringROMType = "ROM+DSP1+RAM+Battery"; }; break;
                 case 0x10: if (IsBSROM) { StringROMType = "BS-X+FLASH"; }; break;
                 case 0x13: StringROMType = "ROM+MarioChip1+RAM"; break;
                 case 0x14: StringROMType = "ROM+GSU1+RAM"; if (ByteROMSize > 0x0A) { StringROMType = "ROM+GSU2+RAM"; }; break;
