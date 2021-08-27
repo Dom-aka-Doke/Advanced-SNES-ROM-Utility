@@ -148,7 +148,8 @@ namespace Advanced_SNES_ROM_Utility
 
                 // Enable / disable text and combo boxes
                 if (!textBoxTitle.Enabled) { textBoxTitle.Enabled = true; }
-                if (sourceROM.IsBSROM) { textBoxTitle.MaxLength = 16; comboBoxCountryRegion.Enabled = false; } else { textBoxTitle.MaxLength = 21; comboBoxCountryRegion.Enabled = true; }
+                if (sourceROM.IsBSROM) { comboBoxCountryRegion.Enabled = false; } else { comboBoxCountryRegion.Enabled = true; }
+                textBoxTitle.MaxLength = sourceROM.StringTitle.Length;
                 if (!textBoxVersion.Enabled) { textBoxVersion.Enabled = true; }
 
                 // Load values into labels and enable / disable buttons
@@ -288,9 +289,9 @@ namespace Advanced_SNES_ROM_Utility
 
         private void textBoxGetTitle_TextChanged(object sender, EventArgs e)
         {
-            if (sourceROM.StringTitle != textBoxTitle.Text)
+            if (!sourceROM.StringTitle.Trim().Equals(textBoxTitle.Text.Trim()))
             {
-                sourceROM.SetTitle(textBoxTitle.Text);
+                sourceROM.SetTitle(textBoxTitle.Text, textBoxTitle.MaxLength);
                 RefreshLabelsAndButtons();
             }
         }
@@ -340,7 +341,7 @@ namespace Advanced_SNES_ROM_Utility
         {
             // Set text boxes
             textBoxROMName.Text = sourceROM.ROMFullPath;
-            textBoxTitle.Text = sourceROM.StringTitle;
+            textBoxTitle.Text = sourceROM.StringTitle.Trim();
             textBoxVersion.Text = sourceROM.StringVersion;
 
             // Set labels

@@ -88,19 +88,23 @@ namespace Advanced_SNES_ROM_Utility
             }
         }
 
-        public void SetTitle(string newTitle)
+        public void SetTitle(string newTitle, int maxLength)
         {
             Encoding newEncodedTitle = Encoding.GetEncoding(932);
-            byte[] newByteTitleTemp = newEncodedTitle.GetBytes(newTitle);
+            byte[] newByteTitle = newEncodedTitle.GetBytes(newTitle.Trim());
 
-            byte[] byteArrayTitle = new byte[21] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-            if (IsBSROM) { byteArrayTitle = new byte[16] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 }; }
+            byte[] byteArrayTitle = new byte[maxLength];
 
-            int newByteTitleTempLenght = newByteTitleTemp.Length;
+            for (int i = 0; i < maxLength; i++)
+            {
+                byteArrayTitle[i] = 0x20;
+            }
 
-            if (newByteTitleTemp.Length > byteArrayTitle.Length) { newByteTitleTempLenght = byteArrayTitle.Length; }
+            int newByteTitleTempLenght = newByteTitle.Length;
 
-            Buffer.BlockCopy(newByteTitleTemp, 0, byteArrayTitle, 0, newByteTitleTempLenght);
+            if (newByteTitle.Length > byteArrayTitle.Length) { newByteTitleTempLenght = byteArrayTitle.Length; }
+
+            Buffer.BlockCopy(newByteTitle, 0, byteArrayTitle, 0, newByteTitleTempLenght);
 
             Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)UIntROMHeaderOffset + 0x10, byteArrayTitle.Length);
 

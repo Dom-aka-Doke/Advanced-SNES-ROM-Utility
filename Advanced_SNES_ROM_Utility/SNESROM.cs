@@ -378,7 +378,7 @@ namespace Advanced_SNES_ROM_Utility
         {
             byte[] title = new byte[21];
 
-            if (IsBSROM) { title = new byte[16]; Buffer.BlockCopy(SourceROMHeader, 0x10, title, 0, 16); } else { Buffer.BlockCopy(SourceROMHeader, 0x10, title, 0, 21); }
+            if (IsBSROM) { title = new byte[16]; Buffer.BlockCopy(SourceROMHeader, 0x10, title, 0, 16); } else { Buffer.BlockCopy(SourceROMHeader, 0x10, title, 0, 21); if (title[20] == 0x00) { title = new byte[20]; Buffer.BlockCopy(SourceROMHeader, 0x10, title, 0, 20); } }
 
             // Return title as little endian byte[]
             if (!BitConverter.IsLittleEndian)
