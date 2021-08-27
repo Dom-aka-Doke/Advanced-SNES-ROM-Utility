@@ -288,9 +288,9 @@ namespace Advanced_SNES_ROM_Utility
 
         private void textBoxGetTitle_TextChanged(object sender, EventArgs e)
         {
-            if (sourceROM.StringTitle.Trim() != textBoxTitle.Text.Trim())
+            if (sourceROM.StringTitle != textBoxTitle.Text)
             {
-                sourceROM.SetTitle(textBoxTitle.Text.Trim());
+                sourceROM.SetTitle(textBoxTitle.Text);
                 RefreshLabelsAndButtons();
             }
         }
@@ -340,7 +340,7 @@ namespace Advanced_SNES_ROM_Utility
         {
             // Set text boxes
             textBoxROMName.Text = sourceROM.ROMFullPath;
-            textBoxTitle.Text = sourceROM.StringTitle.Trim();
+            textBoxTitle.Text = sourceROM.StringTitle;
             textBoxVersion.Text = sourceROM.StringVersion;
 
             // Set labels
