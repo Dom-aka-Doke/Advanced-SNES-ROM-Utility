@@ -257,6 +257,10 @@ namespace Advanced_SNES_ROM_Utility
             {
                 // Use Save function for writing file
                 Save(@saveROMDialog.FileName, "ROM file has successfully been saved to: " + @saveROMDialog.FileName, saveWithHeader);
+
+                // Reload ROM
+                sourceROM = new SNESROM(@saveROMDialog.FileName);
+                RefreshLabelsAndButtons();
             }
         }
 
