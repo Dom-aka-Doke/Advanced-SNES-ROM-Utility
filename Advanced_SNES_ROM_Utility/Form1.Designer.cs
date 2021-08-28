@@ -83,6 +83,7 @@
             this.buttonFixROMSize = new System.Windows.Forms.Button();
             this.buttonAbout = new System.Windows.Forms.Button();
             this.buttonHelp = new System.Windows.Forms.Button();
+            this.buttonIPS = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // openROMFileDialog
@@ -616,11 +617,22 @@
             this.buttonHelp.UseVisualStyleBackColor = true;
             this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
             // 
+            // buttonIPS
+            // 
+            this.buttonIPS.Location = new System.Drawing.Point(169, 348);
+            this.buttonIPS.Name = "buttonIPS";
+            this.buttonIPS.Size = new System.Drawing.Size(99, 23);
+            this.buttonIPS.TabIndex = 61;
+            this.buttonIPS.Text = "Test IPS";
+            this.buttonIPS.UseVisualStyleBackColor = true;
+            this.buttonIPS.Click += new System.EventHandler(this.buttonIPS_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(541, 558);
+            this.Controls.Add(this.buttonIPS);
             this.Controls.Add(this.buttonHelp);
             this.Controls.Add(this.buttonAbout);
             this.Controls.Add(this.buttonFixROMSize);
@@ -741,6 +753,7 @@
         private System.Windows.Forms.Button buttonFixROMSize;
         private System.Windows.Forms.Button buttonAbout;
         private System.Windows.Forms.Button buttonHelp;
+        private System.Windows.Forms.Button buttonIPS;
     }
 }
 

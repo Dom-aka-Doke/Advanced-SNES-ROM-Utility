@@ -471,5 +471,12 @@ namespace Advanced_SNES_ROM_Utility
                 }
             }
         }
+
+        private void buttonIPS_Click(object sender, EventArgs e)
+        {
+            sourceROM.ApplyIPSPatch(@"C:\Temp\E.ips");
+            sourceROM.Initialize();
+            RefreshLabelsAndButtons();
+        }
     }
 }
