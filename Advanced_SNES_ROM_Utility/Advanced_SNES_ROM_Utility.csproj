@@ -127,6 +127,7 @@
   <ItemGroup>
     <None Include="Graphics\save_icon.png" />
     <None Include="Graphics\save-as_icon.png" />
+    <None Include="Graphics\ips-patch_icon.png" />
     <Content Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

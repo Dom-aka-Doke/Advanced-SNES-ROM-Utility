@@ -63,6 +63,16 @@ namespace Advanced_SNES_ROM_Utility.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ips_patch_icon {
+            get {
+                object obj = ResourceManager.GetObject("ips-patch_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap save_as_icon {
             get {
                 object obj = ResourceManager.GetObject("save-as_icon", resourceCulture);

@@ -366,6 +366,7 @@ namespace Advanced_SNES_ROM_Utility
             // Set buttons
             if (!buttonSave.Enabled) { buttonSave.Enabled = true; }
             if (!buttonSaveAs.Enabled) { buttonSaveAs.Enabled = true; }
+            if (!buttonIPS.Enabled) { buttonIPS.Enabled = true; }
             if (sourceROM.SourceROMSMCHeader == null) { buttonAddHeader.Enabled = true; buttonRemoveHeader.Enabled = false; saveWithHeader = false; } else { buttonAddHeader.Enabled = false; buttonRemoveHeader.Enabled = true; saveWithHeader = true; }
             if (sourceROM.SourceROM.Length % 1048576 == 0) { buttonSwapBinROM.Enabled = true; } else { buttonSwapBinROM.Enabled = false; }
             if ((sourceROM.IntROMSize < sourceROM.IntCalcFileSize) && !sourceROM.IsBSROM) { buttonFixROMSize.Enabled = true; } else { buttonFixROMSize.Enabled = false; }
@@ -386,6 +387,23 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             return tempFileHash;
+        }
+
+        private void buttonIPS_Click(object sender, EventArgs e)
+        {
+            // Select IPS file dialogue
+            OpenFileDialog selectIPSDialog = new OpenFileDialog();
+
+            selectIPSDialog.Filter = "IPS Patch File (*.ips)|*.ips|" +
+                                     "All Files (*.*)|*.*";
+
+            // If successfully selected an IPS file...
+            if (selectIPSDialog.ShowDialog() == DialogResult.OK)
+            {
+                sourceROM.ApplyIPSPatch(@selectIPSDialog.FileName, saveWithHeader);
+                sourceROM.Initialize();
+                RefreshLabelsAndButtons();
+            }
         }
 
         private void buttonHelp_Click(object sender, EventArgs e)
@@ -470,13 +488,6 @@ namespace Advanced_SNES_ROM_Utility
                     }
                 }
             }
-        }
-
-        private void buttonIPS_Click(object sender, EventArgs e)
-        {
-            sourceROM.ApplyIPSPatch(@"C:\Temp\E.ips");
-            sourceROM.Initialize();
-            RefreshLabelsAndButtons();
         }
     }
 }

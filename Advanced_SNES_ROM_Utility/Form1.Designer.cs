@@ -75,8 +75,6 @@
             this.labelSRAM = new System.Windows.Forms.Label();
             this.labelGetSRAM = new System.Windows.Forms.Label();
             this.buttonDeinterleave = new System.Windows.Forms.Button();
-            this.buttonSaveAs = new System.Windows.Forms.Button();
-            this.buttonSave = new System.Windows.Forms.Button();
             this.textBoxTitle = new System.Windows.Forms.TextBox();
             this.textBoxVersion = new System.Windows.Forms.TextBox();
             this.comboBoxCountryRegion = new System.Windows.Forms.ComboBox();
@@ -84,6 +82,8 @@
             this.buttonAbout = new System.Windows.Forms.Button();
             this.buttonHelp = new System.Windows.Forms.Button();
             this.buttonIPS = new System.Windows.Forms.Button();
+            this.buttonSaveAs = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // openROMFileDialog
@@ -524,36 +524,6 @@
             this.buttonDeinterleave.UseVisualStyleBackColor = true;
             this.buttonDeinterleave.Click += new System.EventHandler(this.buttonDeinterleave_Click);
             // 
-            // buttonSaveAs
-            // 
-            this.buttonSaveAs.Enabled = false;
-            this.buttonSaveAs.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.save_as_icon;
-            this.buttonSaveAs.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSaveAs.Location = new System.Drawing.Point(448, 39);
-            this.buttonSaveAs.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonSaveAs.Name = "buttonSaveAs";
-            this.buttonSaveAs.Size = new System.Drawing.Size(80, 23);
-            this.buttonSaveAs.TabIndex = 54;
-            this.buttonSaveAs.Text = "Save As";
-            this.buttonSaveAs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.buttonSaveAs.UseVisualStyleBackColor = true;
-            this.buttonSaveAs.Click += new System.EventHandler(this.buttonSaveAs_Click);
-            // 
-            // buttonSave
-            // 
-            this.buttonSave.Enabled = false;
-            this.buttonSave.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.save_icon;
-            this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSave.Location = new System.Drawing.Point(448, 11);
-            this.buttonSave.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(80, 23);
-            this.buttonSave.TabIndex = 53;
-            this.buttonSave.Text = "Save";
-            this.buttonSave.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.buttonSave.UseVisualStyleBackColor = true;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
-            // 
             // textBoxTitle
             // 
             this.textBoxTitle.Enabled = false;
@@ -619,13 +589,47 @@
             // 
             // buttonIPS
             // 
-            this.buttonIPS.Location = new System.Drawing.Point(169, 348);
+            this.buttonIPS.Enabled = false;
+            this.buttonIPS.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.ips_patch_icon;
+            this.buttonIPS.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonIPS.Location = new System.Drawing.Point(415, 67);
             this.buttonIPS.Name = "buttonIPS";
-            this.buttonIPS.Size = new System.Drawing.Size(99, 23);
+            this.buttonIPS.Size = new System.Drawing.Size(113, 28);
             this.buttonIPS.TabIndex = 61;
-            this.buttonIPS.Text = "Test IPS";
+            this.buttonIPS.Text = "Apply IPS Patch";
+            this.buttonIPS.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.buttonIPS.UseVisualStyleBackColor = true;
             this.buttonIPS.Click += new System.EventHandler(this.buttonIPS_Click);
+            // 
+            // buttonSaveAs
+            // 
+            this.buttonSaveAs.Enabled = false;
+            this.buttonSaveAs.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.save_as_icon;
+            this.buttonSaveAs.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonSaveAs.Location = new System.Drawing.Point(448, 39);
+            this.buttonSaveAs.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonSaveAs.Name = "buttonSaveAs";
+            this.buttonSaveAs.Size = new System.Drawing.Size(80, 23);
+            this.buttonSaveAs.TabIndex = 54;
+            this.buttonSaveAs.Text = "Save As";
+            this.buttonSaveAs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.buttonSaveAs.UseVisualStyleBackColor = true;
+            this.buttonSaveAs.Click += new System.EventHandler(this.buttonSaveAs_Click);
+            // 
+            // buttonSave
+            // 
+            this.buttonSave.Enabled = false;
+            this.buttonSave.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.save_icon;
+            this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonSave.Location = new System.Drawing.Point(448, 11);
+            this.buttonSave.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(80, 23);
+            this.buttonSave.TabIndex = 53;
+            this.buttonSave.Text = "Save";
+            this.buttonSave.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
             // Form1
             // 
