@@ -40,13 +40,13 @@
             this.labelAboutFunctions.AutoSize = true;
             this.labelAboutFunctions.Location = new System.Drawing.Point(10, 22);
             this.labelAboutFunctions.Name = "labelAboutFunctions";
-            this.labelAboutFunctions.Size = new System.Drawing.Size(385, 403);
+            this.labelAboutFunctions.Size = new System.Drawing.Size(385, 442);
             this.labelAboutFunctions.TabIndex = 7;
             this.labelAboutFunctions.Text = resources.GetString("labelAboutFunctions.Text");
             // 
             // buttonManualClose
             // 
-            this.buttonManualClose.Location = new System.Drawing.Point(12, 457);
+            this.buttonManualClose.Location = new System.Drawing.Point(12, 496);
             this.buttonManualClose.Name = "buttonManualClose";
             this.buttonManualClose.Size = new System.Drawing.Size(405, 23);
             this.buttonManualClose.TabIndex = 8;
@@ -59,7 +59,7 @@
             this.groupBox1.Controls.Add(this.labelAboutFunctions);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(405, 439);
+            this.groupBox1.Size = new System.Drawing.Size(405, 478);
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Manual";
@@ -68,7 +68,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(431, 487);
+            this.ClientSize = new System.Drawing.Size(431, 526);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.buttonManualClose);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -76,7 +76,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Form5";
-            this.Text = "Manual of the Advanced SNES ROM Utility v0.8.3";
+            this.Text = "Manual of the Advanced SNES ROM Utility v0.9";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);

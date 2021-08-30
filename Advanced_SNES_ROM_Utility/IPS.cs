@@ -2,13 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 
 namespace Advanced_SNES_ROM_Utility
 {
     public partial class SNESROM
     {
-        public void ApplyIPSPatch(string ipsFilePath, bool saveWithHeader)
+        public void ApplyIPSPatch(string ipsFilePath)
         {
             byte[] byteArrayIPSArray = File.ReadAllBytes(ipsFilePath);
 
@@ -27,16 +26,40 @@ namespace Advanced_SNES_ROM_Utility
             string stringCheckEOFMarker = Encoding.ASCII.GetString(checkEOFMarker);
             if (!stringCheckEOFMarker.StartsWith(eofMarker) && !stringCheckEOFMarker.EndsWith(eofMarker)) { return; }
 
-            int endingOffset = byteArrayIPSArray.Length - eofMarker.Length;
+            int ipsFileEndingOffset = byteArrayIPSArray.Length - eofMarker.Length;
+            int ipsFileExpansionSize = 0;
+            int ipsFileTruncationSize = 0;
+
+            // Get size to truncate file to, if infromation is included
+            if (stringCheckEOFMarker.StartsWith(eofMarker))
+            {
+                byte[] newSize24 = new byte[3] { checkEOFMarker[3], checkEOFMarker[4], checkEOFMarker[5] };
+                if (BitConverter.IsLittleEndian) { Array.Reverse(newSize24); }
+                byte[] newSize32 = new byte[4] { newSize24[0], newSize24[1], newSize24[2], 0x00 };
+                ipsFileTruncationSize = BitConverter.ToInt32(newSize32, 0);
+
+                ipsFileEndingOffset -= 3;
+            }
 
             // Prepare ROM for patching
             byte[] patchedSourceROM = null;
 
-            if (saveWithHeader)
+            ipsFileExpansionSize = Patch(magicNumber, ipsFileEndingOffset, byteArrayIPSArray, patchedSourceROM, false);
+
+            if (ipsFileExpansionSize > (SourceROM.Length + UIntSMCHeader))
+            {
+                patchedSourceROM = new byte[ipsFileExpansionSize];
+            }
+
+            else
+            {
+                patchedSourceROM = new byte[SourceROM.Length + UIntSMCHeader];
+            }
+
+            // Copy source ROM data over to ROM for patching
+            if (UIntSMCHeader > 0)
             {
                 // Merge header with ROM if header exists
-                patchedSourceROM = new byte[SourceROMSMCHeader.Length + SourceROM.Length];
-
                 Buffer.BlockCopy(SourceROMSMCHeader, 0, patchedSourceROM, 0, SourceROMSMCHeader.Length);
                 Buffer.BlockCopy(SourceROM, 0, patchedSourceROM, SourceROMSMCHeader.Length, SourceROM.Length);
             }
@@ -44,30 +67,29 @@ namespace Advanced_SNES_ROM_Utility
             else
             {
                 // Just copy source ROM if no header exists
-                patchedSourceROM = new byte[SourceROM.Length];
-
                 Buffer.BlockCopy(SourceROM, 0, patchedSourceROM, 0, SourceROM.Length);
             }
 
-            // Expand or truncate if file size infromation is included
-            if (stringCheckEOFMarker.StartsWith(eofMarker))
+            // Patch file
+            Patch(magicNumber, ipsFileEndingOffset, byteArrayIPSArray, patchedSourceROM, true);
+
+            // Truncate file, if necessary
+            if (ipsFileTruncationSize > 0 && ipsFileTruncationSize < patchedSourceROM.Length)
             {
-                MessageBox.Show("Cannot handle IPS file size information yet, be patient ...");
-
-                return;
-
-                endingOffset -= 3;
-
-                byte[] newSize = new byte[3] { checkEOFMarker[3], checkEOFMarker[4], checkEOFMarker[5] };
-                if (BitConverter.IsLittleEndian) { Array.Reverse(newSize); }
-                byte[] uint32NewSize = new byte[4] { newSize[0], newSize[1], newSize[2], 0x00 };
-                uint uintNewSize = BitConverter.ToUInt32(uint32NewSize, 0);
-
-                patchedSourceROM = new byte[uintNewSize];
+                byte[] tempPatchedSourceROM = patchedSourceROM;
+                patchedSourceROM = new byte[ipsFileTruncationSize];
+                Buffer.BlockCopy(tempPatchedSourceROM, 0, patchedSourceROM, 0, ipsFileTruncationSize);
             }
 
+            SourceROM = patchedSourceROM;
+        }
+
+        private int Patch(byte[] magicNumber, int ipsFileEndingOffset, byte[] byteArrayIPSArray, byte[] patchedSourceROM, bool patch)
+        {
+            int effectivePatchSize = 0;
+
             // Start patching
-            for (int i = magicNumber.Length; i < endingOffset; i++)
+            for (int i = magicNumber.Length; i < ipsFileEndingOffset; i++)
             {
                 byte[] offset = new byte[3];
                 byte[] length = new byte[2];
@@ -108,8 +130,6 @@ namespace Advanced_SNES_ROM_Utility
                     {
                         payload[y] = rlePayloadByte;
                     }
-
-                    if (BitConverter.IsLittleEndian) { Array.Reverse(payload); }
                 }
 
                 // If no RLE hunk was detected, read payload
@@ -122,13 +142,22 @@ namespace Advanced_SNES_ROM_Utility
                 }
 
                 // Insert payload into SourceROM
-                Buffer.BlockCopy(payload, 0, patchedSourceROM, (int)uintOffset, payloadLength);
+                if (patch)
+                {
+                    Buffer.BlockCopy(payload, 0, patchedSourceROM, (int)uintOffset, payloadLength);
+                }
 
                 // Fix loop increment
                 i--;
+
+                // Calculate size on last loop operation
+                if (i == (ipsFileEndingOffset - 1))
+                {
+                    effectivePatchSize = (int)uintOffset + payloadLength;
+                }
             }
 
-            SourceROM = patchedSourceROM;
+            return effectivePatchSize;
         }
     }
 }

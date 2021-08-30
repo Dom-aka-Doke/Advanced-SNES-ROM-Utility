@@ -148,7 +148,10 @@
 
 - Region Unlock: Some games have a copy protection preventing the ROM from
                             running on systems with another region (PAL/NTSC lock).
-                            Use this function to remove most known region locks.</value>
+                            Use this function to remove most known region locks.
+
+- Apply IPS Patch: Patch your loaded ROM with an IPS patch!
+                             Supports patches with RLE hunks, expanding and truncating.</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

@@ -400,7 +400,8 @@ namespace Advanced_SNES_ROM_Utility
             // If successfully selected an IPS file...
             if (selectIPSDialog.ShowDialog() == DialogResult.OK)
             {
-                sourceROM.ApplyIPSPatch(@selectIPSDialog.FileName, saveWithHeader);
+                sourceROM.ApplyIPSPatch(@selectIPSDialog.FileName);
+                MessageBox.Show("ROM has successfully been patched!");
                 sourceROM.Initialize();
                 RefreshLabelsAndButtons();
             }
