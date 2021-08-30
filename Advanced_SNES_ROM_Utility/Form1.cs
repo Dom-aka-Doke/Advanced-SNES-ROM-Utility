@@ -400,10 +400,22 @@ namespace Advanced_SNES_ROM_Utility
             // If successfully selected an IPS file...
             if (selectIPSDialog.ShowDialog() == DialogResult.OK)
             {
-                sourceROM.ApplyIPSPatch(@selectIPSDialog.FileName);
-                MessageBox.Show("ROM has successfully been patched!");
-                sourceROM.Initialize();
-                RefreshLabelsAndButtons();
+                byte[] ipsPatchedSourceROM = sourceROM.ApplyIPSPatch(@selectIPSDialog.FileName);
+
+                if (ipsPatchedSourceROM != null)
+                {
+                    sourceROM.SourceROM = ipsPatchedSourceROM;
+                    sourceROM.UIntSMCHeader = 0;
+                    sourceROM.SourceROMSMCHeader = null;
+                    sourceROM.Initialize();
+                    RefreshLabelsAndButtons();
+                    MessageBox.Show("ROM has successfully been patched!");
+                }
+
+                else
+                {
+                    MessageBox.Show("Could not apply IPS patch! Please check if your patch is valid.");
+                }
             }
         }
 

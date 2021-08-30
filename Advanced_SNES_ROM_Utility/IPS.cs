@@ -7,24 +7,24 @@ namespace Advanced_SNES_ROM_Utility
 {
     public partial class SNESROM
     {
-        public void ApplyIPSPatch(string ipsFilePath)
+        public byte[] ApplyIPSPatch(string ipsFilePath)
         {
             byte[] byteArrayIPSArray = File.ReadAllBytes(ipsFilePath);
 
             // IPS patches muste be at least 14 bytes
-            if (byteArrayIPSArray.Length < 14) { return; }
+            if (byteArrayIPSArray.Length < 14) { return null; }
 
             // Check if IPS patch starts with magic number and contains end-of-file marker
             byte[] magicNumber = Encoding.ASCII.GetBytes("PATCH");
             byte[] checkMagicNumber = new byte[magicNumber.Length];
             Array.Copy(byteArrayIPSArray, 0, checkMagicNumber, 0, magicNumber.Length);
-            if (!checkMagicNumber.SequenceEqual(magicNumber)) { return; }
+            if (!checkMagicNumber.SequenceEqual(magicNumber)) { return null; }
 
             string eofMarker = "EOF";
             byte[] checkEOFMarker = new byte[eofMarker.Length + 3];
             Array.Copy(byteArrayIPSArray, byteArrayIPSArray.Length - (eofMarker.Length + 3), checkEOFMarker, 0, eofMarker.Length + 3);
             string stringCheckEOFMarker = Encoding.ASCII.GetString(checkEOFMarker);
-            if (!stringCheckEOFMarker.StartsWith(eofMarker) && !stringCheckEOFMarker.EndsWith(eofMarker)) { return; }
+            if (!stringCheckEOFMarker.StartsWith(eofMarker) && !stringCheckEOFMarker.EndsWith(eofMarker)) { return null; }
 
             int ipsFileEndingOffset = byteArrayIPSArray.Length - eofMarker.Length;
             int ipsFileExpansionSize = 0;
@@ -57,7 +57,7 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             // Copy source ROM data over to ROM for patching
-            if (UIntSMCHeader > 0)
+            if (SourceROMSMCHeader != null && SourceROMSMCHeader.Length > 0)
             {
                 // Merge header with ROM if header exists
                 Buffer.BlockCopy(SourceROMSMCHeader, 0, patchedSourceROM, 0, SourceROMSMCHeader.Length);
@@ -81,7 +81,7 @@ namespace Advanced_SNES_ROM_Utility
                 Buffer.BlockCopy(tempPatchedSourceROM, 0, patchedSourceROM, 0, ipsFileTruncationSize);
             }
 
-            SourceROM = patchedSourceROM;
+            return patchedSourceROM;
         }
 
         private int Patch(byte[] magicNumber, int ipsFileEndingOffset, byte[] byteArrayIPSArray, byte[] patchedSourceROM, bool patch)
