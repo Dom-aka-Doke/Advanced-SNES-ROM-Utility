@@ -65,10 +65,18 @@ namespace Advanced_SNES_ROM_Utility
                 {
                     ROMName = Path.GetFileNameWithoutExtension(ROMFullPath);
                     ROMFolder = Path.GetDirectoryName(ROMFullPath);
-                    SourceROM = File.ReadAllBytes(ROMFullPath);
+                    FileInfo romFileInfo = new FileInfo(ROMFullPath);
 
-                    // Initialize ROM
-                    Initialize();
+                    if (romFileInfo.Length <= 16777216)
+                    {
+                        SourceROM = File.ReadAllBytes(ROMFullPath);
+                        Initialize();
+                    }
+
+                    else
+                    {
+                        MessageBox.Show("ROMs cannot be larger than 16 MByte.");
+                    }
                 }
 
                 catch (Exception ex)
@@ -534,6 +542,7 @@ namespace Advanced_SNES_ROM_Utility
                     case 0x10: size[0] = 0x0B; break;
                     case 0x20: size[0] = 0x0C; break;
                     case 0x40: size[0] = 0x0D; break;
+                    case 0x80: size[0] = 0x0E; break;
                     default: size[0] = 0x00; break;
                 }
             } 
@@ -554,6 +563,7 @@ namespace Advanced_SNES_ROM_Utility
                 case 0x0B: StringROMSize = "16 Mbit"; IntROMSize = 16; break;
                 case 0x0C: StringROMSize = "32 Mbit"; IntROMSize = 32; break;
                 case 0x0D: StringROMSize = "64 Mbit"; IntROMSize = 64; break;
+                case 0x0E: StringROMSize = "128 Mbit"; IntROMSize = 128; break;
                 default: StringROMSize = "Unknown"; break;
             }
         }

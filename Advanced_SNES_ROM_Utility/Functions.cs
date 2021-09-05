@@ -80,6 +80,7 @@ namespace Advanced_SNES_ROM_Utility
                     case 0x10: byteArrayROMSizeValue[0] = 0x0B; break;
                     case 0x20: byteArrayROMSizeValue[0] = 0x0C; break;
                     case 0x40: byteArrayROMSizeValue[0] = 0x0D; break;
+                    case 0x80: byteArrayROMSizeValue[0] = 0x0E; break;
                 }
 
                 Buffer.BlockCopy(byteArrayROMSizeValue, 0, SourceROM, (int)UIntROMHeaderOffset + 0x27, 1);

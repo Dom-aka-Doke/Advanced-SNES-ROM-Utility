@@ -502,5 +502,10 @@ namespace Advanced_SNES_ROM_Utility
                 }
             }
         }
+
+        private void buttonExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
     }
 }
