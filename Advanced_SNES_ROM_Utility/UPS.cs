@@ -83,8 +83,7 @@ namespace Advanced_SNES_ROM_Utility
 
             if (internalHashDestinationFile != calcHashDestinationFile) { return null; }
 
-            // DEBUG
-            return null;
+            return patchedSourceROM;
         }
 
         private ulong GetVWI(byte[] byteArrayUPSPatch, ref ulong offset)
