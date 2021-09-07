@@ -58,19 +58,41 @@ namespace Advanced_SNES_ROM_Utility
             byte[] patchedSourceROM = new byte[vwiDestinationFileLength];
             foreach (byte b in patchedSourceROM) { patchedSourceROM[b] = 0x00; }
 
-            // Verfiy destination file size
-            Array.Copy(byteArrayUPSPatch, byteArrayUPSPatch.Length - (crc32DestinationFile.Length + crc32PatchFile.Length), crc32DestinationFile, 0, crc32DestinationFile.Length);
+            // Generate destination file using VWI information
+            /*
+             * 
+             * Add some magic here ...
+             * 
+             */
+
+            // Verify size of destination file
+            if ((ulong)patchedSourceROM.Length != vwiDestinationFileLength) { return null; }
 
             // Verfiy CRC32 of destination file
+            Array.Copy(byteArrayUPSPatch, byteArrayUPSPatch.Length - (crc32DestinationFile.Length + crc32PatchFile.Length), crc32DestinationFile, 0, crc32DestinationFile.Length);
+            if (!BitConverter.IsLittleEndian) { Array.Reverse(crc32DestinationFile); }
+            string internalHashDestinationFile = BitConverter.ToString(crc32DestinationFile).Replace("-", "");
+
+            Crc32 calcCRC32DestinationFile = new Crc32();
+            string calcHashDestinationFile = null;
+
+            foreach (byte singleByte in calcCRC32DestinationFile.ComputeHash(patchedSourceROM))
+            {
+                calcHashDestinationFile += singleByte.ToString("X2").ToUpper();
+            }
+
+            if (internalHashDestinationFile != calcHashDestinationFile) { return null; }
+
+            // DEBUG
             return null;
         }
 
-        private ulong GetVWI(byte[] byteArrayUPSArray, ref ulong offset)
+        private ulong GetVWI(byte[] byteArrayUPSPatch, ref ulong offset)
         {
             ulong value = 0;
             int shift = 1;
             offset++;
-            byte x = byteArrayUPSArray[offset];
+            byte x = byteArrayUPSPatch[offset];
             value += (ulong)((x & 0x7F) * shift);
 
             while ((x & 0x80) == 0)
@@ -78,7 +100,7 @@ namespace Advanced_SNES_ROM_Utility
                 shift <<= 7;
                 value += (ulong)shift;
                 offset++;
-                x = byteArrayUPSArray[offset];
+                x = byteArrayUPSPatch[offset];
                 value += (ulong)((x & 0x7F) * shift);
             }
 
