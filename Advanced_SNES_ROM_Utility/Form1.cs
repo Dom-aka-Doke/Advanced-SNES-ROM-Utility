@@ -236,6 +236,42 @@ namespace Advanced_SNES_ROM_Utility
             RefreshLabelsAndButtons();
         }
 
+        private void buttonPatch_Click(object sender, EventArgs e)
+        {
+            // Select IPS file dialogue
+            OpenFileDialog selectPatchDialog = new OpenFileDialog();
+
+            selectPatchDialog.Filter = "Patch File (*.ips;*.ups)|*.ips;*.ups|" +
+                                     "All Files (*.*)|*.*";
+
+            // If successfully selected an IPS file...
+            if (selectPatchDialog.ShowDialog() == DialogResult.OK)
+            {
+                byte[] patchedSourceROM = null;
+                
+                switch(Path.GetExtension(selectPatchDialog.FileName))
+                {
+                    case ".ips": sourceROM.ApplyIPSPatch(selectPatchDialog.FileName); break;
+                    case ".ups": sourceROM.ApplyUPSPatch(selectPatchDialog.FileName); break;
+                }
+                
+                if (patchedSourceROM != null)
+                {
+                    sourceROM.SourceROM = patchedSourceROM;
+                    sourceROM.UIntSMCHeader = 0;
+                    sourceROM.SourceROMSMCHeader = null;
+                    sourceROM.Initialize();
+                    RefreshLabelsAndButtons();
+                    MessageBox.Show("ROM has successfully been patched!");
+                }
+
+                else
+                {
+                    MessageBox.Show("Could not apply IPS patch! Please check if your patch is valid.");
+                }
+            }
+        }
+
         private void buttonSave_Click(object sender, EventArgs e)
         {
             Save(sourceROM.ROMFullPath, "ROM file has successfully been saved!", saveWithHeader);
@@ -366,7 +402,7 @@ namespace Advanced_SNES_ROM_Utility
             // Set buttons
             if (!buttonSave.Enabled) { buttonSave.Enabled = true; }
             if (!buttonSaveAs.Enabled) { buttonSaveAs.Enabled = true; }
-            if (!buttonIPS.Enabled) { buttonIPS.Enabled = true; }
+            if (!buttonPatch.Enabled) { buttonPatch.Enabled = true; }
             if (sourceROM.SourceROMSMCHeader == null) { buttonAddHeader.Enabled = true; buttonRemoveHeader.Enabled = false; saveWithHeader = false; } else { buttonAddHeader.Enabled = false; buttonRemoveHeader.Enabled = true; saveWithHeader = true; }
             if (sourceROM.SourceROM.Length % 1048576 == 0) { buttonSwapBinROM.Enabled = true; } else { buttonSwapBinROM.Enabled = false; }
             if ((sourceROM.IntROMSize < sourceROM.IntCalcFileSize) && !sourceROM.IsBSROM) { buttonFixROMSize.Enabled = true; } else { buttonFixROMSize.Enabled = false; }
@@ -387,36 +423,6 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             return tempFileHash;
-        }
-
-        private void buttonIPS_Click(object sender, EventArgs e)
-        {
-            // Select IPS file dialogue
-            OpenFileDialog selectIPSDialog = new OpenFileDialog();
-
-            selectIPSDialog.Filter = "IPS Patch File (*.ips)|*.ips|" +
-                                     "All Files (*.*)|*.*";
-
-            // If successfully selected an IPS file...
-            if (selectIPSDialog.ShowDialog() == DialogResult.OK)
-            {
-                byte[] ipsPatchedSourceROM = sourceROM.ApplyIPSPatch(@selectIPSDialog.FileName);
-
-                if (ipsPatchedSourceROM != null)
-                {
-                    sourceROM.SourceROM = ipsPatchedSourceROM;
-                    sourceROM.UIntSMCHeader = 0;
-                    sourceROM.SourceROMSMCHeader = null;
-                    sourceROM.Initialize();
-                    RefreshLabelsAndButtons();
-                    MessageBox.Show("ROM has successfully been patched!");
-                }
-
-                else
-                {
-                    MessageBox.Show("Could not apply IPS patch! Please check if your patch is valid.");
-                }
-            }
         }
 
         private void buttonHelp_Click(object sender, EventArgs e)

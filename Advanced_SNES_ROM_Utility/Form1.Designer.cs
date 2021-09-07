@@ -77,7 +77,7 @@
             this.buttonFixROMSize = new System.Windows.Forms.Button();
             this.buttonAbout = new System.Windows.Forms.Button();
             this.buttonHelp = new System.Windows.Forms.Button();
-            this.buttonIPS = new System.Windows.Forms.Button();
+            this.buttonPatch = new System.Windows.Forms.Button();
             this.buttonSaveAs = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.groupBoxInfo = new System.Windows.Forms.GroupBox();
@@ -550,18 +550,18 @@
             this.buttonHelp.UseVisualStyleBackColor = true;
             this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
             // 
-            // buttonIPS
+            // buttonPatch
             // 
-            this.buttonIPS.Enabled = false;
-            this.buttonIPS.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.ips_patch_icon;
-            this.buttonIPS.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonIPS.Location = new System.Drawing.Point(366, 273);
-            this.buttonIPS.Name = "buttonIPS";
-            this.buttonIPS.Size = new System.Drawing.Size(166, 28);
-            this.buttonIPS.TabIndex = 61;
-            this.buttonIPS.Text = "Apply IPS Patch";
-            this.buttonIPS.UseVisualStyleBackColor = true;
-            this.buttonIPS.Click += new System.EventHandler(this.buttonIPS_Click);
+            this.buttonPatch.Enabled = false;
+            this.buttonPatch.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.ips_patch_icon;
+            this.buttonPatch.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonPatch.Location = new System.Drawing.Point(366, 273);
+            this.buttonPatch.Name = "buttonPatch";
+            this.buttonPatch.Size = new System.Drawing.Size(166, 28);
+            this.buttonPatch.TabIndex = 61;
+            this.buttonPatch.Text = "Apply IPS / UPS Patch";
+            this.buttonPatch.UseVisualStyleBackColor = true;
+            this.buttonPatch.Click += new System.EventHandler(this.buttonPatch_Click);
             // 
             // buttonSaveAs
             // 
@@ -670,7 +670,7 @@
             this.Controls.Add(this.buttonExit);
             this.Controls.Add(this.groupBoxROMInfo);
             this.Controls.Add(this.groupBoxChecksums);
-            this.Controls.Add(this.buttonIPS);
+            this.Controls.Add(this.buttonPatch);
             this.Controls.Add(this.buttonHelp);
             this.Controls.Add(this.buttonAbout);
             this.Controls.Add(this.buttonFixROMSize);
@@ -758,7 +758,7 @@
         private System.Windows.Forms.Button buttonFixROMSize;
         private System.Windows.Forms.Button buttonAbout;
         private System.Windows.Forms.Button buttonHelp;
-        private System.Windows.Forms.Button buttonIPS;
+        private System.Windows.Forms.Button buttonPatch;
         private System.Windows.Forms.GroupBox groupBoxInfo;
         private System.Windows.Forms.GroupBox groupBoxChecksums;
         private System.Windows.Forms.GroupBox groupBoxROMInfo;
