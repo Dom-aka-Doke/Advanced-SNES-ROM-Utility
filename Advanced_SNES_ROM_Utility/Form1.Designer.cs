@@ -559,7 +559,7 @@
             this.buttonPatch.Name = "buttonPatch";
             this.buttonPatch.Size = new System.Drawing.Size(166, 28);
             this.buttonPatch.TabIndex = 61;
-            this.buttonPatch.Text = "Apply IPS / UPS Patch";
+            this.buttonPatch.Text = "Apply Patch";
             this.buttonPatch.UseVisualStyleBackColor = true;
             this.buttonPatch.Click += new System.EventHandler(this.buttonPatch_Click);
             // 
