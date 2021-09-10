@@ -251,8 +251,8 @@ namespace Advanced_SNES_ROM_Utility
                 
                 switch(Path.GetExtension(selectPatchDialog.FileName))
                 {
-                    case ".ips": sourceROM.ApplyIPSPatch(selectPatchDialog.FileName); break;
-                    case ".ups": sourceROM.ApplyUPSPatch(selectPatchDialog.FileName); break;
+                    case ".ips": patchedSourceROM = sourceROM.ApplyIPSPatch(selectPatchDialog.FileName); break;
+                    case ".ups": patchedSourceROM = sourceROM.ApplyUPSPatch(selectPatchDialog.FileName); break;
                 }
                 
                 if (patchedSourceROM != null)
