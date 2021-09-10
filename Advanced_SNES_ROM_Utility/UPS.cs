@@ -64,7 +64,9 @@ namespace Advanced_SNES_ROM_Utility
             else if (internalHashDestinationFile == CRC32Hash) { patchedSourceROM = new byte[vwiSourceFileLength]; }
 
             foreach (byte b in patchedSourceROM) { patchedSourceROM[b] = 0x00; }
-            Array.Copy(SourceROM, 0, patchedSourceROM, 0, patchedSourceROM.Length);
+
+            if (patchedSourceROM.Length <= SourceROM.Length) { Array.Copy(SourceROM, 0, patchedSourceROM, 0, patchedSourceROM.Length); }
+            else if (patchedSourceROM.Length > SourceROM.Length) { Array.Copy(SourceROM, 0, patchedSourceROM, 0, SourceROM.Length); }
 
             // Generate patched file using VWI information
             while (offsetUPSPatch < (ulong)(byteArrayUPSPatch.Length - (crc32SourceFile.Length + crc32DestinationFile.Length + crc32PatchFile.Length)))
@@ -72,7 +74,7 @@ namespace Advanced_SNES_ROM_Utility
                 ulong bytesToSkip = GetVWI(byteArrayUPSPatch, ref offsetUPSPatch);
                 offsetSourceFile += bytesToSkip;
 
-                while (byteArrayUPSPatch[offsetUPSPatch] != 0x00)
+                while (byteArrayUPSPatch[offsetUPSPatch] != 0x00 && offsetSourceFile < (ulong)patchedSourceROM.Length)
                 {
                     patchedSourceROM[offsetSourceFile] = (byte)(byteArrayUPSPatch[offsetUPSPatch] ^ patchedSourceROM[offsetSourceFile]);
                     offsetSourceFile++;
