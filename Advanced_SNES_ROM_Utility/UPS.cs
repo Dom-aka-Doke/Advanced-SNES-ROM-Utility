@@ -65,7 +65,7 @@ namespace Advanced_SNES_ROM_Utility
 
             foreach (byte b in patchedSourceROM) { patchedSourceROM[b] = 0x00; }
 
-            if (SourceROMSMCHeader != null && UIntSMCHeader > 0) { Array.Copy(SourceROMSMCHeader, 0, patchedSourceROM, 0, SourceROMSMCHeader.Length); }
+            if (SourceROMSMCHeader != null && UIntSMCHeader > 0) { Array.Copy(SourceROMSMCHeader, 0, patchedSourceROM, 0, UIntSMCHeader); }
             if (patchedSourceROM.Length <= SourceROM.Length + UIntSMCHeader) { Array.Copy(SourceROM, 0, patchedSourceROM, UIntSMCHeader, patchedSourceROM.Length - UIntSMCHeader); }
             else if (patchedSourceROM.Length > SourceROM.Length + UIntSMCHeader) { Array.Copy(SourceROM, 0, patchedSourceROM, UIntSMCHeader, SourceROM.Length); }
 
