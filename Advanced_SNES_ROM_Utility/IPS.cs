@@ -57,7 +57,7 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             // Copy source ROM data over to ROM for patching
-            if (SourceROMSMCHeader != null && SourceROMSMCHeader.Length > 0)
+            if (SourceROMSMCHeader != null && UIntSMCHeader > 0)
             {
                 // Merge header with ROM if header exists
                 Buffer.BlockCopy(SourceROMSMCHeader, 0, patchedSourceROM, 0, SourceROMSMCHeader.Length);

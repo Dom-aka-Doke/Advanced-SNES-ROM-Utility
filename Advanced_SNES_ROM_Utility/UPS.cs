@@ -46,7 +46,7 @@ namespace Advanced_SNES_ROM_Utility
             // Verify size of source file
             ulong vwiSourceFileLength = GetVWI(byteArrayUPSPatch, ref offsetUPSPatch);
             ulong vwiDestinationFileLength = GetVWI(byteArrayUPSPatch, ref offsetUPSPatch);
-            if ((ulong)SourceROM.Length != vwiSourceFileLength && (ulong)SourceROM.Length != vwiDestinationFileLength) { return null; }
+            if ((ulong)(SourceROM.Length + UIntSMCHeader) != vwiSourceFileLength && (ulong)(SourceROM.Length + UIntSMCHeader) != vwiDestinationFileLength) { return null; }
 
             // Verify CRC32 of source file
             Array.Copy(byteArrayUPSPatch, byteArrayUPSPatch.Length - (crc32SourceFile.Length + crc32DestinationFile.Length + crc32PatchFile.Length), crc32SourceFile, 0, crc32SourceFile.Length);
@@ -65,8 +65,9 @@ namespace Advanced_SNES_ROM_Utility
 
             foreach (byte b in patchedSourceROM) { patchedSourceROM[b] = 0x00; }
 
-            if (patchedSourceROM.Length <= SourceROM.Length) { Array.Copy(SourceROM, 0, patchedSourceROM, 0, patchedSourceROM.Length); }
-            else if (patchedSourceROM.Length > SourceROM.Length) { Array.Copy(SourceROM, 0, patchedSourceROM, 0, SourceROM.Length); }
+            if (SourceROMSMCHeader != null && UIntSMCHeader > 0) { Array.Copy(SourceROMSMCHeader, 0, patchedSourceROM, 0, SourceROMSMCHeader.Length); }
+            if (patchedSourceROM.Length <= SourceROM.Length + UIntSMCHeader) { Array.Copy(SourceROM, 0, patchedSourceROM, UIntSMCHeader, patchedSourceROM.Length - UIntSMCHeader); }
+            else if (patchedSourceROM.Length > SourceROM.Length + UIntSMCHeader) { Array.Copy(SourceROM, 0, patchedSourceROM, UIntSMCHeader, SourceROM.Length); }
 
             // Generate patched file using VWI information
             while (offsetUPSPatch < (ulong)(byteArrayUPSPatch.Length - (crc32SourceFile.Length + crc32DestinationFile.Length + crc32PatchFile.Length)))
