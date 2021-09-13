@@ -73,11 +73,6 @@ namespace Advanced_SNES_ROM_Utility
                 comboBoxCountryRegion.DisplayMember = "Name";
                 comboBoxCountryRegion.ValueMember = "Id";
 
-                int selectedCompanyRegion = sourceROM.ByteCountry;
-                if (selectedCompanyRegion > 12) { selectedCompanyRegion--; }
-
-                comboBoxCountryRegion.SelectedIndex = selectedCompanyRegion;
-
                 // Check if ROM can be expanded
                 if (sourceROM.IntCalcFileSize < 32)
                 {
@@ -87,11 +82,7 @@ namespace Advanced_SNES_ROM_Utility
                     if (sourceROM.IntCalcFileSize < 2) { list.Add(new comboBoxExpandROMList { Id = 2, Name = "2 Mbit (256 kByte) | 27C2001" }); };
                     if (sourceROM.IntCalcFileSize < 4) { list.Add(new comboBoxExpandROMList { Id = 4, Name = "4 Mbit (512 kByte) | 274001" }); };
                     if (sourceROM.IntCalcFileSize < 8) { list.Add(new comboBoxExpandROMList { Id = 8, Name = "8 Mbit (1 MByte) | 27C801" }); };
-                    //if (sourceROM.CalcFileSize < 12) { list.Add(new comboBoxExpandROMList { Id = 12, Name = "12 Mbit (1,5 MByte)" }); };
                     if (sourceROM.IntCalcFileSize < 16) { list.Add(new comboBoxExpandROMList { Id = 16, Name = "16 Mbit (2 MByte) | 27C160" }); };
-                    //if (sourceROM.CalcFileSize < 20) { list.Add(new comboBoxExpandROMList { Id = 20, Name = "20 Mbit (2,5 MByte)" }); };
-                    //if (sourceROM.CalcFileSize < 24) { list.Add(new comboBoxExpandROMList { Id = 24, Name = "24 Mbit (3 MByte)" }); };
-                    //if (sourceROM.CalcFileSize < 28) { list.Add(new comboBoxExpandROMList { Id = 28, Name = "28 Mbit (3,5 MByte)" }); };
                     list.Add(new comboBoxExpandROMList { Id = 32, Name = "32 Mbit (4 MByte) | 27C322" });
 
                     comboBoxExpandROM.DataSource = list;
@@ -397,6 +388,11 @@ namespace Advanced_SNES_ROM_Utility
             labelGetCalcChksm.Text = BitConverter.ToString(sourceROM.ByteArrayCalcChecksum).Replace("-", "");
             labelGetCalcInvChksm.Text = BitConverter.ToString(sourceROM.ByteArrayCalcInvChecksum).Replace("-", "");
             labelGetCRC32Chksm.Text = sourceROM.CRC32Hash;
+
+            // Set combo boxes
+            int selectedCompanyRegion = sourceROM.ByteCountry;
+            if (selectedCompanyRegion > 12) { selectedCompanyRegion--; }
+            comboBoxCountryRegion.SelectedIndex = selectedCompanyRegion;
 
             // Set buttons
             if (!buttonSave.Enabled) { buttonSave.Enabled = true; }
