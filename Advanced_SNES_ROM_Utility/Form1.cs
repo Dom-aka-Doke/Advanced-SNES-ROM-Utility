@@ -9,22 +9,41 @@ namespace Advanced_SNES_ROM_Utility
 {
     public partial class Form1 : Form
     {
-        public Form1()
-        {
-            InitializeComponent();
-        }
-
-        // Prepare some global variables
-        bool saveWithHeader;
+        // Create empty ROM
+        SNESROM sourceROM;
 
         Crc32 savedFileCRC32 = new Crc32();
         string savedFileHash;
 
+        bool saveWithHeader;
+
         // Create combo box for selecting country and region
         List<comboBoxCountryRegionList> listCountryRegion = new List<comboBoxCountryRegionList>();
+        List<comboBoxExpandROMList> listExpandROM = new List<comboBoxExpandROMList>();
+        List<comboBoxSplitROMList> listSplitROM = new List<comboBoxSplitROMList>();
 
-        // Create empty ROM
-        SNESROM sourceROM;
+        public Form1()
+        {
+            InitializeComponent();
+
+            // Fill combo box for country and region
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 0, Name = "Japan | NTSC" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 1, Name = "USA | NTSC" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 2, Name = "Europe/Oceania/Asia | PAL" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 3, Name = "Sweden/Scandinavia | PAL" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 4, Name = "Finland | PAL" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 5, Name = "Denmark | PAL" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 6, Name = "France | SECAM (PAL-like, 50 Hz)" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 7, Name = "Netherlands | PAL" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 8, Name = "Spain | PAL" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 9, Name = "Germany/Austria/Switzerland | PAL" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 10, Name = "China/Hong Kong | PAL" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 11, Name = "Indonesia | PAL" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 12, Name = "South Korea | NTSC" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 14, Name = "Canada | NTSC" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 15, Name = "Brazil | PAL-M (NTSC-like, 60 Hz)" });
+            listCountryRegion.Add(new comboBoxCountryRegionList { Id = 16, Name = "Australia | PAL" });
+        }
 
         private void buttonSelectROM_Click(object sender, EventArgs e)
         {
@@ -37,93 +56,11 @@ namespace Advanced_SNES_ROM_Utility
             // If successfully selected a ROM file...
             if (selectROMDialog.ShowDialog() == DialogResult.OK)
             {
-                // Clear content of combo boxes and disable
-                comboBoxExpandROM.DataSource = null;
-                comboBoxSplitROM.DataSource = null;
-                comboBoxExpandROM.Items.Clear();
-                comboBoxSplitROM.Items.Clear();
-                comboBoxExpandROM.Enabled = false;
-                comboBoxSplitROM.Enabled = false;
-
                 // Create new ROM
                 sourceROM = new SNESROM(@selectROMDialog.FileName);
 
                 // Store CRC32 for dirty tracking
                 savedFileHash = GetCRC32FromFile(@selectROMDialog.FileName);
-
-                // Initialize combo box for country and region
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 0, Name = "Japan | NTSC" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 1, Name = "USA | NTSC" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 2, Name = "Europe/Oceania/Asia | PAL" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 3, Name = "Sweden/Scandinavia | PAL" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 4, Name = "Finland | PAL" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 5, Name = "Denmark | PAL" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 6, Name = "France | SECAM (PAL-like, 50 Hz)" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 7, Name = "Netherlands | PAL" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 8, Name = "Spain | PAL" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 9, Name = "Germany/Austria/Switzerland | PAL" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 10, Name = "China/Hong Kong | PAL" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 11, Name = "Indonesia | PAL" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 12, Name = "South Korea | NTSC" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 14, Name = "Canada | NTSC" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 15, Name = "Brazil | PAL-M (NTSC-like, 60 Hz)" });
-                listCountryRegion.Add(new comboBoxCountryRegionList { Id = 16, Name = "Australia | PAL" });
-
-                comboBoxCountryRegion.DataSource = listCountryRegion;
-                comboBoxCountryRegion.DisplayMember = "Name";
-                comboBoxCountryRegion.ValueMember = "Id";
-
-                // Check if ROM can be expanded
-                if (sourceROM.IntCalcFileSize < 32)
-                {
-                    List<comboBoxExpandROMList> list = new List<comboBoxExpandROMList>();
-
-                    if (sourceROM.IntCalcFileSize < 1) { list.Add(new comboBoxExpandROMList { Id = 1, Name = "1 Mbit (128 kByte) | 27C1001" }); };
-                    if (sourceROM.IntCalcFileSize < 2) { list.Add(new comboBoxExpandROMList { Id = 2, Name = "2 Mbit (256 kByte) | 27C2001" }); };
-                    if (sourceROM.IntCalcFileSize < 4) { list.Add(new comboBoxExpandROMList { Id = 4, Name = "4 Mbit (512 kByte) | 274001" }); };
-                    if (sourceROM.IntCalcFileSize < 8) { list.Add(new comboBoxExpandROMList { Id = 8, Name = "8 Mbit (1 MByte) | 27C801" }); };
-                    if (sourceROM.IntCalcFileSize < 16) { list.Add(new comboBoxExpandROMList { Id = 16, Name = "16 Mbit (2 MByte) | 27C160" }); };
-                    list.Add(new comboBoxExpandROMList { Id = 32, Name = "32 Mbit (4 MByte) | 27C322" });
-
-                    comboBoxExpandROM.DataSource = list;
-                    comboBoxExpandROM.DisplayMember = "Name";
-                    comboBoxExpandROM.ValueMember = "Id";
-
-                    buttonExpandROM.Enabled = true;
-                    comboBoxExpandROM.Enabled = true;
-                }
-
-                else
-                {
-                    buttonExpandROM.Enabled = false;
-                    comboBoxExpandROM.Enabled = false;
-                }
-
-                // Check if ROM can be splittet
-                if (sourceROM.IntCalcFileSize > 1)
-                {
-                    List<comboBoxSplitROMList> list = new List<comboBoxSplitROMList>();
-
-                    if (sourceROM.IntCalcFileSize % 32 == 0 && sourceROM.IntCalcFileSize > 32) { list.Add(new comboBoxSplitROMList { Id = 32, Name = "32 Mbit (4 MByte) | 27C322" }); };
-                    if (sourceROM.IntCalcFileSize % 16 == 0 && sourceROM.IntCalcFileSize > 16) { list.Add(new comboBoxSplitROMList { Id = 16, Name = "16 Mbit (2 MByte) | 27C160" }); };
-                    if (sourceROM.IntCalcFileSize % 8 == 0 && sourceROM.IntCalcFileSize > 8) { list.Add(new comboBoxSplitROMList { Id = 8, Name = "8 Mbit (1 MByte) | 27C801" }); };
-                    if (sourceROM.IntCalcFileSize % 4 == 0 && sourceROM.IntCalcFileSize > 4) { list.Add(new comboBoxSplitROMList { Id = 4, Name = "4 Mbit (512 kByte) | 27C4001" }); };
-                    if (sourceROM.IntCalcFileSize % 2 == 0 && sourceROM.IntCalcFileSize > 2) { list.Add(new comboBoxSplitROMList { Id = 2, Name = "2 Mbit (256 kByte) | 27C2001" }); };
-                    list.Add(new comboBoxSplitROMList { Id = 1, Name = "1 Mbit (128 kByte) | 27C1001" });
-
-                    comboBoxSplitROM.DataSource = list;
-                    comboBoxSplitROM.DisplayMember = "Name";
-                    comboBoxSplitROM.ValueMember = "Id";
-
-                    buttonSplitROM.Enabled = true;
-                    comboBoxSplitROM.Enabled = true;
-                }
-
-                else
-                {
-                    buttonSplitROM.Enabled = false;
-                    comboBoxSplitROM.Enabled = false;
-                }
 
                 // Check if ROM contains region locks
                 if (sourceROM.UnlockRegion(false)) 
@@ -135,6 +72,11 @@ namespace Advanced_SNES_ROM_Utility
                 {
                     buttonFixRegion.Enabled = false;
                 }
+
+                // Initialize combo box for country and region
+                comboBoxCountryRegion.DataSource = listCountryRegion;
+                comboBoxCountryRegion.DisplayMember = "Name";
+                comboBoxCountryRegion.ValueMember = "Id";
 
                 // Enable / disable text and combo boxes
                 if (!textBoxTitle.Enabled) { textBoxTitle.Enabled = true; }
@@ -168,15 +110,75 @@ namespace Advanced_SNES_ROM_Utility
         private void ButtonExpandROM_Click(object sender, EventArgs e)
         {
             // Create new ROM for expanding
-            int sizeExpandedROM = (int)comboBoxExpandROM.SelectedValue;
+            int sizeExpandedROM = (int)comboBoxExpandROM.SelectedValue - ((int)comboBoxExpandROM.SelectedValue % 2);
             byte[] expandedROM = new byte[sizeExpandedROM * 131072];
 
-            foreach (byte singleByte in expandedROM)
-            {
-                expandedROM[singleByte] = 0x00;
-            }
+            foreach (byte singleByte in expandedROM) { expandedROM[singleByte] = 0x00; }
 
             Buffer.BlockCopy(sourceROM.SourceROM, 0, expandedROM, 0, sourceROM.SourceROM.Length);
+
+            // If only expanding to ExROM
+            if (sizeExpandedROM >= 48 && (int)comboBoxExpandROM.SelectedValue % 2 == 0)
+            {
+                if (sourceROM.StringMapMode.StartsWith("LoROM"))
+                {
+                    if (sourceROM.ByteMapMode >= 0x30)
+                    {
+                        byte[] newMapMode = new byte[1] { 0x32 };
+                        Buffer.BlockCopy(newMapMode, 0, expandedROM, (int)sourceROM.UIntROMHeaderOffset + 0x25, 1);
+                        Buffer.BlockCopy(expandedROM, 0, expandedROM, 0x400000, 0x8000);
+                    }
+
+                    else
+                    {
+                        Buffer.BlockCopy(expandedROM, 0, expandedROM, 0x400000, 0x400000);
+
+                        byte[] fillZeroByte = new byte[0x3F8000];
+                        foreach (byte singleByte in fillZeroByte) { fillZeroByte[singleByte] = 0x00; }
+
+                        Buffer.BlockCopy(fillZeroByte, 0, expandedROM, 0x8000, fillZeroByte.Length);
+                    }
+                }
+
+                else if (sourceROM.StringMapMode.StartsWith("HiROM"))
+                {
+                    byte[] newMapMode = new byte[1];
+                    newMapMode[0] = (byte)(sourceROM.ByteROMSpeed | 0x05);
+                    Buffer.BlockCopy(newMapMode, 0, expandedROM, (int)sourceROM.UIntROMHeaderOffset + 0x25, 1);
+                    Buffer.BlockCopy(expandedROM, 0x8000, expandedROM, 0x408000, 0x8000);
+                }
+            }
+
+            // If expanding to ExROM and mirroring is selected
+            if (sizeExpandedROM >= 48 && (int)comboBoxExpandROM.SelectedValue % 2 == 1)
+            {
+                if (sourceROM.StringMapMode.Contains("LoROM"))
+                {
+                    if (sourceROM.ByteMapMode >= 0x30)
+                    {
+                        byte[] newMapMode = new byte[1] { 0x32 };
+                        Buffer.BlockCopy(newMapMode, 0, expandedROM, (int)sourceROM.UIntROMHeaderOffset + 0x25, 1);
+                    }
+
+                    Buffer.BlockCopy(expandedROM, 0, expandedROM, 0x400000, 0x400000);
+                }
+
+                else if (sourceROM.StringMapMode.Contains("HiROM"))
+                {
+                    byte[] newMapMode = new byte[1];
+                    newMapMode[0] = (byte)(sourceROM.ByteROMSpeed | 0x05);
+                    Buffer.BlockCopy(newMapMode, 0, expandedROM, (int)sourceROM.UIntROMHeaderOffset + 0x25, 1);
+
+                    int offset = 0x408000;
+
+                    while (offset < expandedROM.Length)
+                    {
+                        int firstHalfLocation = offset - 0x400000;
+                        Buffer.BlockCopy(expandedROM, firstHalfLocation, expandedROM, offset, 0x8000);
+                        offset += 0x10000;
+                    }
+                }
+            }
 
             // Save file without header
             File.WriteAllBytes(@sourceROM.ROMFolder + @"\" + sourceROM.ROMName + "_[expanded]" + ".bin", expandedROM);
@@ -393,6 +395,71 @@ namespace Advanced_SNES_ROM_Utility
             int selectedCompanyRegion = sourceROM.ByteCountry;
             if (selectedCompanyRegion > 12) { selectedCompanyRegion--; }
             comboBoxCountryRegion.SelectedIndex = selectedCompanyRegion;
+
+            comboBoxExpandROM.DataSource = null;
+            comboBoxSplitROM.DataSource = null;
+            comboBoxExpandROM.Items.Clear();
+            comboBoxSplitROM.Items.Clear();
+            comboBoxExpandROM.Enabled = false;
+            comboBoxSplitROM.Enabled = false;
+
+            if (sourceROM.IntCalcFileSize < 64)
+            {
+                List<comboBoxExpandROMList> list = new List<comboBoxExpandROMList>();
+
+                if (sourceROM.IntCalcFileSize < 1) { list.Add(new comboBoxExpandROMList { Id = 1, Name = "1 Mbit (128 kByte) | 27C1001" }); };
+                if (sourceROM.IntCalcFileSize < 2) { list.Add(new comboBoxExpandROMList { Id = 2, Name = "2 Mbit (256 kByte) | 27C2001" }); };
+                if (sourceROM.IntCalcFileSize < 4) { list.Add(new comboBoxExpandROMList { Id = 4, Name = "4 Mbit (512 kByte) | 274001" }); };
+                if (sourceROM.IntCalcFileSize < 8) { list.Add(new comboBoxExpandROMList { Id = 8, Name = "8 Mbit (1 MByte) | 27C801" }); };
+                if (sourceROM.IntCalcFileSize < 12) { list.Add(new comboBoxExpandROMList { Id = 12, Name = "12 Mbit (1,5 MByte)" }); };
+                if (sourceROM.IntCalcFileSize < 16) { list.Add(new comboBoxExpandROMList { Id = 16, Name = "16 Mbit (2 MByte) | 27C160" }); };
+                if (sourceROM.IntCalcFileSize < 20) { list.Add(new comboBoxExpandROMList { Id = 20, Name = "20 Mbit (2,5 MByte)" }); };
+                if (sourceROM.IntCalcFileSize < 24) { list.Add(new comboBoxExpandROMList { Id = 24, Name = "24 Mbit (3 MByte)" }); };
+                if (sourceROM.IntCalcFileSize < 28) { list.Add(new comboBoxExpandROMList { Id = 28, Name = "28 Mbit (3,5 MByte)" }); };
+                if (sourceROM.IntCalcFileSize < 32) { list.Add(new comboBoxExpandROMList { Id = 32, Name = "32 Mbit (4 MByte) | 27C322" }); };
+                if (sourceROM.IntCalcFileSize < 48 && !sourceROM.IsBSROM) { list.Add(new comboBoxExpandROMList { Id = 48, Name = "48 Mbit (6 MByte)" });
+                                                                            list.Add(new comboBoxExpandROMList { Id = 49, Name = "48 Mbit (6 MByte) [Mirror]" }); };
+                if (sourceROM.IntCalcFileSize < 64 && !sourceROM.IsBSROM) { list.Add(new comboBoxExpandROMList { Id = 64, Name = "64 Mbit (8 MByte)" });
+                                                                            list.Add(new comboBoxExpandROMList { Id = 65, Name = "64 Mbit (8 MByte) [Mirror]" }); };
+
+                comboBoxExpandROM.DataSource = list;
+                comboBoxExpandROM.DisplayMember = "Name";
+                comboBoxExpandROM.ValueMember = "Id";
+
+                buttonExpandROM.Enabled = true;
+                comboBoxExpandROM.Enabled = true;
+            }
+
+            else
+            {
+                buttonExpandROM.Enabled = false;
+                comboBoxExpandROM.Enabled = false;
+            }
+
+            if (sourceROM.IntCalcFileSize > 1)
+            {
+                List<comboBoxSplitROMList> list = new List<comboBoxSplitROMList>();
+
+                if (sourceROM.IntCalcFileSize % 32 == 0 && sourceROM.IntCalcFileSize > 32) { list.Add(new comboBoxSplitROMList { Id = 32, Name = "32 Mbit (4 MByte) | 27C322" }); };
+                if (sourceROM.IntCalcFileSize % 16 == 0 && sourceROM.IntCalcFileSize > 16) { list.Add(new comboBoxSplitROMList { Id = 16, Name = "16 Mbit (2 MByte) | 27C160" }); };
+                if (sourceROM.IntCalcFileSize % 8 == 0 && sourceROM.IntCalcFileSize > 8) { list.Add(new comboBoxSplitROMList { Id = 8, Name = "8 Mbit (1 MByte) | 27C801" }); };
+                if (sourceROM.IntCalcFileSize % 4 == 0 && sourceROM.IntCalcFileSize > 4) { list.Add(new comboBoxSplitROMList { Id = 4, Name = "4 Mbit (512 kByte) | 27C4001" }); };
+                if (sourceROM.IntCalcFileSize % 2 == 0 && sourceROM.IntCalcFileSize > 2) { list.Add(new comboBoxSplitROMList { Id = 2, Name = "2 Mbit (256 kByte) | 27C2001" }); };
+                list.Add(new comboBoxSplitROMList { Id = 1, Name = "1 Mbit (128 kByte) | 27C1001" });
+
+                comboBoxSplitROM.DataSource = list;
+                comboBoxSplitROM.DisplayMember = "Name";
+                comboBoxSplitROM.ValueMember = "Id";
+
+                buttonSplitROM.Enabled = true;
+                comboBoxSplitROM.Enabled = true;
+            }
+
+            else
+            {
+                buttonSplitROM.Enabled = false;
+                comboBoxSplitROM.Enabled = false;
+            }
 
             // Set buttons
             if (!buttonSave.Enabled) { buttonSave.Enabled = true; }
