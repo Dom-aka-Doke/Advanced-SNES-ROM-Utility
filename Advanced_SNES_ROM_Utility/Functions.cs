@@ -53,6 +53,11 @@ namespace Advanced_SNES_ROM_Utility
 
             Buffer.BlockCopy(newChksmSequence, 0, SourceROM, (int)offset, newChksmSequence.Length);
 
+            if (UIntROMHeaderOffset == 0x407FB0 || UIntROMHeaderOffset == 0x40FFB0)
+            {
+                Buffer.BlockCopy(newChksmSequence, 0, SourceROM, (int)offset - 0x400000, newChksmSequence.Length);
+            }
+
             Initialize();
         }
 
@@ -85,6 +90,11 @@ namespace Advanced_SNES_ROM_Utility
 
                 Buffer.BlockCopy(byteArrayROMSizeValue, 0, SourceROM, (int)UIntROMHeaderOffset + 0x27, 1);
 
+                if (UIntROMHeaderOffset == 0x407FB0 || UIntROMHeaderOffset == 0x40FFB0)
+                {
+                    Buffer.BlockCopy(byteArrayROMSizeValue, 0, SourceROM, (int)(UIntROMHeaderOffset + 0x27 - 0x400000), 1);
+                }
+
                 Initialize();
             }
         }
@@ -109,6 +119,11 @@ namespace Advanced_SNES_ROM_Utility
 
             Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)UIntROMHeaderOffset + 0x10, byteArrayTitle.Length);
 
+            if (UIntROMHeaderOffset == 0x407FB0 || UIntROMHeaderOffset == 0x40FFB0)
+            {
+                Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)UIntROMHeaderOffset + 0x10 - 0x400000, byteArrayTitle.Length);
+            }
+
             Initialize();
         }
 
@@ -117,6 +132,11 @@ namespace Advanced_SNES_ROM_Utility
             byte[] byteArrayVersion = { newVersion };
             Buffer.BlockCopy(byteArrayVersion, 0, SourceROM, (int)UIntROMHeaderOffset + 0x2B, 1);
 
+            if (UIntROMHeaderOffset == 0x407FB0 || UIntROMHeaderOffset == 0x40FFB0)
+            {
+                Buffer.BlockCopy(byteArrayVersion, 0, SourceROM, (int)UIntROMHeaderOffset + 0x2B - 0x400000, 1);
+            }
+
             Initialize();
         }
 
@@ -124,6 +144,11 @@ namespace Advanced_SNES_ROM_Utility
         {
             byte[] byteArrayCountryRegion = { newCountryRegion };
             Buffer.BlockCopy(byteArrayCountryRegion, 0, SourceROM, (int)UIntROMHeaderOffset + 0x29, 1);
+
+            if (UIntROMHeaderOffset == 0x407FB0 || UIntROMHeaderOffset == 0x40FFB0)
+            {
+                Buffer.BlockCopy(byteArrayCountryRegion, 0, SourceROM, (int)UIntROMHeaderOffset + 0x29 - 0x400000, 1);
+            }
 
             Initialize();
         }
