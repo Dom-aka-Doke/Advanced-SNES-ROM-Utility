@@ -485,7 +485,7 @@ namespace Advanced_SNES_ROM_Utility
             if (!buttonPatch.Enabled) { buttonPatch.Enabled = true; }
             if (sourceROM.SourceROMSMCHeader == null) { buttonAddHeader.Enabled = true; buttonRemoveHeader.Enabled = false; saveWithHeader = false; } else { buttonAddHeader.Enabled = false; buttonRemoveHeader.Enabled = true; saveWithHeader = true; }
             if (sourceROM.SourceROM.Length % 1048576 == 0) { buttonSwapBinROM.Enabled = true; } else { buttonSwapBinROM.Enabled = false; }
-            if ((sourceROM.IntROMSize < sourceROM.IntCalcFileSize) && !sourceROM.IsBSROM) { buttonFixROMSize.Enabled = true; } else { buttonFixROMSize.Enabled = false; }
+            if (sourceROM.IntROMSize < sourceROM.IntCalcFileSize) { buttonFixROMSize.Enabled = true; } else { buttonFixROMSize.Enabled = false; }
             if (sourceROM.IsInterleaved) { buttonDeinterleave.Enabled = true; buttonFixChksm.Enabled = false; return; } else { buttonDeinterleave.Enabled = false; }
             if (!sourceROM.ByteArrayChecksum.SequenceEqual(sourceROM.ByteArrayCalcChecksum)) { buttonFixChksm.Enabled = true; } else { buttonFixChksm.Enabled = false; }
         }

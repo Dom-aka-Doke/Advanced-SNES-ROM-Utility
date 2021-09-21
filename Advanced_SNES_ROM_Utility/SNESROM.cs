@@ -545,7 +545,7 @@ namespace Advanced_SNES_ROM_Utility
                     case 0x80: size[0] = 0x0E; break;
                     default: size[0] = 0x00; break;
                 }
-            } 
+            }
             
             else
             { 

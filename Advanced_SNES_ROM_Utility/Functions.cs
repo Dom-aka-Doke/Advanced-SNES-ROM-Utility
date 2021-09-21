@@ -63,36 +63,59 @@ namespace Advanced_SNES_ROM_Utility
 
         public void FixInternalROMSize()
         {
-            if ((IntROMSize < IntCalcFileSize) && !IsBSROM)
+            if (IntROMSize < IntCalcFileSize)
             {
                 IntROMSize = 1;
 
-                while (IntROMSize < IntCalcFileSize)
+                if (!IsBSROM)
                 {
-                    IntROMSize *= 2;
+                    while (IntROMSize < IntCalcFileSize)
+                    {
+                        IntROMSize *= 2;
+                    }
+
+                    byte byteROMSizeValue = Convert.ToByte(IntROMSize);
+                    byte[] byteArrayROMSizeValue = new byte[1];
+                    byteArrayROMSizeValue[0] = byteROMSizeValue;
+
+                    switch (byteArrayROMSizeValue[0])
+                    {
+                        case 0x01: byteArrayROMSizeValue[0] = 0x07; break;
+                        case 0x02: byteArrayROMSizeValue[0] = 0x08; break;
+                        case 0x04: byteArrayROMSizeValue[0] = 0x09; break;
+                        case 0x08: byteArrayROMSizeValue[0] = 0x0A; break;
+                        case 0x10: byteArrayROMSizeValue[0] = 0x0B; break;
+                        case 0x20: byteArrayROMSizeValue[0] = 0x0C; break;
+                        case 0x40: byteArrayROMSizeValue[0] = 0x0D; break;
+                        case 0x80: byteArrayROMSizeValue[0] = 0x0E; break;
+                    }
+
+                    Buffer.BlockCopy(byteArrayROMSizeValue, 0, SourceROM, (int)UIntROMHeaderOffset + 0x27, 1);
+
+                    if (UIntROMHeaderOffset == 0x407FB0 || UIntROMHeaderOffset == 0x40FFB0)
+                    {
+                        Buffer.BlockCopy(byteArrayROMSizeValue, 0, SourceROM, (int)(UIntROMHeaderOffset + 0x27 - 0x400000), 1);
+                    }
                 }
 
-                byte byteROMSizeValue = Convert.ToByte(IntROMSize);
-                byte[] byteArrayROMSizeValue = new byte[1];
-                byteArrayROMSizeValue[0] = byteROMSizeValue;
-
-                switch (byteArrayROMSizeValue[0])
+                else
                 {
-                    case 0x01: byteArrayROMSizeValue[0] = 0x07; break;
-                    case 0x02: byteArrayROMSizeValue[0] = 0x08; break;
-                    case 0x04: byteArrayROMSizeValue[0] = 0x09; break;
-                    case 0x08: byteArrayROMSizeValue[0] = 0x0A; break;
-                    case 0x10: byteArrayROMSizeValue[0] = 0x0B; break;
-                    case 0x20: byteArrayROMSizeValue[0] = 0x0C; break;
-                    case 0x40: byteArrayROMSizeValue[0] = 0x0D; break;
-                    case 0x80: byteArrayROMSizeValue[0] = 0x0E; break;
-                }
+                    IntROMSize = IntCalcFileSize;
 
-                Buffer.BlockCopy(byteArrayROMSizeValue, 0, SourceROM, (int)UIntROMHeaderOffset + 0x27, 1);
+                    int size = 1;
+                    int sizeCtr = IntROMSize;
 
-                if (UIntROMHeaderOffset == 0x407FB0 || UIntROMHeaderOffset == 0x40FFB0)
-                {
-                    Buffer.BlockCopy(byteArrayROMSizeValue, 0, SourceROM, (int)(UIntROMHeaderOffset + 0x27 - 0x400000), 1);
+                    while (sizeCtr > 1)
+                    {
+                        size <<= 1;
+                        size |= 1;
+                        sizeCtr--;
+                    }
+
+                    byte[] byteArrayROMSizeValue = new byte[4];
+                    byteArrayROMSizeValue = BitConverter.GetBytes(size);
+
+                    Buffer.BlockCopy(byteArrayROMSizeValue, 0, SourceROM, (int)UIntROMHeaderOffset + 0x20, 4);
                 }
 
                 Initialize();
