@@ -69,25 +69,13 @@ namespace Advanced_SNES_ROM_Utility
 
                 if (!IsBSROM)
                 {
+                    byte[] byteArrayROMSizeValue = new byte[1];
+                    byteArrayROMSizeValue[0] = 0x07;
+
                     while (IntROMSize < IntCalcFileSize)
                     {
                         IntROMSize *= 2;
-                    }
-
-                    byte byteROMSizeValue = Convert.ToByte(IntROMSize);
-                    byte[] byteArrayROMSizeValue = new byte[1];
-                    byteArrayROMSizeValue[0] = byteROMSizeValue;
-
-                    switch (byteArrayROMSizeValue[0])
-                    {
-                        case 0x01: byteArrayROMSizeValue[0] = 0x07; break;
-                        case 0x02: byteArrayROMSizeValue[0] = 0x08; break;
-                        case 0x04: byteArrayROMSizeValue[0] = 0x09; break;
-                        case 0x08: byteArrayROMSizeValue[0] = 0x0A; break;
-                        case 0x10: byteArrayROMSizeValue[0] = 0x0B; break;
-                        case 0x20: byteArrayROMSizeValue[0] = 0x0C; break;
-                        case 0x40: byteArrayROMSizeValue[0] = 0x0D; break;
-                        case 0x80: byteArrayROMSizeValue[0] = 0x0E; break;
+                        byteArrayROMSizeValue[0]++;
                     }
 
                     Buffer.BlockCopy(byteArrayROMSizeValue, 0, SourceROM, (int)UIntROMHeaderOffset + 0x27, 1);

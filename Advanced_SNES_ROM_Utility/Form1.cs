@@ -109,6 +109,8 @@ namespace Advanced_SNES_ROM_Utility
 
         private void ButtonExpandROM_Click(object sender, EventArgs e)
         {
+            if ((int)comboBoxExpandROM.SelectedValue < 1) { return; }
+
             // Create new ROM for expanding
             int sizeExpandedROM = (int)comboBoxExpandROM.SelectedValue - ((int)comboBoxExpandROM.SelectedValue % 2);
             byte[] expandedROM = new byte[sizeExpandedROM * 131072];
@@ -387,7 +389,7 @@ namespace Advanced_SNES_ROM_Utility
                 comboBoxExpandROM.Enabled = false;
                 comboBoxSplitROM.Enabled = false;
 
-                if (sourceROM.IntCalcFileSize < 64)
+                if ((!sourceROM.IsBSROM && sourceROM.IntCalcFileSize < 64) || (sourceROM.IsBSROM && sourceROM.IntCalcFileSize < 32))
                 {
                     List<comboBoxExpandROMList> list = new List<comboBoxExpandROMList>();
 

@@ -521,50 +521,34 @@ namespace Advanced_SNES_ROM_Utility
             {
                 size = new byte[4];
                 Buffer.BlockCopy(SourceROMHeader, 0x20, size, 0, 4);
-                int intSize = BitConverter.ToInt32(size, 0);
+                uint byteSize = BitConverter.ToUInt32(size, 0);
 
-                int count = 0;
-                while (intSize > 0)
+                IntROMSize = 1;
+                while (byteSize > 1)
                 {
-                    count += intSize & 1;
-                    intSize >>= 1;
+                    byteSize >>= 1;
+                    IntROMSize++;
                 }
-
-                size = new byte[1];
-                size[0] = Convert.ToByte(count);
-
-                switch (size[0])
-                {
-                    case 0x01: size[0] = 0x07; break;
-                    case 0x02: size[0] = 0x08; break;
-                    case 0x04: size[0] = 0x09; break;
-                    case 0x08: size[0] = 0x0A; break;
-                    case 0x10: size[0] = 0x0B; break;
-                    case 0x20: size[0] = 0x0C; break;
-                    case 0x40: size[0] = 0x0D; break;
-                    case 0x80: size[0] = 0x0E; break;
-                    default: size[0] = 0x00; break;
-                }
+                                
+                ByteROMSize = Convert.ToByte(IntROMSize);
+                StringROMSize = IntROMSize + " Mbit";
             }
             
             else
             { 
                 Buffer.BlockCopy(SourceROMHeader, 0x27, size, 0, 1);
-            }
+                
+                ByteROMSize = size[0];
+                IntROMSize = 1;
 
-            ByteROMSize = size[0];
+                int count = 7;
+                while (count < ByteROMSize)
+                {
+                    IntROMSize *= 2;
+                    count++;
+                }
 
-            switch (ByteROMSize)
-            {
-                case 0x07: StringROMSize = "1 Mbit"; IntROMSize = 1; break;
-                case 0x08: StringROMSize = "2 Mbit"; IntROMSize = 2; break;
-                case 0x09: StringROMSize = "4 Mbit"; IntROMSize = 4; break;
-                case 0x0A: StringROMSize = "8 Mbit"; IntROMSize = 8; break;
-                case 0x0B: StringROMSize = "16 Mbit"; IntROMSize = 16; break;
-                case 0x0C: StringROMSize = "32 Mbit"; IntROMSize = 32; break;
-                case 0x0D: StringROMSize = "64 Mbit"; IntROMSize = 64; break;
-                case 0x0E: StringROMSize = "128 Mbit"; IntROMSize = 128; break;
-                default: StringROMSize = "Unknown"; break;
+                StringROMSize = IntROMSize + " Mbit";
             }
         }
 
@@ -594,7 +578,6 @@ namespace Advanced_SNES_ROM_Utility
         private void GetExRAMSize()
         {
             byte[] exramsize = new byte[1];
-
             exramsize[0] = 0x00;
 
             if (!IsBSROM)
@@ -612,7 +595,6 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             ByteExRAMSize = exramsize[0];
-
             StringRAMSize = "No";
 
             if (ByteSRAMSize > 0x00)
