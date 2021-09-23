@@ -693,7 +693,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "Advanced SNES ROM Utility v0.9.1";
+            this.Text = "Advanced SNES ROM Utility v0.9.5";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.groupBoxInfo.ResumeLayout(false);
             this.groupBoxInfo.PerformLayout();

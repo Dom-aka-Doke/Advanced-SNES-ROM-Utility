@@ -67,7 +67,7 @@ namespace Advanced_SNES_ROM_Utility
                     ROMFolder = Path.GetDirectoryName(ROMFullPath);
                     FileInfo romFileInfo = new FileInfo(ROMFullPath);
 
-                    if (romFileInfo.Length <= 16777216)
+                    if (romFileInfo.Length >= 131584 && romFileInfo.Length <= 16777728)                 // Min is 1 Mbit, max is 128 Mbit incl. 512 byte header
                     {
                         SourceROM = File.ReadAllBytes(ROMFullPath);
                         Initialize();
@@ -75,7 +75,7 @@ namespace Advanced_SNES_ROM_Utility
 
                     else
                     {
-                        MessageBox.Show("ROMs cannot be larger than 16 MByte.");
+                        MessageBox.Show("ROMs cannot be smaller than 128 kByte (1 Mbit) or larger than 16 MByte (128 Mbit).");
                     }
                 }
 
