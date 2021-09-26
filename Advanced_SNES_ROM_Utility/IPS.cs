@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Advanced_SNES_ROM_Utility
 {
-    public partial class SNESROM
+    class IPSPatch
     {
-        public byte[] ApplyIPSPatch(string ipsFilePath)
+        public static byte[] Apply(SNESROM sourceROM, string ipsFilePath)
         {
             byte[] byteArrayIPSPatch = File.ReadAllBytes(ipsFilePath);
 
@@ -46,28 +46,28 @@ namespace Advanced_SNES_ROM_Utility
 
             ipsFileExpansionSize = Patch(magicNumber, ipsFileEndingOffset, byteArrayIPSPatch, patchedSourceROM, false);
 
-            if (ipsFileExpansionSize > (SourceROM.Length + UIntSMCHeader))
+            if (ipsFileExpansionSize > (sourceROM.SourceROM.Length + sourceROM.UIntSMCHeader))
             {
                 patchedSourceROM = new byte[ipsFileExpansionSize];
             }
 
             else
             {
-                patchedSourceROM = new byte[SourceROM.Length + UIntSMCHeader];
+                patchedSourceROM = new byte[sourceROM.SourceROM.Length + sourceROM.UIntSMCHeader];
             }
 
             // Copy source ROM data over to ROM for patching
-            if (SourceROMSMCHeader != null && UIntSMCHeader > 0)
+            if (sourceROM.SourceROMSMCHeader != null && sourceROM.UIntSMCHeader > 0)
             {
                 // Merge header with ROM if header exists
-                Buffer.BlockCopy(SourceROMSMCHeader, 0, patchedSourceROM, 0, SourceROMSMCHeader.Length);
-                Buffer.BlockCopy(SourceROM, 0, patchedSourceROM, SourceROMSMCHeader.Length, SourceROM.Length);
+                Buffer.BlockCopy(sourceROM.SourceROMSMCHeader, 0, patchedSourceROM, 0, sourceROM.SourceROMSMCHeader.Length);
+                Buffer.BlockCopy(sourceROM.SourceROM, 0, patchedSourceROM, sourceROM.SourceROMSMCHeader.Length, sourceROM.SourceROM.Length);
             }
 
             else
             {
                 // Just copy source ROM if no header exists
-                Buffer.BlockCopy(SourceROM, 0, patchedSourceROM, 0, SourceROM.Length);
+                Buffer.BlockCopy(sourceROM.SourceROM, 0, patchedSourceROM, 0, sourceROM.SourceROM.Length);
             }
 
             // Patch file
@@ -84,7 +84,7 @@ namespace Advanced_SNES_ROM_Utility
             return patchedSourceROM;
         }
 
-        private int Patch(byte[] magicNumber, int ipsFileEndingOffset, byte[] byteArrayIPSArray, byte[] patchedSourceROM, bool patch)
+        private static int Patch(byte[] magicNumber, int ipsFileEndingOffset, byte[] byteArrayIPSArray, byte[] patchedSourceROM, bool patch)
         {
             int effectivePatchSize = 0;
 

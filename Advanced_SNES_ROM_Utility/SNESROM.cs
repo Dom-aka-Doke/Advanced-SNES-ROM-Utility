@@ -523,32 +523,52 @@ namespace Advanced_SNES_ROM_Utility
                 Buffer.BlockCopy(SourceROMHeader, 0x20, size, 0, 4);
                 uint byteSize = BitConverter.ToUInt32(size, 0);
 
-                IntROMSize = 1;
-                while (byteSize > 1)
+                if (byteSize > 0 && byteSize <= 4294967295)
                 {
-                    byteSize >>= 1;
-                    IntROMSize++;
+                    IntROMSize = 1;
+                    while (byteSize > 1)
+                    {
+                        byteSize >>= 1;
+                        IntROMSize++;
+                    }
+
+                    ByteROMSize = Convert.ToByte(IntROMSize);
+                    StringROMSize = IntROMSize + " Mbit";
                 }
-                                
-                ByteROMSize = Convert.ToByte(IntROMSize);
-                StringROMSize = IntROMSize + " Mbit";
+
+                else
+                {
+                    IntROMSize = 0;
+                    ByteROMSize = 0;
+                    StringROMSize = "Unknown";
+                }
             }
             
             else
             { 
                 Buffer.BlockCopy(SourceROMHeader, 0x27, size, 0, 1);
-                
                 ByteROMSize = size[0];
-                IntROMSize = 1;
 
-                int count = 7;
-                while (count < ByteROMSize)
+                if (ByteROMSize >= 0x07 && ByteROMSize <= 0x0E)
                 {
-                    IntROMSize *= 2;
-                    count++;
+                    IntROMSize = 1;
+
+                    int count = 7;
+                    while (count < ByteROMSize)
+                    {
+                        IntROMSize *= 2;
+                        count++;
+                    }
+
+                    StringROMSize = IntROMSize + " Mbit";
                 }
 
-                StringROMSize = IntROMSize + " Mbit";
+                else
+                {
+                    IntROMSize = 0;
+                    ByteROMSize = 0;
+                    StringROMSize = "Unknown";
+                }
             }
         }
 

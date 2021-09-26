@@ -69,8 +69,7 @@ namespace Advanced_SNES_ROM_Utility
 
                 if (!IsBSROM)
                 {
-                    byte[] byteArrayROMSizeValue = new byte[1];
-                    byteArrayROMSizeValue[0] = 0x07;
+                    byte[] byteArrayROMSizeValue = { 0x07 };
 
                     while (IntROMSize < IntCalcFileSize)
                     {
@@ -90,7 +89,7 @@ namespace Advanced_SNES_ROM_Utility
                 {
                     IntROMSize = IntCalcFileSize;
 
-                    int size = 1;
+                    uint size = 1;
                     int sizeCtr = IntROMSize;
 
                     while (sizeCtr > 1)
@@ -100,9 +99,7 @@ namespace Advanced_SNES_ROM_Utility
                         sizeCtr--;
                     }
 
-                    byte[] byteArrayROMSizeValue = new byte[4];
-                    byteArrayROMSizeValue = BitConverter.GetBytes(size);
-
+                    byte[] byteArrayROMSizeValue = BitConverter.GetBytes(size);
                     Buffer.BlockCopy(byteArrayROMSizeValue, 0, SourceROM, (int)UIntROMHeaderOffset + 0x20, 4);
                 }
 
