@@ -7,7 +7,7 @@ namespace Advanced_SNES_ROM_Utility
 {
     class IPSPatch
     {
-        public static byte[] Apply(SNESROM sourceROM, string ipsFilePath)
+        public static byte[] Apply(byte[] mergedSourceROM, string ipsFilePath)
         {
             byte[] byteArrayIPSPatch = File.ReadAllBytes(ipsFilePath);
 
@@ -42,32 +42,13 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             // Prepare ROM for patching
-            byte[] patchedSourceROM = null;
+            byte[] patchedSourceROM = mergedSourceROM;
 
             ipsFileExpansionSize = Patch(magicNumber, ipsFileEndingOffset, byteArrayIPSPatch, patchedSourceROM, false);
 
-            if (ipsFileExpansionSize > (sourceROM.SourceROM.Length + sourceROM.UIntSMCHeader))
+            if (ipsFileExpansionSize > mergedSourceROM.Length)
             {
-                patchedSourceROM = new byte[ipsFileExpansionSize];
-            }
-
-            else
-            {
-                patchedSourceROM = new byte[sourceROM.SourceROM.Length + sourceROM.UIntSMCHeader];
-            }
-
-            // Copy source ROM data over to ROM for patching
-            if (sourceROM.SourceROMSMCHeader != null && sourceROM.UIntSMCHeader > 0)
-            {
-                // Merge header with ROM if header exists
-                Buffer.BlockCopy(sourceROM.SourceROMSMCHeader, 0, patchedSourceROM, 0, sourceROM.SourceROMSMCHeader.Length);
-                Buffer.BlockCopy(sourceROM.SourceROM, 0, patchedSourceROM, sourceROM.SourceROMSMCHeader.Length, sourceROM.SourceROM.Length);
-            }
-
-            else
-            {
-                // Just copy source ROM if no header exists
-                Buffer.BlockCopy(sourceROM.SourceROM, 0, patchedSourceROM, 0, sourceROM.SourceROM.Length);
+                Array.Resize(ref patchedSourceROM, ipsFileExpansionSize);
             }
 
             // Patch file
@@ -76,9 +57,7 @@ namespace Advanced_SNES_ROM_Utility
             // Truncate file, if necessary
             if (ipsFileTruncationSize > 0 && ipsFileTruncationSize < patchedSourceROM.Length)
             {
-                byte[] tempPatchedSourceROM = patchedSourceROM;
-                patchedSourceROM = new byte[ipsFileTruncationSize];
-                Buffer.BlockCopy(tempPatchedSourceROM, 0, patchedSourceROM, 0, ipsFileTruncationSize);
+                Array.Resize(ref patchedSourceROM, ipsFileTruncationSize);
             }
 
             return patchedSourceROM;

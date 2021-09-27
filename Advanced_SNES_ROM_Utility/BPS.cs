@@ -7,7 +7,7 @@ namespace Advanced_SNES_ROM_Utility
 {
     class BPSPatch
     {
-        public static byte[] Apply(SNESROM sourceROM, string bpsFilePath)
+        public static byte[] Apply(byte[] mergedSourceROM, string crc32Hash, string bpsFilePath)
         {
             byte[] byteArrayBPSPatch = File.ReadAllBytes(bpsFilePath);
             ulong offsetBPSPatch = 0;
@@ -47,47 +47,33 @@ namespace Advanced_SNES_ROM_Utility
             if (internalHashPatchFile != calcHashPatchFile) { return null; }
 
             // Validate CRC32 of source file
-            if (internalHashSourceFile != sourceROM.CRC32Hash) { return null; }
+            if (internalHashSourceFile != crc32Hash) { return null; }
 
             // Get VWI information
-            ulong vwiSourceFileLength = GetVWI(byteArrayBPSPatch, ref offsetBPSPatch);
-            ulong vwiDestinationFileLength = GetVWI(byteArrayBPSPatch, ref offsetBPSPatch);
-            ulong vwiMetadataLength = GetVWI(byteArrayBPSPatch, ref offsetBPSPatch);
+            ulong vwiSourceFileLength = GetVWI(ref byteArrayBPSPatch, ref offsetBPSPatch);
+            ulong vwiDestinationFileLength = GetVWI(ref byteArrayBPSPatch, ref offsetBPSPatch);
+            ulong vwiMetadataLength = GetVWI(ref byteArrayBPSPatch, ref offsetBPSPatch);
 
             // Validate length of source file
-            if ((ulong)(sourceROM.SourceROM.Length + sourceROM.UIntSMCHeader) != vwiSourceFileLength) { return null; }
-
-            // Merge ROM and header, if header exists
-            byte[] byteArraySourceROM = new byte[sourceROM.SourceROM.Length + sourceROM.UIntSMCHeader];
-
-            if (sourceROM.SourceROMSMCHeader != null && sourceROM.UIntSMCHeader > 0)
-            {
-                Array.Copy(sourceROM.SourceROMSMCHeader, 0, byteArraySourceROM, 0, sourceROM.UIntSMCHeader);
-                Array.Copy(sourceROM.SourceROM, 0, byteArraySourceROM, sourceROM.UIntSMCHeader, sourceROM.SourceROM.Length);
-            }
-
-            else
-            {
-                Array.Copy(sourceROM.SourceROMSMCHeader, 0, byteArraySourceROM, 0, sourceROM.SourceROM.Length);
-            }
+            if ((ulong)(mergedSourceROM.Length) != vwiSourceFileLength) { return null; }
 
             // Create destination file for patching
             byte[] patchedSourceROM = new byte[vwiDestinationFileLength];
-            foreach (byte b in patchedSourceROM) { patchedSourceROM[b] = 0x00; }
 
             // Generate patched file using VWI information
             while (offsetBPSPatch < (ulong)byteArrayBPSPatch.Length - 12)
             {
-                ulong data = GetVWI(byteArrayBPSPatch, ref offsetBPSPatch);
+                ulong data = GetVWI(ref byteArrayBPSPatch, ref offsetBPSPatch);
                 ulong command = data & 3;
                 ulong length = (data >> 2) + 1;
 
                 switch (command)
                 {
-                    case 0: SourceRead(ref patchedSourceROM, ref byteArraySourceROM, ref offsetDestinationFile, length); break;
-/*                  case 1: TargetRead(ref patchedSourceROM, ref byteArraySourceROM, ref offsetDestinationFile, length); break;
-                    case 2: SourceCopy(ref patchedSourceROM, ref byteArraySourceROM, ref offsetDestinationFile, length); break;
-                    case 3: TargetCopy(ref patchedSourceROM, ref byteArraySourceROM, ref offsetDestinationFile, length); break;  */
+                    case 0: SourceRead(ref mergedSourceROM, ref patchedSourceROM, ref offsetSourceFile, ref offsetDestinationFile, length); break;
+                    case 1: TargetRead(ref byteArrayBPSPatch, ref patchedSourceROM, ref offsetBPSPatch, ref offsetDestinationFile, length); break;
+                    case 2: SourceCopy(ref byteArrayBPSPatch, ref mergedSourceROM, ref patchedSourceROM, ref offsetBPSPatch, ref offsetSourceFile, ref offsetDestinationFile, length); break;
+                    case 3: TargetCopy(ref byteArrayBPSPatch, ref mergedSourceROM, ref patchedSourceROM, ref offsetBPSPatch, ref offsetSourceFile, ref offsetDestinationFile, length); break;
+                    default: return null;
                 }
             }
 
@@ -108,7 +94,55 @@ namespace Advanced_SNES_ROM_Utility
             return patchedSourceROM;
         }
 
-        private static ulong GetVWI(byte[] byteArrayBPSPatch, ref ulong offsetBPSPatch)
+        private static void SourceRead(ref byte[] mergedSourceROM, ref byte[] patchedSourceROM, ref ulong offsetSourceFile, ref ulong offsetDestinationFile, ulong length)
+        {
+            Array.Copy(mergedSourceROM, (int)offsetSourceFile, patchedSourceROM, (int)offsetDestinationFile, (int)length);
+            offsetSourceFile += length;
+            offsetDestinationFile += length;
+        }
+
+        private static void TargetRead(ref byte[] byteArrayBPSPatch, ref byte[] patchedSourceROM, ref ulong offsetBPSPatch, ref ulong offsetDestinationFile, ulong length)
+        {
+            Array.Copy(byteArrayBPSPatch, (int)offsetBPSPatch, patchedSourceROM, (int)offsetDestinationFile, (int)length);
+            offsetBPSPatch += length;
+            offsetDestinationFile += length;
+        }
+
+        // TODO: Verify function SourceCopy in BPS.cs
+        private static void SourceCopy(ref byte[] byteArrayBPSPatch, ref byte[] mergedSourceROM, ref byte[] patchedSourceROM, ref ulong offsetBPSPatch, ref ulong offsetSourceFile, ref ulong offsetDestinationFile, ulong length)
+        {
+            long data = (long)GetVWI(ref byteArrayBPSPatch, ref offsetBPSPatch);
+            long newLength = (data >> 2) + 1;
+            long dataAndOne = data & 1;
+            int minusOrPlusOne = 1;
+            if (dataAndOne == 1) { minusOrPlusOne = -1; }
+            
+            long newOffsetSourceFile = (long)offsetSourceFile + minusOrPlusOne * (data >> 1);
+
+            Array.Copy(mergedSourceROM, (int)newOffsetSourceFile, patchedSourceROM, (int)offsetDestinationFile, (int)newLength);
+
+            offsetSourceFile += (ulong)newOffsetSourceFile;
+            offsetDestinationFile += (ulong)newLength;
+        }
+
+        // TODO: Write function TargetCopy in BPS.cs
+        private static void TargetCopy(ref byte[] byteArrayBPSPatch, ref byte[] mergedSourceROM, ref byte[] patchedSourceROM, ref ulong offsetBPSPatch, ref ulong offsetSourceFile, ref ulong offsetDestinationFile, ulong length)
+        {
+            long data = (long)GetVWI(ref byteArrayBPSPatch, ref offsetBPSPatch);
+            long newLength = (data >> 2) + 1;
+            long dataAndOne = data & 1;
+            int minusOrPlusOne = 1;
+            if (dataAndOne == 1) { minusOrPlusOne = -1; }
+
+            long newOffsetSourceFile = (long)offsetSourceFile + minusOrPlusOne * (data >> 1);
+
+            Array.Copy(mergedSourceROM, (int)newOffsetSourceFile, patchedSourceROM, (int)offsetDestinationFile, (int)newLength);
+
+            offsetSourceFile = (ulong)newOffsetSourceFile;
+            offsetDestinationFile += length;
+        }
+
+        private static ulong GetVWI(ref byte[] byteArrayBPSPatch, ref ulong offsetBPSPatch)
         {
             ulong data = 0;
             int shift = 1;
@@ -127,42 +161,5 @@ namespace Advanced_SNES_ROM_Utility
             offsetBPSPatch++;
             return data;
         }
-
-        private static void SourceRead(ref byte[] patchedSourceROM, ref byte[] byteArraySourceROM, ref ulong offsetDestinationFile, ulong length)
-        {
-            while (length-- >= 0)
-            {
-                patchedSourceROM[offsetDestinationFile] = byteArraySourceROM[offsetDestinationFile];
-                offsetDestinationFile++;
-            }
-        }
-        /*
-        private static void TargetRead()
-        {
-            while (length--)
-            {
-                target[outputOffset++] = read();
-            }
-        }
-
-        private static void SourceCopy()
-        {
-            uint64 data = decode();
-            sourceRelativeOffset += (data & 1 ? -1 : +1) * (data >> 1);
-            while (length--)
-            {
-                target[outputOffset++] = source[sourceRelativeOffset++];
-            }
-        }
-
-        private static void TargetCopy()
-        {
-            uint64 data = decode();
-            targetRelativeOffset += (data & 1 ? -1 : +1) * (data >> 1);
-            while (length--)
-            {
-                target[outputOffset++] = target[targetRelativeOffset++];
-            }
-        }   */
     }
 }

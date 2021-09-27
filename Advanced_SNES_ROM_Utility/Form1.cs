@@ -249,12 +249,26 @@ namespace Advanced_SNES_ROM_Utility
             if (selectPatchDialog.ShowDialog() == DialogResult.OK)
             {
                 byte[] patchedSourceROM = null;
-                
-                switch(Path.GetExtension(selectPatchDialog.FileName))
+                byte[] mergedSourceROM = new byte[sourceROM.SourceROM.Length + sourceROM.UIntSMCHeader];
+
+                if (sourceROM.SourceROMSMCHeader != null && sourceROM.UIntSMCHeader > 0)
                 {
-                    case ".ips": patchedSourceROM = IPSPatch.Apply(sourceROM, selectPatchDialog.FileName); break;
-                    case ".ups": patchedSourceROM = UPSPatch.Apply(sourceROM, selectPatchDialog.FileName); break;
-                    case ".bps": patchedSourceROM = BPSPatch.Apply(sourceROM, selectPatchDialog.FileName); break;
+                    // Merge header with ROM if header exists
+                    Buffer.BlockCopy(sourceROM.SourceROMSMCHeader, 0, mergedSourceROM, 0, sourceROM.SourceROMSMCHeader.Length);
+                    Buffer.BlockCopy(sourceROM.SourceROM, 0, mergedSourceROM, sourceROM.SourceROMSMCHeader.Length, sourceROM.SourceROM.Length);
+                }
+
+                else
+                {
+                    // Just copy source ROM if no header exists
+                    Buffer.BlockCopy(sourceROM.SourceROM, 0, mergedSourceROM, 0, sourceROM.SourceROM.Length);
+                }
+
+                switch (Path.GetExtension(selectPatchDialog.FileName))
+                {
+                    case ".ips": patchedSourceROM = IPSPatch.Apply(mergedSourceROM, selectPatchDialog.FileName); break;
+                    case ".ups": patchedSourceROM = UPSPatch.Apply(mergedSourceROM, sourceROM.CRC32Hash, selectPatchDialog.FileName); break;
+                    case ".bps": patchedSourceROM = BPSPatch.Apply(mergedSourceROM, sourceROM.CRC32Hash, selectPatchDialog.FileName); break;
                 }
                 
                 if (patchedSourceROM != null)
@@ -269,7 +283,7 @@ namespace Advanced_SNES_ROM_Utility
 
                 else
                 {
-                    MessageBox.Show("Could not apply IPS patch! Please check if your patch is valid.");
+                    MessageBox.Show("Could not apply patch! Please check if your patch is valid for your ROM.");
                 }
             }
         }

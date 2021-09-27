@@ -7,7 +7,7 @@ namespace Advanced_SNES_ROM_Utility
 {
     class UPSPatch
     {
-        public static byte[] Apply(SNESROM sourceROM, string upsFilePath)
+        public static byte[] Apply(byte[] mergedSourceROM, string crc32Hash, string upsFilePath)
         {
             byte[] byteArrayUPSPatch = File.ReadAllBytes(upsFilePath);
             ulong offsetUPSPatch = 0;
@@ -46,7 +46,7 @@ namespace Advanced_SNES_ROM_Utility
             // Verify size of source file
             ulong vwiSourceFileLength = GetVWI(byteArrayUPSPatch, ref offsetUPSPatch);
             ulong vwiDestinationFileLength = GetVWI(byteArrayUPSPatch, ref offsetUPSPatch);
-            if ((ulong)(sourceROM.SourceROM.Length + sourceROM.UIntSMCHeader) != vwiSourceFileLength && (ulong)(sourceROM.SourceROM.Length + sourceROM.UIntSMCHeader) != vwiDestinationFileLength) { return null; }
+            if ((ulong)(mergedSourceROM.Length) != vwiSourceFileLength && (ulong)(mergedSourceROM.Length) != vwiDestinationFileLength) { return null; }
 
             // Verify CRC32 of source file
             Array.Copy(byteArrayUPSPatch, byteArrayUPSPatch.Length - (crc32SourceFile.Length + crc32DestinationFile.Length + crc32PatchFile.Length), crc32SourceFile, 0, crc32SourceFile.Length);
@@ -55,25 +55,18 @@ namespace Advanced_SNES_ROM_Utility
             string internalHashSourceFile = BitConverter.ToString(crc32SourceFile).Replace("-", "");
             string internalHashDestinationFile = BitConverter.ToString(crc32DestinationFile).Replace("-", "");
 
-            if (internalHashSourceFile != sourceROM.CRC32Hash && internalHashDestinationFile != sourceROM.CRC32Hash) { return null; }
+            if (internalHashSourceFile != crc32Hash && internalHashDestinationFile != crc32Hash) { return null; }
 
             // Create destination file for patching
-            byte[] patchedSourceROM = null;
+            byte[] patchedSourceROM = mergedSourceROM;
             
-            if (internalHashSourceFile == sourceROM.CRC32Hash) { patchedSourceROM = new byte[vwiDestinationFileLength]; }
-            else if (internalHashDestinationFile == sourceROM.CRC32Hash) { patchedSourceROM = new byte[vwiSourceFileLength]; }
-
-            foreach (byte b in patchedSourceROM) { patchedSourceROM[b] = 0x00; }
-
-            if (sourceROM.SourceROMSMCHeader != null && sourceROM.UIntSMCHeader > 0) { Array.Copy(sourceROM.SourceROMSMCHeader, 0, patchedSourceROM, 0, sourceROM.UIntSMCHeader); }
-            if (patchedSourceROM.Length <= sourceROM.SourceROM.Length + sourceROM.UIntSMCHeader) { Array.Copy(sourceROM.SourceROM, 0, patchedSourceROM, sourceROM.UIntSMCHeader, patchedSourceROM.Length - sourceROM.UIntSMCHeader); }
-            else if (patchedSourceROM.Length > sourceROM.SourceROM.Length + sourceROM.UIntSMCHeader) { Array.Copy(sourceROM.SourceROM, 0, patchedSourceROM, sourceROM.UIntSMCHeader, sourceROM.SourceROM.Length); }
+            if (internalHashSourceFile == crc32Hash) { Array.Resize(ref patchedSourceROM, (int)vwiDestinationFileLength); }
+            else if (internalHashDestinationFile == crc32Hash) { Array.Resize(ref patchedSourceROM, (int)vwiSourceFileLength); }
 
             // Generate patched file using VWI information
             while (offsetUPSPatch < (ulong)(byteArrayUPSPatch.Length - (crc32SourceFile.Length + crc32DestinationFile.Length + crc32PatchFile.Length)))
             {
-                ulong bytesToSkip = GetVWI(byteArrayUPSPatch, ref offsetUPSPatch);
-                offsetSourceFile += bytesToSkip;
+                offsetSourceFile += GetVWI(byteArrayUPSPatch, ref offsetUPSPatch);
 
                 while (byteArrayUPSPatch[offsetUPSPatch] != 0x00 && offsetSourceFile < (ulong)patchedSourceROM.Length)
                 {
@@ -98,7 +91,7 @@ namespace Advanced_SNES_ROM_Utility
                 calcHashDestinationFile += singleByte.ToString("X2").ToUpper();
             }
 
-            if (internalHashDestinationFile != calcHashDestinationFile && internalHashDestinationFile != sourceROM.CRC32Hash) { return null; }
+            if (internalHashDestinationFile != calcHashDestinationFile && internalHashDestinationFile != crc32Hash) { return null; }
 
             return patchedSourceROM;
         }
