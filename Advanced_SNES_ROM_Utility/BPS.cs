@@ -11,8 +11,8 @@ namespace Advanced_SNES_ROM_Utility
         {
             byte[] byteArrayBPSPatch = File.ReadAllBytes(bpsFilePath);
             ulong offsetBPSPatch = 0;
-            ulong offsetSourceFile = 0;             // sourceRelativeOffset
-            ulong offsetDestinationFile = 0;        // outputOffset
+            ulong offsetSourceFile = 0;
+            ulong offsetDestinationFile = 0;
 
             // Check if BPS patch starts with magic number
             byte[] magicNumber = Encoding.ASCII.GetBytes("BPS1");
@@ -67,13 +67,22 @@ namespace Advanced_SNES_ROM_Utility
                 ulong command = data & 3;
                 ulong length = (data >> 2) + 1;
 
-                switch (command)
+                try
                 {
-                    case 0: SourceRead(ref mergedSourceROM, ref patchedSourceROM, ref offsetSourceFile, ref offsetDestinationFile, length); break;
-                    case 1: TargetRead(ref byteArrayBPSPatch, ref patchedSourceROM, ref offsetBPSPatch, ref offsetDestinationFile, length); break;
-                    case 2: SourceCopy(ref byteArrayBPSPatch, ref mergedSourceROM, ref patchedSourceROM, ref offsetBPSPatch, ref offsetSourceFile, ref offsetDestinationFile, length); break;
-                    case 3: TargetCopy(ref byteArrayBPSPatch, ref mergedSourceROM, ref patchedSourceROM, ref offsetBPSPatch, ref offsetSourceFile, ref offsetDestinationFile, length); break;
-                    default: return null;
+                    switch (command)
+                    {
+                        case 0: SourceRead(ref mergedSourceROM, ref patchedSourceROM, ref offsetSourceFile, ref offsetDestinationFile, length); break;
+                        case 1: TargetRead(ref byteArrayBPSPatch, ref patchedSourceROM, ref offsetBPSPatch, ref offsetDestinationFile, length); break;
+                        case 2: SourceCopy(ref byteArrayBPSPatch, ref mergedSourceROM, ref patchedSourceROM, ref offsetBPSPatch, ref offsetSourceFile, ref offsetDestinationFile); break;
+                        case 3: TargetCopy(ref byteArrayBPSPatch, ref patchedSourceROM, ref offsetBPSPatch, ref offsetSourceFile, ref offsetDestinationFile); break;
+                        default: return null;
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    File.WriteAllBytes(@"C:\Temp\test.smc", patchedSourceROM);
+                    return null;
                 }
             }
 
@@ -108,38 +117,32 @@ namespace Advanced_SNES_ROM_Utility
             offsetDestinationFile += length;
         }
 
-        // TODO: Verify function SourceCopy in BPS.cs
-        private static void SourceCopy(ref byte[] byteArrayBPSPatch, ref byte[] mergedSourceROM, ref byte[] patchedSourceROM, ref ulong offsetBPSPatch, ref ulong offsetSourceFile, ref ulong offsetDestinationFile, ulong length)
+        private static void SourceCopy(ref byte[] byteArrayBPSPatch, ref byte[] mergedSourceROM, ref byte[] patchedSourceROM, ref ulong offsetBPSPatch, ref ulong offsetSourceFile, ref ulong offsetDestinationFile)
         {
             long data = (long)GetVWI(ref byteArrayBPSPatch, ref offsetBPSPatch);
-            long newLength = (data >> 2) + 1;
+            long sourceRelativeLength = (data >> 2) + 1;
             long dataAndOne = data & 1;
             int minusOrPlusOne = 1;
             if (dataAndOne == 1) { minusOrPlusOne = -1; }
+            long sourceRelativeOffset = (int)offsetSourceFile + (minusOrPlusOne * (data >> 1));
             
-            long newOffsetSourceFile = (long)offsetSourceFile + minusOrPlusOne * (data >> 1);
-
-            Array.Copy(mergedSourceROM, (int)newOffsetSourceFile, patchedSourceROM, (int)offsetDestinationFile, (int)newLength);
-
-            offsetSourceFile += (ulong)newOffsetSourceFile;
-            offsetDestinationFile += (ulong)newLength;
+            Array.Copy(mergedSourceROM, (int)sourceRelativeOffset, patchedSourceROM, (int)offsetDestinationFile, (int)sourceRelativeLength);
+            offsetDestinationFile += (ulong)sourceRelativeLength;
+            offsetSourceFile += (ulong)sourceRelativeLength;
         }
 
-        // TODO: Write function TargetCopy in BPS.cs
-        private static void TargetCopy(ref byte[] byteArrayBPSPatch, ref byte[] mergedSourceROM, ref byte[] patchedSourceROM, ref ulong offsetBPSPatch, ref ulong offsetSourceFile, ref ulong offsetDestinationFile, ulong length)
+        private static void TargetCopy(ref byte[] byteArrayBPSPatch, ref byte[] patchedSourceROM, ref ulong offsetBPSPatch, ref ulong offsetSourceFile, ref ulong offsetDestinationFile)
         {
             long data = (long)GetVWI(ref byteArrayBPSPatch, ref offsetBPSPatch);
-            long newLength = (data >> 2) + 1;
+            long targetRelativeLength = (data >> 2) + 1;
             long dataAndOne = data & 1;
             int minusOrPlusOne = 1;
             if (dataAndOne == 1) { minusOrPlusOne = -1; }
+            long targetRelativeOffset = (int)offsetDestinationFile + (minusOrPlusOne * (data >> 1));
 
-            long newOffsetSourceFile = (long)offsetSourceFile + minusOrPlusOne * (data >> 1);
-
-            Array.Copy(mergedSourceROM, (int)newOffsetSourceFile, patchedSourceROM, (int)offsetDestinationFile, (int)newLength);
-
-            offsetSourceFile = (ulong)newOffsetSourceFile;
-            offsetDestinationFile += length;
+            Array.Copy(patchedSourceROM, (int)targetRelativeOffset, patchedSourceROM, (int)offsetDestinationFile, (int)targetRelativeLength);
+            offsetDestinationFile += (ulong)targetRelativeLength;
+            offsetSourceFile += (ulong)targetRelativeLength;
         }
 
         private static ulong GetVWI(ref byte[] byteArrayBPSPatch, ref ulong offsetBPSPatch)
