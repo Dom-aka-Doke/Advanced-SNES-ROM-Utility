@@ -38,15 +38,15 @@
             // labelAboutFunctions
             // 
             this.labelAboutFunctions.AutoSize = true;
-            this.labelAboutFunctions.Location = new System.Drawing.Point(10, 22);
+            this.labelAboutFunctions.Location = new System.Drawing.Point(10, 21);
             this.labelAboutFunctions.Name = "labelAboutFunctions";
-            this.labelAboutFunctions.Size = new System.Drawing.Size(385, 481);
+            this.labelAboutFunctions.Size = new System.Drawing.Size(389, 481);
             this.labelAboutFunctions.TabIndex = 7;
             this.labelAboutFunctions.Text = resources.GetString("labelAboutFunctions.Text");
             // 
             // buttonManualClose
             // 
-            this.buttonManualClose.Location = new System.Drawing.Point(12, 524);
+            this.buttonManualClose.Location = new System.Drawing.Point(12, 523);
             this.buttonManualClose.Name = "buttonManualClose";
             this.buttonManualClose.Size = new System.Drawing.Size(405, 23);
             this.buttonManualClose.TabIndex = 8;
@@ -68,7 +68,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(431, 555);
+            this.ClientSize = new System.Drawing.Size(431, 553);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.buttonManualClose);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
