@@ -118,9 +118,8 @@ namespace Advanced_SNES_ROM_Utility
             {
                 Array.Copy(mergedSourceROM, sourceRelativeOffset, patchedSourceROM, (int)outputOffset, 1);
                 outputOffset++;
+                sourceRelativeOffset++;
             }
-
-            sourceRelativeOffset += length;
         }
 
         private static void TargetCopy(ref byte[] byteArrayBPSPatch, ref byte[] patchedSourceROM, ref long offsetBPSPatch, ref long outputOffset, ref long targetRelativeOffset, ref long length)
@@ -132,9 +131,8 @@ namespace Advanced_SNES_ROM_Utility
             {
                 Array.Copy(patchedSourceROM, targetRelativeOffset, patchedSourceROM, (int)outputOffset, 1);
                 outputOffset++;
+                targetRelativeOffset++;
             }
-
-            targetRelativeOffset += length;
         }
 
         private static long GetVWI(ref byte[] byteArrayBPSPatch, ref long offsetBPSPatch)
