@@ -114,31 +114,27 @@ namespace Advanced_SNES_ROM_Utility
             long data = GetVWI(ref byteArrayBPSPatch, ref offsetBPSPatch);
             sourceRelativeOffset += ((data & 1) == 1 ? -1 : 1) * (data >> 1);
 
-            byte[] sourceRelativeByte = { 0x00 };
-            Array.Copy(mergedSourceROM, sourceRelativeOffset, sourceRelativeByte, 0, 1);
-
             for (int i = 0; i < (int)length; i++)
             {
-                Array.Copy(sourceRelativeByte, 0, patchedSourceROM, (int)outputOffset, 1);
-                sourceRelativeOffset++;
+                Array.Copy(mergedSourceROM, sourceRelativeOffset, patchedSourceROM, (int)outputOffset, 1);
                 outputOffset++;
             }
+
+            sourceRelativeOffset += length;
         }
 
         private static void TargetCopy(ref byte[] byteArrayBPSPatch, ref byte[] patchedSourceROM, ref long offsetBPSPatch, ref long outputOffset, ref long targetRelativeOffset, ref long length)
         {
             long data = GetVWI(ref byteArrayBPSPatch, ref offsetBPSPatch);
             targetRelativeOffset += ((data & 1) == 1 ? -1 : 1) * (data >> 1);
-
-            byte[] targetRelativeByte = { 0x00 };
-            Array.Copy(patchedSourceROM, targetRelativeOffset, targetRelativeByte, 0, 1);
-            
+           
             for (int i = 0; i < (int)length; i++)
             {
-                Array.Copy(targetRelativeByte, 0, patchedSourceROM, (int)outputOffset, 1);
-                targetRelativeOffset++;
+                Array.Copy(patchedSourceROM, targetRelativeOffset, patchedSourceROM, (int)outputOffset, 1);
                 outputOffset++;
             }
+
+            targetRelativeOffset += length;
         }
 
         private static long GetVWI(ref byte[] byteArrayBPSPatch, ref long offsetBPSPatch)
