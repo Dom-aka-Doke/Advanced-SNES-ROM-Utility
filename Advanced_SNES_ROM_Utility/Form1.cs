@@ -58,6 +58,7 @@ namespace Advanced_SNES_ROM_Utility
             {
                 // Create new ROM
                 sourceROM = new SNESROM(@selectROMDialog.FileName);
+                if (sourceROM.SourceROM == null) { return; }
 
                 // Store CRC32 for dirty tracking
                 savedFileHash = GetCRC32FromFile(@selectROMDialog.FileName);
