@@ -123,7 +123,7 @@ namespace Advanced_SNES_ROM_Utility
             long data = GetVWI(ref byteArrayBPSPatch, ref offsetBPSPatch);
             targetRelativeOffset += ((data & 1) == 1 ? -1 : 1) * (data >> 1);
            
-            for (int i = 0; i < (int)length; i++)
+            for (long i = 0; i < length; i++)
             {
                 Array.Copy(patchedSourceROM, targetRelativeOffset, patchedSourceROM, outputOffset, 1);
                 outputOffset++;
