@@ -244,7 +244,7 @@ namespace Advanced_SNES_ROM_Utility
             // Select IPS file dialogue
             OpenFileDialog selectPatchDialog = new OpenFileDialog();
 
-            selectPatchDialog.Filter = "Patch File (*.ips;*.ups;*.bps)|*.ips;*.ups;*.bps";
+            selectPatchDialog.Filter = "Patch File (*.ips;*.ups;*.bps;*.bdf;*.bdiff)|*.ips;*.ups;*.bps;*.bdf;*.bdiff";
 
             // If successfully selected an IPS file...
             if (selectPatchDialog.ShowDialog() == DialogResult.OK)
@@ -270,6 +270,8 @@ namespace Advanced_SNES_ROM_Utility
                     case ".ips": patchedSourceROM = IPSPatch.Apply(mergedSourceROM, selectPatchDialog.FileName); break;
                     case ".ups": patchedSourceROM = UPSPatch.Apply(mergedSourceROM, sourceROM.CRC32Hash, selectPatchDialog.FileName); break;
                     case ".bps": patchedSourceROM = BPSPatch.Apply(mergedSourceROM, sourceROM.CRC32Hash, selectPatchDialog.FileName); break;
+                    case ".bdf": patchedSourceROM = BDFPatch.Apply(mergedSourceROM, selectPatchDialog.FileName); break;
+                    case ".bdiff": patchedSourceROM = BDFPatch.Apply(mergedSourceROM, selectPatchDialog.FileName); break;
                 }
                 
                 if (patchedSourceROM != null)

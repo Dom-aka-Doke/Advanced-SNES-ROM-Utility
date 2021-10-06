@@ -53,6 +53,12 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="bz2portable, Version=0.86.0.518, Culture=neutral, PublicKeyToken=43072770b20d93eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\bz2portable.1.0.1\lib\bz2portable.dll</HintPath>
+    </Reference>
+    <Reference Include="deltaq, Version=1.0.0.0, Culture=neutral, PublicKeyToken=4ec66318c45104d7, processorArchitecture=MSIL">
+      <HintPath>..\packages\deltaq.1.0.1\lib\deltaq.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -65,6 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BDF.cs" />
     <Compile Include="BPS.cs" />
     <Compile Include="Crc32.cs" />
     <Compile Include="Form1.cs">
@@ -131,6 +138,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
