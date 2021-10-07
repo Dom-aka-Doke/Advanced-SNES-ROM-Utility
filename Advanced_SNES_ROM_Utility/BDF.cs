@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Windows.Forms;
+﻿using System.IO;
 using deltaq;
 
 namespace Advanced_SNES_ROM_Utility
