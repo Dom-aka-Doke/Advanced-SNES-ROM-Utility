@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Windows.Forms;
 using deltaq;
 
 namespace Advanced_SNES_ROM_Utility
@@ -15,8 +17,9 @@ namespace Advanced_SNES_ROM_Utility
                 return patchedSourceROMStream.ToArray();
             }
 
-            catch
+            catch (Exception ex)
             {
+                MessageBox.Show($"{ex}");
                 return null;
             }
         }
