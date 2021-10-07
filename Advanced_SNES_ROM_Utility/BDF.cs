@@ -17,9 +17,8 @@ namespace Advanced_SNES_ROM_Utility
                 return patchedSourceROMStream.ToArray();
             }
 
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show($"{ex}");
                 return null;
             }
         }

@@ -15,9 +15,8 @@ namespace Advanced_SNES_ROM_Utility
                 return Xdelta3Lib.Decode(source: mergedSourceROM, delta: byteArrayBDFPatch).ToArray();
             }
 
-            catch(Exception ex)
+            catch
             {
-                MessageBox.Show($"{ex}");
                 return null;
             }
         }
