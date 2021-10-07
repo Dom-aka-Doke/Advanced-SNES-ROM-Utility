@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Costura.Fody.4.1.0\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.4.1.0\build\Costura.Fody.props')" />
   <Import Project="..\packages\xdelta3.net.redist.windows.x64.1.0.1\build\net45\xdelta3.net.redist.windows.x64.props" Condition="Exists('..\packages\xdelta3.net.redist.windows.x64.1.0.1\build\net45\xdelta3.net.redist.windows.x64.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -78,6 +79,9 @@
   <ItemGroup>
     <Reference Include="bz2portable, Version=0.86.0.518, Culture=neutral, PublicKeyToken=43072770b20d93eb, processorArchitecture=MSIL">
       <HintPath>..\packages\bz2portable.1.0.1\lib\bz2portable.dll</HintPath>
+    </Reference>
+    <Reference Include="Costura, Version=4.1.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Costura.Fody.4.1.0\lib\net40\Costura.dll</HintPath>
     </Reference>
     <Reference Include="deltaq, Version=1.0.0.0, Culture=neutral, PublicKeyToken=4ec66318c45104d7, processorArchitecture=MSIL">
       <HintPath>..\packages\deltaq.1.0.1\lib\deltaq.dll</HintPath>
@@ -197,6 +201,9 @@
     <None Include="Graphics\save_icon.png" />
     <None Include="Graphics\save-as_icon.png" />
     <None Include="Graphics\ips-patch_icon.png" />
+    <EmbeddedResource Include="Costura32\xdelta3.dll" />
+    <EmbeddedResource Include="Costura64\xdelta3.dll" />
+    <Content Include="FodyWeavers.xml" />
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -206,13 +213,17 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\xdelta3.net.redist.windows.x64.1.0.1\build\net45\xdelta3.net.redist.windows.x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xdelta3.net.redist.windows.x64.1.0.1\build\net45\xdelta3.net.redist.windows.x64.props'))" />
+    <Error Condition="!Exists('..\packages\Fody.6.0.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.6.0.0\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Costura.Fody.4.1.0\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.4.1.0\build\Costura.Fody.props'))" />
   </Target>
+  <Import Project="..\packages\Fody.6.0.0\build\Fody.targets" Condition="Exists('..\packages\Fody.6.0.0\build\Fody.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
