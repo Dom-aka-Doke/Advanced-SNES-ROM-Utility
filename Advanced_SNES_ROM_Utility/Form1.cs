@@ -125,13 +125,19 @@ namespace Advanced_SNES_ROM_Utility
             {
                 if (sourceROM.StringMapMode.StartsWith("LoROM"))
                 {
-                    if (sourceROM.ByteMapMode >= 0x30)
+                  //if (sourceROM.ByteMapMode >= 0x30)
+                  //{
+
+                    if (sourceROM.ByteMapMode >= 0x30)          // <-- remove this if block when using uncommented way!
                     {
                         byte[] newMapMode = new byte[1] { 0x32 };
                         Buffer.BlockCopy(newMapMode, 0, expandedROM, (int)sourceROM.UIntROMHeaderOffset + 0x25, 1);
-                        Buffer.BlockCopy(expandedROM, 0, expandedROM, 0x400000, 0x8000);
                     }
+                    
+                    Buffer.BlockCopy(expandedROM, 0, expandedROM, 0x400000, 0x8000);
 
+                  //}
+                    /*
                     else
                     {
                         int size = 0x400000;
@@ -144,7 +150,7 @@ namespace Advanced_SNES_ROM_Utility
                         foreach (byte singleByte in fillZeroByte) { fillZeroByte[singleByte] = 0x00; }
 
                         Buffer.BlockCopy(fillZeroByte, 0, expandedROM, 0x8000, fillZeroByte.Length);
-                    }
+                    }*/
                 }
 
                 else if (sourceROM.StringMapMode.StartsWith("HiROM"))
@@ -241,12 +247,12 @@ namespace Advanced_SNES_ROM_Utility
 
         private void buttonPatch_Click(object sender, EventArgs e)
         {
-            // Select IPS file dialogue
+            // Select patch file dialogue
             OpenFileDialog selectPatchDialog = new OpenFileDialog();
 
-            selectPatchDialog.Filter = "Patch File (*.ips;*.ups;*.bps;*.bdf;*.bdiff;*.xdelta)|*.ips;*.ups;*.bps;*.bdf;*.bdiff;*.xdelta";
+            selectPatchDialog.Filter = "Patch File (*.ips;*.ups;*.bps;*.bdf;*.xdelta)|*.ips;*.ups;*.bps;*.bdf;*.xdelta";
 
-            // If successfully selected an IPS file...
+            // If successfully selected a patch file...
             if (selectPatchDialog.ShowDialog() == DialogResult.OK)
             {
                 byte[] patchedSourceROM = null;
