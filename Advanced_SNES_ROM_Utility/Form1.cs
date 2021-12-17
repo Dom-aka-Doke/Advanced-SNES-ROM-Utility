@@ -74,6 +74,34 @@ namespace Advanced_SNES_ROM_Utility
                     buttonFixRegion.Enabled = false;
                 }
 
+                // Check if FastROM contains SlowROM checks
+                if (sourceROM.ByteROMSpeed == 0x30)
+                {
+                    if (sourceROM.RemoveSlowROMChecks(false))
+                    {
+                        buttonFixSlowROMChecks.Enabled = true;
+                    }
+                }
+
+                else
+                {
+                    buttonFixSlowROMChecks.Enabled = false;
+                }
+
+                // Check if ROM contains SRAM checks
+                if(sourceROM.ByteSRAMSize > 0x00 || sourceROM.ByteExRAMSize > 0x00)
+                {
+                    if (sourceROM.RemoveSRAMChecks(false))
+                    {
+                        buttonFixSRAMChecks.Enabled = true;
+                    }
+                }
+
+                else
+                {
+                    buttonFixSRAMChecks.Enabled = false;
+                }
+
                 // Initialize combo box for country and region
                 comboBoxCountryRegion.DataSource = listCountryRegion;
                 comboBoxCountryRegion.DisplayMember = "Name";
@@ -237,6 +265,22 @@ namespace Advanced_SNES_ROM_Utility
             RefreshLabelsAndButtons();
             // Set button manually, because RefreshLabelsAndButtons doesn't do that for performace reasons
             buttonFixRegion.Enabled = false;
+        }
+
+        private void buttonSlowROMFix_Click(object sender, EventArgs e)
+        {
+            sourceROM.RemoveSlowROMChecks(true);
+            RefreshLabelsAndButtons();
+            // Set button manually, because RefreshLabelsAndButtons doesn't do that for performace reasons
+            buttonFixSlowROMChecks.Enabled = false;
+        }
+
+        private void buttonFixSRAMChecks_Click(object sender, EventArgs e)
+        {
+            sourceROM.RemoveSRAMChecks(true);
+            RefreshLabelsAndButtons();
+            // Set button manually, because RefreshLabelsAndButtons doesn't do that for performace reasons
+            buttonFixSRAMChecks.Enabled = false;
         }
 
         private void buttonFixROMSize_Click(object sender, EventArgs e)

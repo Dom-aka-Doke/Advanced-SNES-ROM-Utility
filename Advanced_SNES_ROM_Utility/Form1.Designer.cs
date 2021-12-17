@@ -84,6 +84,8 @@
             this.groupBoxChecksums = new System.Windows.Forms.GroupBox();
             this.groupBoxROMInfo = new System.Windows.Forms.GroupBox();
             this.buttonExit = new System.Windows.Forms.Button();
+            this.buttonFixSlowROMChecks = new System.Windows.Forms.Button();
+            this.buttonFixSRAMChecks = new System.Windows.Forms.Button();
             this.groupBoxInfo.SuspendLayout();
             this.groupBoxChecksums.SuspendLayout();
             this.groupBoxROMInfo.SuspendLayout();
@@ -450,11 +452,11 @@
             // buttonFixRegion
             // 
             this.buttonFixRegion.Enabled = false;
-            this.buttonFixRegion.Location = new System.Drawing.Point(366, 244);
+            this.buttonFixRegion.Location = new System.Drawing.Point(366, 255);
             this.buttonFixRegion.Name = "buttonFixRegion";
             this.buttonFixRegion.Size = new System.Drawing.Size(166, 23);
             this.buttonFixRegion.TabIndex = 46;
-            this.buttonFixRegion.Text = "Region Unlock";
+            this.buttonFixRegion.Text = "Remove Region Locks";
             this.buttonFixRegion.UseVisualStyleBackColor = true;
             this.buttonFixRegion.Click += new System.EventHandler(this.buttonFixRegion_Click);
             // 
@@ -555,7 +557,7 @@
             this.buttonPatch.Enabled = false;
             this.buttonPatch.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.ips_patch_icon;
             this.buttonPatch.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonPatch.Location = new System.Drawing.Point(366, 273);
+            this.buttonPatch.Location = new System.Drawing.Point(366, 351);
             this.buttonPatch.Name = "buttonPatch";
             this.buttonPatch.Size = new System.Drawing.Size(166, 28);
             this.buttonPatch.TabIndex = 61;
@@ -662,11 +664,35 @@
             this.buttonExit.UseVisualStyleBackColor = true;
             this.buttonExit.Click += new System.EventHandler(this.buttonExit_Click);
             // 
+            // buttonFixSlowROMChecks
+            // 
+            this.buttonFixSlowROMChecks.Enabled = false;
+            this.buttonFixSlowROMChecks.Location = new System.Drawing.Point(366, 284);
+            this.buttonFixSlowROMChecks.Name = "buttonFixSlowROMChecks";
+            this.buttonFixSlowROMChecks.Size = new System.Drawing.Size(166, 23);
+            this.buttonFixSlowROMChecks.TabIndex = 66;
+            this.buttonFixSlowROMChecks.Text = "Remove SlowROM Checks";
+            this.buttonFixSlowROMChecks.UseVisualStyleBackColor = true;
+            this.buttonFixSlowROMChecks.Click += new System.EventHandler(this.buttonSlowROMFix_Click);
+            // 
+            // buttonFixSRAMChecks
+            // 
+            this.buttonFixSRAMChecks.Enabled = false;
+            this.buttonFixSRAMChecks.Location = new System.Drawing.Point(366, 313);
+            this.buttonFixSRAMChecks.Name = "buttonFixSRAMChecks";
+            this.buttonFixSRAMChecks.Size = new System.Drawing.Size(166, 23);
+            this.buttonFixSRAMChecks.TabIndex = 67;
+            this.buttonFixSRAMChecks.Text = "Remove SRAM Checks";
+            this.buttonFixSRAMChecks.UseVisualStyleBackColor = true;
+            this.buttonFixSRAMChecks.Click += new System.EventHandler(this.buttonFixSRAMChecks_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(544, 491);
+            this.Controls.Add(this.buttonFixSRAMChecks);
+            this.Controls.Add(this.buttonFixSlowROMChecks);
             this.Controls.Add(this.buttonExit);
             this.Controls.Add(this.groupBoxROMInfo);
             this.Controls.Add(this.groupBoxChecksums);
@@ -693,7 +719,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "Advanced SNES ROM Utility v0.9.6";
+            this.Text = "Advanced SNES ROM Utility v0.9.7";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.groupBoxInfo.ResumeLayout(false);
             this.groupBoxInfo.PerformLayout();
@@ -763,6 +789,8 @@
         private System.Windows.Forms.GroupBox groupBoxChecksums;
         private System.Windows.Forms.GroupBox groupBoxROMInfo;
         private System.Windows.Forms.Button buttonExit;
+        private System.Windows.Forms.Button buttonFixSlowROMChecks;
+        private System.Windows.Forms.Button buttonFixSRAMChecks;
     }
 }
 
