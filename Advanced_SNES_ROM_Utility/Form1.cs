@@ -269,10 +269,23 @@ namespace Advanced_SNES_ROM_Utility
 
         private void buttonSlowROMFix_Click(object sender, EventArgs e)
         {
-            sourceROM.RemoveSlowROMChecks(true);
-            RefreshLabelsAndButtons();
-            // Set button manually, because RefreshLabelsAndButtons doesn't do that for performace reasons
-            buttonFixSlowROMChecks.Enabled = false;
+            DialogResult dialogResult = MessageBox.Show("Removing SlowROM checks from a FastROM will force this ROM into SlowROM mode.\n\n" +
+                                                        "This might cause some heavy slow downs while playing.\n\n" +
+                                                        "It isn't really recommended or neccessary to do this, unless you know exactly what you're doing.\n\n" +
+                                                        "Do you want to proceed anyway?", "Attention!", MessageBoxButtons.YesNo);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                sourceROM.RemoveSlowROMChecks(true);
+                RefreshLabelsAndButtons();
+                // Set button manually, because RefreshLabelsAndButtons doesn't do that for performace reasons
+                buttonFixSlowROMChecks.Enabled = false;
+            }
+
+            else
+            {
+                return;
+            }
         }
 
         private void buttonFixSRAMChecks_Click(object sender, EventArgs e)

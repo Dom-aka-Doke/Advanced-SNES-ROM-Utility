@@ -667,7 +667,7 @@
             // buttonFixSlowROMChecks
             // 
             this.buttonFixSlowROMChecks.Enabled = false;
-            this.buttonFixSlowROMChecks.Location = new System.Drawing.Point(366, 284);
+            this.buttonFixSlowROMChecks.Location = new System.Drawing.Point(366, 313);
             this.buttonFixSlowROMChecks.Name = "buttonFixSlowROMChecks";
             this.buttonFixSlowROMChecks.Size = new System.Drawing.Size(166, 23);
             this.buttonFixSlowROMChecks.TabIndex = 66;
@@ -678,7 +678,7 @@
             // buttonFixSRAMChecks
             // 
             this.buttonFixSRAMChecks.Enabled = false;
-            this.buttonFixSRAMChecks.Location = new System.Drawing.Point(366, 313);
+            this.buttonFixSRAMChecks.Location = new System.Drawing.Point(366, 284);
             this.buttonFixSRAMChecks.Name = "buttonFixSRAMChecks";
             this.buttonFixSRAMChecks.Size = new System.Drawing.Size(166, 23);
             this.buttonFixSRAMChecks.TabIndex = 67;

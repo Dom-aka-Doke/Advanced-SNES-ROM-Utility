@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Advanced_SNES_ROM_Utility
@@ -585,37 +586,38 @@ namespace Advanced_SNES_ROM_Utility
 
         public bool RemoveSRAMChecks(bool unlock)
         {
-            List<byte[]> lockingCodes = new List<byte[]>();
-            List<byte[]> unlockingCodes = new List<byte[]>();
-            List<bool[]> lockingCodePattern = new List<bool[]>();
+            List<string> lockingCodes = new List<string>();
+            List<string> unlockingCodes = new List<string>();
 
-            lockingCodes.Add(new byte[] { 0x8F, 0x00, 0x00, 0x70, 0xCF, 0x00, 0x00, 0x70, 0xD0 });
-            lockingCodes.Add(new byte[] { 0x8F, 0x00, 0x00, 0x70, 0xDF, 0x00, 0x00, 0x70, 0xD0 });
-            lockingCodes.Add(new byte[] { 0x9F, 0x00, 0x00, 0x70, 0xCF, 0x00, 0x00, 0x70, 0xD0 });
-            lockingCodes.Add(new byte[] { 0x9F, 0x00, 0x00, 0x70, 0xDF, 0x00, 0x00, 0x70, 0xD0 });
-
-            if(ByteSRAMSize == 0x03 || ByteExRAMSize == 0x03)
+            if (StringMapMode.Contains("LoROM"))
             {
-                unlockingCodes.Add(new byte[] { 0x8F, 0x00, 0x00, 0x70, 0xCF, 0x00, 0x00, 0x70, 0xEA, 0xEA });
-                unlockingCodes.Add(new byte[] { 0x8F, 0x00, 0x00, 0x70, 0xDF, 0x00, 0x00, 0x70, 0xEA, 0xEA });
-                unlockingCodes.Add(new byte[] { 0x9F, 0x00, 0x00, 0x70, 0xCF, 0x00, 0x00, 0x70, 0xEA, 0xEA });
-                unlockingCodes.Add(new byte[] { 0x9F, 0x00, 0x00, 0x70, 0xDF, 0x00, 0x00, 0x70, 0xEA, 0xEA });
+                lockingCodes.Add(@"(8F|9F)(\w{4})(70)(CF|DF)(\w{4})(70)(D0)");
+                lockingCodes.Add(@"(E220A9)(AA)(8FFF0770A9558FFF0F70CFFF0770)");        // Ochan no Oekaki Logic
+                lockingCodes.Add(@"(A90000A2FE1FDF000070)(D0)");                        // Super Metroid
+
+                if (ByteSRAMSize == 0x03 || ByteExRAMSize == 0x03) { unlockingCodes.Add("$1 $2 $3 $4 $5 $6 EA EA"); }
+                else { unlockingCodes.Add("$1 $2 $3 $4 $5 $6 80"); }
+                unlockingCodes.Add("$1 55 $3");                                         // Ochan no Oekaki Logic
+                unlockingCodes.Add("$1 EA EA");                                         // Super Metroid
+
+                return FindAndReplaceByRegEx(lockingCodes, unlockingCodes, unlock);
+            }
+            
+            else if (StringMapMode.Contains("HiROM"))
+            {
+                lockingCodes.Add(@"(8F|9F)(\w{4})(30|31|32|33)(CF|DF)(\w{4})(30|31|32|33)(D0)");
+                lockingCodes.Add(@"(8F|9F)(\w{4})(30|31|32|33)(CF|DF)(\w{4})(30|31|32|33)(F0)");
+                lockingCodes.Add(@"(8F|9F)(\w{4})(30|31|32|33)(AF)(\w{4})(30|31|32|33)(C9)(\w{4})(D0)");
+
+                if (StringTitle.Contains("DONKEY KONG COUNTRY")) { unlockingCodes.Add("$1 $2 $3 $4 $5 $6 EA EA"); }
+                else { unlockingCodes.Add("$1 $2 $3 $4 $5 $6 80"); }
+                unlockingCodes.Add("$1 $2 $3 $4 $5 $6 EA EA");
+                unlockingCodes.Add("$1 $2 $3 $4 $5 $6 $7 $8 80");
+
+                return FindAndReplaceByRegEx(lockingCodes, unlockingCodes, unlock);
             }
 
-            else
-            {
-                unlockingCodes.Add(new byte[] { 0x8F, 0x00, 0x00, 0x70, 0xCF, 0x00, 0x00, 0x70, 0x80 });
-                unlockingCodes.Add(new byte[] { 0x8F, 0x00, 0x00, 0x70, 0xDF, 0x00, 0x00, 0x70, 0x80 });
-                unlockingCodes.Add(new byte[] { 0x9F, 0x00, 0x00, 0x70, 0xCF, 0x00, 0x00, 0x70, 0x80 });
-                unlockingCodes.Add(new byte[] { 0x9F, 0x00, 0x00, 0x70, 0xDF, 0x00, 0x00, 0x70, 0x80 });
-            }
-
-            lockingCodePattern.Add(new bool[] { false, true, true, false, false, true, true, false, false });
-            lockingCodePattern.Add(new bool[] { false, true, true, false, false, true, true, false, false });
-            lockingCodePattern.Add(new bool[] { false, true, true, false, false, true, true, false, false });
-            lockingCodePattern.Add(new bool[] { false, true, true, false, false, true, true, false, false });
-
-            return FindAndReplace(lockingCodes, unlockingCodes, lockingCodePattern, unlock);
+            return false;
         }
 
         public bool FindAndReplace(List<byte[]> lockingCodes, List<byte[]> unlockingCodes, List<bool[]> lockingCodePattern, bool unlock)
@@ -686,6 +688,60 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             return false;
+        }
+
+        public bool FindAndReplaceByRegEx(List<string> lockingCodes, List<string> unlockingCodes, bool unlock)
+        {
+            string sourceROMString = BitConverter.ToString(SourceROM).Replace("-", "");
+            int ulcCtr = 0;
+            int matchCtr = 0;
+
+            foreach (string lockingCode in lockingCodes)
+            {
+                Regex r = new Regex(lockingCode);
+
+                foreach (Match match in r.Matches(sourceROMString))
+                {
+                    if (match.Index % 2 == 0)
+                    {
+                        if (unlock)
+                        {
+                            string newHexString = Regex.Replace(match.Value, lockingCode, unlockingCodes[ulcCtr]).Replace(" ", "");
+                            sourceROMString = sourceROMString.Remove(match.Index, newHexString.Length).Insert(match.Index, newHexString);
+                            matchCtr++;
+                        }
+
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                ulcCtr++;
+            }
+
+            if (matchCtr > 0)
+            {
+                SourceROM = StringToByteArray(sourceROMString);
+                Initialize();
+                return true;
+            }
+
+            return false;
+        }
+
+        public static byte[] StringToByteArray(string hexString)
+        {
+            int numberChars = hexString.Length;
+            byte[] bytes = new byte[numberChars/2];
+
+            for (int i = 0; i < numberChars; i += 2)
+            {
+                bytes[i / 2] = Convert.ToByte(hexString.Substring(i, 2), 16);
+            }
+
+            return bytes;
         }
     }
 }
