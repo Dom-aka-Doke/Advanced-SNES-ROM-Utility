@@ -89,12 +89,9 @@ namespace Advanced_SNES_ROM_Utility
                 }
 
                 // Check if ROM contains SRAM checks
-                if(sourceROM.ByteSRAMSize > 0x00 || sourceROM.ByteExRAMSize > 0x00)
+                if (sourceROM.RemoveSRAMChecks(false))
                 {
-                    if (sourceROM.RemoveSRAMChecks(false))
-                    {
-                        buttonFixSRAMChecks.Enabled = true;
-                    }
+                    buttonFixSRAMChecks.Enabled = true;
                 }
 
                 else
@@ -270,8 +267,9 @@ namespace Advanced_SNES_ROM_Utility
         private void buttonSlowROMFix_Click(object sender, EventArgs e)
         {
             DialogResult dialogResult = MessageBox.Show("Removing SlowROM checks from a FastROM will force this ROM into SlowROM mode.\n\n" +
-                                                        "This might cause some heavy slow downs while playing.\n\n" +
+                                                        "This might cause some heavy slow downs or bugs while playing.\n\n" +
                                                         "It isn't really recommended or neccessary to do this, unless you know exactly what you're doing.\n\n" +
+                                                        "Info: This only makes sense, if you want to burn or play this ROM on a chip slower than 120ns.\n\n\n" +
                                                         "Do you want to proceed anyway?", "Attention!", MessageBoxButtons.YesNo);
 
             if (dialogResult == DialogResult.Yes)
