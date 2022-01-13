@@ -653,12 +653,14 @@ namespace Advanced_SNES_ROM_Utility
                     lockingCodes.Add(@"(AF|BF)(\w{2})(FF)(80|C0)(CF|DF)(\w{2})(FF40)(F0)");     // Demon's Crest
                     lockingCodes.Add(@"(8F)(\w{4})(70AF)(\w{4})(70C9)(\w{4})(D0)");             // Tetris Attack
                     lockingCodes.Add(@"(C230)(ADCF1F)(C95044D0)");                              // Tetris Attack
+                    lockingCodes.Add(@"(AF481F00F00CC220B9081C49FFFF1A99081C6BDA5A8D0002)(78F8)(AD220238ED00028D2202)(D858)(22629600)");        // Beavis & Butthead
 
                     unlockingCodes.Add("$1 $2 $3 $4 $5 $6 EA EA");                      // Mega Man X
                     unlockingCodes.Add("$1 $2 $3 $4 $5 $6 80");                         // Mega Man X
                     unlockingCodes.Add("$1 $2 $3 $4 $5 $6 $7 80");                      // Demon's Crest
                     unlockingCodes.Add("$1 $2 $3 $4 $5 $6 80");                         // Tetris Attack
                     unlockingCodes.Add("$1 4C D1 80 $3");                               // Tetris Attack
+                    unlockingCodes.Add("$1 80 00 $3 80 00 $5");                         // Beavis & Butthead
 
                     return FindAndReplaceByRegEx(lockingCodes, unlockingCodes, unlock);
                 }
@@ -800,7 +802,7 @@ namespace Advanced_SNES_ROM_Utility
 
             for (int i = 0; i < numberChars; i += 2)
             {
-                bytes[i / 2] = Convert.ToByte(hexString.Substring(i, 2), 16);
+                bytes[i/2] = Convert.ToByte(hexString.Substring(i, 2), 16);
             }
 
             return bytes;
