@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -586,61 +587,53 @@ namespace Advanced_SNES_ROM_Utility
 
         public bool RemoveSRAMChecks(bool unlock)
         {
-            List<string> lockingCodes = new List<string>();
-            List<string> unlockingCodes = new List<string>();
+            IDictionary<string, string> lockingCodeDictionary = new Dictionary<string, string>();
 
             if (ByteSRAMSize > 0x00 || ByteExRAMSize > 0x00)
             {
                 if (StringMapMode.Contains("LoROM"))
                 {
-                    lockingCodes.Add(@"(8F|9F)(\w{4})(70)(CF|DF)(\w{4})(70)(D0)");
-                    lockingCodes.Add(@"(A90000A2FE1FDF000070)(D0)");                            // Super Metroid
-                    lockingCodes.Add(@"(8F)(\w{4})(77E2)(\w{2})(AF)(\w{4})(77C9)(\w{2})(F0)");  // Uniracers / Unirally
-                    lockingCodes.Add(@"(CA10F838EF1A8081)(8D)");                                // Kirby's Dream Course
-                    lockingCodes.Add(@"(81CA10F8CF398087)(F0)");                                // Kirby's Dream Course
-                    lockingCodes.Add(@"(E220A9)(AA)(8FFF0770A9558FFF0F70CFFF0770)");            // Ochan no Oekaki Logic
+                    if (ByteSRAMSize == 0x03 || ByteExRAMSize == 0x03)
+                    {
+                        lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(70)(CF|DF)(\w{4})(70)(D0)", "$1 $2 $3 $4 $5 $6 EA EA");
+                        lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(70)(CF|DF)(\w{4})(70)(F0)", "$1 $2 $3 $4 $5 $6 80");
+                    }
+                    
+                    else
+                    {
+                        lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(70)(CF|DF)(\w{4})(70)(D0)", "$1 $2 $3 $4 $5 $6 80");
+                        lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(70)(CF|DF)(\w{4})(70)(F0)", "$1 $2 $3 $4 $5 $6 EA EA");
+                    }
 
-                    if (ByteSRAMSize == 0x03 || ByteExRAMSize == 0x03) { unlockingCodes.Add("$1 $2 $3 $4 $5 $6 EA EA"); }
-                    else { unlockingCodes.Add("$1 $2 $3 $4 $5 $6 80"); }
-                    unlockingCodes.Add("$1 EA EA");                                         // Super Metroid
-                    unlockingCodes.Add("$1 $2 $3 $4 $5 $6 $7 $8 80");                       // Uniracers / Unirally
-                    unlockingCodes.Add("$1 9C");                                            // Kirby's Dream Course
-                    unlockingCodes.Add("$1 80");                                            // Kirby's Dream Course
-                    unlockingCodes.Add("$1 55 $3");                                         // Ochan no Oekaki Logic
+                    lockingCodeDictionary.Add(@"(A90000A2FE1FDF000070)(D0)", "$1 EA EA");                                               // Super Metroid
+                    lockingCodeDictionary.Add(@"(8F)(\w{4})(77E2)(\w{2})(AF)(\w{4})(77C9)(\w{2})(F0)", "$1 $2 $3 $4 $5 $6 $7 $8 80");   // Uniracers / Unirally
+                    lockingCodeDictionary.Add(@"(CA10F838EF1A8081)(8D)", "$1 9C");                                                      // Kirby's Dream Course
+                    lockingCodeDictionary.Add(@"(81CA10F8CF398087)(F0)", "$1 80");                                                      // Kirby's Dream Course
+                    lockingCodeDictionary.Add(@"(E220A9)(AA)(8FFF0770A9558FFF0F70CFFF0770)", "$1 55 $3");                               // Ochan no Oekaki Logic
 
-                    return FindAndReplaceByRegEx(lockingCodes, unlockingCodes, unlock);
+                    return FindAndReplaceByRegEx(lockingCodeDictionary, unlock);
                 }
 
                 else if (StringMapMode.Contains("HiROM"))
                 {
-                    if (StringTitle.Contains("DONKEY KONG COUNTRY") || StringTitle.Contains("SUPER DONKEY KONG")) { lockingCodes.Add(@"(8F|9F)(57|59)(60|68)(30|31|32|33)(CF|DF)(57|59)(60)(30|31|32|33)(D0)"); }    // Donkey Kong Country
-                    lockingCodes.Add(@"(8F|9F)(\w{4})(30|31|32|33)(CF|DF)(\w{4})(30|31|32|33)(D0)");
-                    lockingCodes.Add(@"(8F|9F)(\w{4})(30|31|32|33)(CF|DF)(\w{4})(30|31|32|33)(F0)");
-                    lockingCodes.Add(@"(8F|9F)(\w{4})(30|31|32|33)(AF)(\w{4})(30|31|32|33)(C9)(\w{4})(D0)");
-                    lockingCodes.Add(@"(AF|BF)(\w{2})(FF)(80|C0)(CF|DF)(\w{2})(FF40)(F0)");                     // Breath of Fire II
-                    lockingCodes.Add(@"(AF|BF)(\w{4})(30|31|32|33)(CF|DF)(\w{4})(30|31|32|33)(F0)");            // Breath of Fire II
-                    lockingCodes.Add(@"(8F|AF)(\w{4})(B0CF)(\w{4})(B1)(D0)");                                   // Mario no Super Picross
-                    lockingCodes.Add(@"(2638E94812C9AF71)(F0)");                                                // Donkey Kong Country 2 - Diddy's Kong Quest
-                    lockingCodes.Add(@"(A05C2F7732E9C704)(F0)");                                                // Donkey Kong Country 2 - Diddy's Kong Quest
-                    lockingCodes.Add(@"(4B4F4E4700F8)(F7)");                                                    // Donkey Kong Country 2 - Diddy's Kong Quest
-                    lockingCodes.Add(@"(A9C3)(80DD)(FFFF)(F06C)");                                              // Donkey Kong Country 3 - Dixie Kong's Double Trouble
-                    lockingCodes.Add(@"(D0F4ABCFAEFF00D0)(01)");                                                // Front Mission - Gun Hazard
+                    if (StringTitle.Contains("DONKEY KONG COUNTRY") || StringTitle.Contains("SUPER DONKEY KONG")) { lockingCodeDictionary.Add(@"(8F|9F)(57|59)(60|68)(30|31|32|33)(CF|DF)(57|59)(60)(30|31|32|33)(D0)", "$1 $2 $3 $4 $5 $6 $7 $8 EA EA"); }    // Donkey Kong Country
+                    
+                    if (StringTitle.Contains("DONKEY KONG COUNTRY")) { lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(30|31|32|33)(CF|DF)(\w{4})(30|31|32|33)(D0)", "$1 $2 $3 $4 $5 $6 EA EA"); }
+                    else { lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(30|31|32|33)(CF|DF)(\w{4})(30|31|32|33)(D0)", "$1 $2 $3 $4 $5 $6 80"); }
 
-                    if (StringTitle.Contains("DONKEY KONG COUNTRY") || StringTitle.Contains("SUPER DONKEY KONG")) { unlockingCodes.Add("$1 $2 $3 $4 $5 $6 $7 $8 EA EA"); }   // Donkey Kong Country
-                    if (StringTitle.Contains("DONKEY KONG COUNTRY")) { unlockingCodes.Add("$1 $2 $3 $4 $5 $6 EA EA"); }
-                    else { unlockingCodes.Add("$1 $2 $3 $4 $5 $6 80"); }
-                    unlockingCodes.Add("$1 $2 $3 $4 $5 $6 EA EA");
-                    unlockingCodes.Add("$1 $2 $3 $4 $5 $6 $7 $8 80");
-                    unlockingCodes.Add("$1 $2 $3 $4 $5 $6 $7 80");                          // Breath of Fire II
-                    unlockingCodes.Add("$1 $2 $3 $4 $5 $6 80");                             // Breath of Fire II
-                    unlockingCodes.Add("$1 $2 $3 $4 $5 EA EA");                             // Mario no Super Picross
-                    unlockingCodes.Add("$1 80");                                            // Donkey Kong Country 2 - Diddy's Kong Quest
-                    unlockingCodes.Add("$1 80");                                            // Donkey Kong Country 2 - Diddy's Kong Quest
-                    unlockingCodes.Add("$1 F8");                                            // Donkey Kong Country 2 - Diddy's Kong Quest
-                    unlockingCodes.Add("$1 F0 CC $3 80 7D");                                // Donkey Kong Country 3 - Dixie Kong's Double Trouble
-                    unlockingCodes.Add("$1 00");                                            // Front Mission - Gun Hazard
+                    lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(30|31|32|33)(CF|DF)(\w{4})(30|31|32|33)(F0)", "$1 $2 $3 $4 $5 $6 EA EA");
+                    lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(30|31|32|33)(AF)(\w{4})(30|31|32|33)(C9)(\w{4})(D0)", "$1 $2 $3 $4 $5 $6 $7 $8 80");
 
-                    return FindAndReplaceByRegEx(lockingCodes, unlockingCodes, unlock);
+                    lockingCodeDictionary.Add(@"(AF|BF)(\w{2})(FF)(80|C0)(CF|DF)(\w{2})(FF40)(F0)", "$1 $2 $3 $4 $5 $6 $7 80");                    // Breath of Fire II
+                    lockingCodeDictionary.Add(@"(AF|BF)(\w{4})(30|31|32|33)(CF|DF)(\w{4})(30|31|32|33)(F0)", "$1 $2 $3 $4 $5 $6 80");              // Breath of Fire II
+                    lockingCodeDictionary.Add(@"(8F|AF)(\w{4})(B0CF)(\w{4})(B1)(D0)", "$1 $2 $3 $4 $5 EA EA");                                     // Mario no Super Picross
+                    lockingCodeDictionary.Add(@"(2638E94812C9AF71)(F0)", "$1 80");                                                                 // Donkey Kong Country 2 - Diddy's Kong Quest
+                    lockingCodeDictionary.Add(@"(A05C2F7732E9C704)(F0)", "$1 80");                                                                 // Donkey Kong Country 2 - Diddy's Kong Quest
+                    lockingCodeDictionary.Add(@"(4B4F4E4700F8)(F7)", "$1 F8");                                                                     // Donkey Kong Country 2 - Diddy's Kong Quest
+                    lockingCodeDictionary.Add(@"(A9C3)(80DD)(FFFF)(F06C)", "$1 F0 CC $3 80 7D");                                                   // Donkey Kong Country 3 - Dixie Kong's Double Trouble
+                    lockingCodeDictionary.Add(@"(D0F4ABCFAEFF00D0)(01)", "$1 00");                                                                 // Front Mission - Gun Hazard
+
+                    return FindAndReplaceByRegEx(lockingCodeDictionary, unlock);
                 }
             }
 
@@ -648,36 +641,24 @@ namespace Advanced_SNES_ROM_Utility
             {
                 if (StringMapMode.Contains("LoROM"))
                 {
-                    lockingCodes.Add(@"(8F|9F)(\w{4})(70)(CF|DF)(\w{4})(70)(F0)");              // Mega Man X
-                    lockingCodes.Add(@"(AF|BF)(\w{2})(8000)(CF|DF)(\w{2})(8040)(F0)");          // Mega Man X
-                    lockingCodes.Add(@"(AF|BF)(\w{2})(FF)(80|C0)(CF|DF)(\w{2})(FF40)(F0)");     // Demon's Crest
-                    lockingCodes.Add(@"(8F)(\w{4})(70AF)(\w{4})(70C9)(\w{4})(D0)");             // Tetris Attack
-                    lockingCodes.Add(@"(C230)(ADCF1F)(C95044D0)");                              // Tetris Attack
-                    lockingCodes.Add(@"(AF481F00F00CC220B9081C49FFFF1A99081C6BDA5A8D0002)(78F8)(AD220238ED00028D2202)(D858)(22629600)");        // Beavis & Butthead
+                    lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(70)(CF|DF)(\w{4})(70)(F0)", "$1 $2 $3 $4 $5 $6 EA EA");                                                          // Mega Man X
+                    lockingCodeDictionary.Add(@"(AF|BF)(\w{2})(8000)(CF|DF)(\w{2})(8040)(F0)", "$1 $2 $3 $4 $5 $6 80");                                                         // Mega Man X
+                    lockingCodeDictionary.Add(@"(AF|BF)(\w{2})(FF)(80|C0)(CF|DF)(\w{2})(FF40)(F0)", "$1 $2 $3 $4 $5 $6 $7 80");                                                 // Demon's Crest
+                    lockingCodeDictionary.Add(@"(8F)(\w{4})(70AF)(\w{4})(70C9)(\w{4})(D0)", "$1 $2 $3 $4 $5 $6 80");                                                            // Tetris Attack
+                    lockingCodeDictionary.Add(@"(C230)(ADCF1F)(C95044D0)", "$1 4C D1 80 $3");                                                                                   // Tetris Attack
+                    lockingCodeDictionary.Add(@"(AF481F00F00CC220B9081C49FFFF1A99081C6BDA5A8D0002)(78F8)(AD220238ED00028D2202)(D858)(22629600)", "$1 80 00 $3 80 00 $5");       // Beavis & Butthead
 
-                    unlockingCodes.Add("$1 $2 $3 $4 $5 $6 EA EA");                      // Mega Man X
-                    unlockingCodes.Add("$1 $2 $3 $4 $5 $6 80");                         // Mega Man X
-                    unlockingCodes.Add("$1 $2 $3 $4 $5 $6 $7 80");                      // Demon's Crest
-                    unlockingCodes.Add("$1 $2 $3 $4 $5 $6 80");                         // Tetris Attack
-                    unlockingCodes.Add("$1 4C D1 80 $3");                               // Tetris Attack
-                    unlockingCodes.Add("$1 80 00 $3 80 00 $5");                         // Beavis & Butthead
-
-                    return FindAndReplaceByRegEx(lockingCodes, unlockingCodes, unlock);
+                    return FindAndReplaceByRegEx(lockingCodeDictionary, unlock);
                 }
 
                 else if (StringMapMode.Contains("HiROM"))
                 {
-                    lockingCodes.Add(@"(5C7FD08318FB78C230)");          // Killer Instinct
-                    lockingCodes.Add(@"(22085C10B028)");                // BS The Legend of Zelda Remix
-                    lockingCodes.Add(@"(DAE230C9)(01)(F018C9)(02)");    // BS The Legend of Zelda Remix
-                    lockingCodes.Add(@"(29FF00C9)(07)(009016)");        // BS The Legend of Zelda Remix
+                    lockingCodeDictionary.Add(@"(5C7FD08318FB78C230)", "EAEAEAEAEAEAEAEAEA");           // Killer Instinct
+                    lockingCodeDictionary.Add(@"(22085C10B028)", "EAEAEAEAEAEA");                       // BS The Legend of Zelda Remix
+                    lockingCodeDictionary.Add(@"(DAE230C9)(01)(F018C9)(02)", "$1 09 $3 07");            // BS The Legend of Zelda Remix
+                    lockingCodeDictionary.Add(@"(29FF00C9)(07)(009016)", "$1 00 $3");                   // BS The Legend of Zelda Remix
 
-                    unlockingCodes.Add("EAEAEAEAEAEAEAEAEA");           // Killer Instinct
-                    unlockingCodes.Add("EAEAEAEAEAEA");                 // BS The Legend of Zelda Remix
-                    unlockingCodes.Add("$1 09 $3 07");                  // BS The Legend of Zelda Remix
-                    unlockingCodes.Add("$1 00 $3");                     // BS The Legend of Zelda Remix
-
-                    return FindAndReplaceByRegEx(lockingCodes, unlockingCodes, unlock);
+                    return FindAndReplaceByRegEx(lockingCodeDictionary, unlock);
                 }
             }
 
@@ -754,15 +735,15 @@ namespace Advanced_SNES_ROM_Utility
             return false;
         }
 
-        public bool FindAndReplaceByRegEx(List<string> lockingCodes, List<string> unlockingCodes, bool unlock)
+        public bool FindAndReplaceByRegEx(IDictionary<string, string> lockingCodeDictionary, bool unlock)
         {
             string sourceROMString = BitConverter.ToString(SourceROM).Replace("-", "");
             int ulcCtr = 0;
             int matchCtr = 0;
 
-            foreach (string lockingCode in lockingCodes)
+            foreach (KeyValuePair<string, string> lockingCode in lockingCodeDictionary)
             {
-                Regex r = new Regex(lockingCode);
+                Regex r = new Regex(lockingCode.Key);
 
                 foreach (Match match in r.Matches(sourceROMString))
                 {
@@ -770,7 +751,7 @@ namespace Advanced_SNES_ROM_Utility
                     {
                         if (unlock)
                         {
-                            string newHexString = Regex.Replace(match.Value, lockingCode, unlockingCodes[ulcCtr]).Replace(" ", "");
+                            string newHexString = Regex.Replace(match.Value, lockingCode.Key, lockingCode.Value).Replace(" ", "");
                             sourceROMString = sourceROMString.Remove(match.Index, newHexString.Length).Insert(match.Index, newHexString);
                             matchCtr++;
                         }
