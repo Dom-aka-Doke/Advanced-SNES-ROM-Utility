@@ -667,7 +667,7 @@
             // buttonFixSlowROMChecks
             // 
             this.buttonFixSlowROMChecks.Enabled = false;
-            this.buttonFixSlowROMChecks.Location = new System.Drawing.Point(366, 313);
+            this.buttonFixSlowROMChecks.Location = new System.Drawing.Point(366, 284);
             this.buttonFixSlowROMChecks.Name = "buttonFixSlowROMChecks";
             this.buttonFixSlowROMChecks.Size = new System.Drawing.Size(166, 23);
             this.buttonFixSlowROMChecks.TabIndex = 66;
@@ -678,12 +678,13 @@
             // buttonFixSRAMChecks
             // 
             this.buttonFixSRAMChecks.Enabled = false;
-            this.buttonFixSRAMChecks.Location = new System.Drawing.Point(366, 284);
+            this.buttonFixSRAMChecks.Location = new System.Drawing.Point(366, 313);
             this.buttonFixSRAMChecks.Name = "buttonFixSRAMChecks";
             this.buttonFixSRAMChecks.Size = new System.Drawing.Size(166, 23);
             this.buttonFixSRAMChecks.TabIndex = 67;
             this.buttonFixSRAMChecks.Text = "Remove SRAM Checks";
             this.buttonFixSRAMChecks.UseVisualStyleBackColor = true;
+            this.buttonFixSRAMChecks.Visible = false;
             this.buttonFixSRAMChecks.Click += new System.EventHandler(this.buttonFixSRAMChecks_Click);
             // 
             // Form1
@@ -692,9 +693,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(544, 491);
             this.Controls.Add(this.buttonFixSRAMChecks);
-            this.Controls.Add(this.buttonFixSlowROMChecks);
             this.Controls.Add(this.buttonExit);
             this.Controls.Add(this.groupBoxROMInfo);
+            this.Controls.Add(this.buttonFixSlowROMChecks);
             this.Controls.Add(this.groupBoxChecksums);
             this.Controls.Add(this.buttonPatch);
             this.Controls.Add(this.buttonHelp);

@@ -141,6 +141,10 @@
                         will reverse this process. Please use ROMs with copy station
                         header, unless you know which copy station was used!
 
+- Remove Slow ROM Checks: Useful if you want to play your FastROMs on a
+                                                 copy station without FastROM support or burn
+                                                 them on (E)EPROMs slower than 120ns.
+
 - Fix Checksum: Fixes a broken checksum. You always should do this after
                           using other functionalities. Please note that some beta or demo
                           ROMs have an odd checksum anyway.

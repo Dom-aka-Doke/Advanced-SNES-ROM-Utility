@@ -589,11 +589,13 @@ namespace Advanced_SNES_ROM_Utility
         {
             IDictionary<string, string> lockingCodeDictionary = new Dictionary<string, string>();
 
-            if (ByteSRAMSize > 0x00 || ByteExRAMSize > 0x00)
+            if (ByteSRAMSize > 0x00)
             {
                 if (StringMapMode.Contains("LoROM"))
                 {
-                    if (ByteSRAMSize == 0x03 || ByteExRAMSize == 0x03)
+                    List<string> excludedTitles = new List<string>{ "OHCHAN NO LOGIC" };
+
+                    if (ByteSRAMSize == 0x03 || excludedTitles.Contains(StringTitle.Trim()))
                     {
                         lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(70)(CF|DF)(\w{4})(70)(D0)", "$1 $2 $3 $4 $5 $6 EA EA");
                         lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(70)(CF|DF)(\w{4})(70)(F0)", "$1 $2 $3 $4 $5 $6 80");
@@ -605,11 +607,10 @@ namespace Advanced_SNES_ROM_Utility
                         lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(70)(CF|DF)(\w{4})(70)(F0)", "$1 $2 $3 $4 $5 $6 EA EA");
                     }
 
-                    lockingCodeDictionary.Add(@"(A90000A2FE1FDF000070)(D0)", "$1 EA EA");                                               // Super Metroid
-                    lockingCodeDictionary.Add(@"(8F)(\w{4})(77E2)(\w{2})(AF)(\w{4})(77C9)(\w{2})(F0)", "$1 $2 $3 $4 $5 $6 $7 $8 80");   // Uniracers / Unirally
-                    lockingCodeDictionary.Add(@"(CA10F838EF1A8081)(8D)", "$1 9C");                                                      // Kirby's Dream Course
-                    lockingCodeDictionary.Add(@"(81CA10F8CF398087)(F0)", "$1 80");                                                      // Kirby's Dream Course
-                    lockingCodeDictionary.Add(@"(E220A9)(AA)(8FFF0770A9558FFF0F70CFFF0770)", "$1 55 $3");                               // Ochan no Oekaki Logic
+                    lockingCodeDictionary.Add(@"(A90000A2FE1FDF000070)(D0)", "$1 EA EA");                                                   // Super Metroid
+                    lockingCodeDictionary.Add(@"(8F)(\w{4})(77E2)(\w{2})(AF)(\w{4})(77C9)(\w{2})(F0)", "$1 $2 $3 $4 $5 $6 $7 $8 80");       // Uniracers / Unirally
+                    lockingCodeDictionary.Add(@"(CA10F838EF1A8081)(8D)", "$1 9C");                                                          // Kirby's Dream Course
+                    lockingCodeDictionary.Add(@"(81CA10F8CF398087)(F0)", "$1 80");                                                          // Kirby's Dream Course
 
                     return FindAndReplaceByRegEx(lockingCodeDictionary, unlock);
                 }
