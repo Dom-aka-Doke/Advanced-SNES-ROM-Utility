@@ -106,7 +106,7 @@
             this.buttonSelectROM.TabIndex = 0;
             this.buttonSelectROM.Text = "Select ROM File";
             this.buttonSelectROM.UseVisualStyleBackColor = true;
-            this.buttonSelectROM.Click += new System.EventHandler(this.buttonSelectROM_Click);
+            this.buttonSelectROM.Click += new System.EventHandler(this.ButtonSelectROM_Click);
             // 
             // textBoxROMName
             // 
@@ -146,6 +146,7 @@
             this.labelGetCalcChksm.Size = new System.Drawing.Size(77, 13);
             this.labelGetCalcChksm.TabIndex = 4;
             this.labelGetCalcChksm.Text = "- Select ROM -";
+            this.labelGetCalcChksm.Click += new System.EventHandler(this.CopyToClipboard_Click);
             // 
             // labelIntChksm
             // 
@@ -164,6 +165,7 @@
             this.labelGetIntChksm.Size = new System.Drawing.Size(77, 13);
             this.labelGetIntChksm.TabIndex = 6;
             this.labelGetIntChksm.Text = "- Select ROM -";
+            this.labelGetIntChksm.Click += new System.EventHandler(this.CopyToClipboard_Click);
             // 
             // labelCalcInvChksm
             // 
@@ -182,6 +184,7 @@
             this.labelGetCalcInvChksm.Size = new System.Drawing.Size(77, 13);
             this.labelGetCalcInvChksm.TabIndex = 8;
             this.labelGetCalcInvChksm.Text = "- Select ROM -";
+            this.labelGetCalcInvChksm.Click += new System.EventHandler(this.CopyToClipboard_Click);
             // 
             // labelIntInvChksm
             // 
@@ -200,6 +203,7 @@
             this.labelGetIntInvChksm.Size = new System.Drawing.Size(77, 13);
             this.labelGetIntInvChksm.TabIndex = 10;
             this.labelGetIntInvChksm.Text = "- Select ROM -";
+            this.labelGetIntInvChksm.Click += new System.EventHandler(this.CopyToClipboard_Click);
             // 
             // labelCRC32Chksm
             // 
@@ -218,6 +222,7 @@
             this.labelGetCRC32Chksm.Size = new System.Drawing.Size(77, 13);
             this.labelGetCRC32Chksm.TabIndex = 12;
             this.labelGetCRC32Chksm.Text = "- Select ROM -";
+            this.labelGetCRC32Chksm.Click += new System.EventHandler(this.CopyToClipboard_Click);
             // 
             // labelTitle
             // 
@@ -458,7 +463,7 @@
             this.buttonFixRegion.TabIndex = 46;
             this.buttonFixRegion.Text = "Remove Region Locks";
             this.buttonFixRegion.UseVisualStyleBackColor = true;
-            this.buttonFixRegion.Click += new System.EventHandler(this.buttonFixRegion_Click);
+            this.buttonFixRegion.Click += new System.EventHandler(this.ButtonFixRegion_Click);
             // 
             // labelSRAM
             // 
@@ -487,7 +492,7 @@
             this.buttonDeinterleave.TabIndex = 49;
             this.buttonDeinterleave.Text = "Deinterleave";
             this.buttonDeinterleave.UseVisualStyleBackColor = true;
-            this.buttonDeinterleave.Click += new System.EventHandler(this.buttonDeinterleave_Click);
+            this.buttonDeinterleave.Click += new System.EventHandler(this.ButtonDeinterleave_Click);
             // 
             // textBoxTitle
             // 
@@ -497,7 +502,7 @@
             this.textBoxTitle.Name = "textBoxTitle";
             this.textBoxTitle.Size = new System.Drawing.Size(167, 20);
             this.textBoxTitle.TabIndex = 55;
-            this.textBoxTitle.TextChanged += new System.EventHandler(this.textBoxGetTitle_TextChanged);
+            this.textBoxTitle.TextChanged += new System.EventHandler(this.TextBoxGetTitle_TextChanged);
             // 
             // textBoxVersion
             // 
@@ -507,7 +512,7 @@
             this.textBoxVersion.Name = "textBoxVersion";
             this.textBoxVersion.Size = new System.Drawing.Size(45, 20);
             this.textBoxVersion.TabIndex = 56;
-            this.textBoxVersion.Leave += new System.EventHandler(this.textBoxGetVersion_Leave);
+            this.textBoxVersion.Leave += new System.EventHandler(this.TextBoxGetVersion_Leave);
             // 
             // comboBoxCountryRegion
             // 
@@ -519,7 +524,7 @@
             this.comboBoxCountryRegion.Name = "comboBoxCountryRegion";
             this.comboBoxCountryRegion.Size = new System.Drawing.Size(167, 21);
             this.comboBoxCountryRegion.TabIndex = 57;
-            this.comboBoxCountryRegion.SelectedIndexChanged += new System.EventHandler(this.comboBoxCountryRegion_SelectedIndexChanged);
+            this.comboBoxCountryRegion.SelectedIndexChanged += new System.EventHandler(this.ComboBoxCountryRegion_SelectedIndexChanged);
             // 
             // buttonFixROMSize
             // 
@@ -530,7 +535,7 @@
             this.buttonFixROMSize.TabIndex = 58;
             this.buttonFixROMSize.Text = "Fix Internal ROM Size";
             this.buttonFixROMSize.UseVisualStyleBackColor = true;
-            this.buttonFixROMSize.Click += new System.EventHandler(this.buttonFixROMSize_Click);
+            this.buttonFixROMSize.Click += new System.EventHandler(this.ButtonFixROMSize_Click);
             // 
             // buttonAbout
             // 
@@ -540,7 +545,7 @@
             this.buttonAbout.TabIndex = 59;
             this.buttonAbout.Text = "About";
             this.buttonAbout.UseVisualStyleBackColor = true;
-            this.buttonAbout.Click += new System.EventHandler(this.buttonAbout_Click);
+            this.buttonAbout.Click += new System.EventHandler(this.ButtonAbout_Click);
             // 
             // buttonHelp
             // 
@@ -550,7 +555,7 @@
             this.buttonHelp.TabIndex = 60;
             this.buttonHelp.Text = "Help";
             this.buttonHelp.UseVisualStyleBackColor = true;
-            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+            this.buttonHelp.Click += new System.EventHandler(this.ButtonHelp_Click);
             // 
             // buttonPatch
             // 
@@ -563,7 +568,7 @@
             this.buttonPatch.TabIndex = 61;
             this.buttonPatch.Text = "Apply Patch";
             this.buttonPatch.UseVisualStyleBackColor = true;
-            this.buttonPatch.Click += new System.EventHandler(this.buttonPatch_Click);
+            this.buttonPatch.Click += new System.EventHandler(this.ButtonPatch_Click);
             // 
             // buttonSaveAs
             // 
@@ -578,7 +583,7 @@
             this.buttonSaveAs.Text = "Save As";
             this.buttonSaveAs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.buttonSaveAs.UseVisualStyleBackColor = true;
-            this.buttonSaveAs.Click += new System.EventHandler(this.buttonSaveAs_Click);
+            this.buttonSaveAs.Click += new System.EventHandler(this.ButtonSaveAs_Click);
             // 
             // buttonSave
             // 
@@ -593,7 +598,7 @@
             this.buttonSave.Text = "Save";
             this.buttonSave.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.buttonSave.UseVisualStyleBackColor = true;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            this.buttonSave.Click += new System.EventHandler(this.ButtonSave_Click);
             // 
             // groupBoxInfo
             // 
@@ -662,7 +667,7 @@
             this.buttonExit.TabIndex = 65;
             this.buttonExit.Text = "Exit";
             this.buttonExit.UseVisualStyleBackColor = true;
-            this.buttonExit.Click += new System.EventHandler(this.buttonExit_Click);
+            this.buttonExit.Click += new System.EventHandler(this.ButtonExit_Click);
             // 
             // buttonFixSlowROMChecks
             // 
@@ -673,7 +678,7 @@
             this.buttonFixSlowROMChecks.TabIndex = 66;
             this.buttonFixSlowROMChecks.Text = "Remove SlowROM Checks";
             this.buttonFixSlowROMChecks.UseVisualStyleBackColor = true;
-            this.buttonFixSlowROMChecks.Click += new System.EventHandler(this.buttonSlowROMFix_Click);
+            this.buttonFixSlowROMChecks.Click += new System.EventHandler(this.ButtonSlowROMFix_Click);
             // 
             // buttonFixSRAMChecks
             // 
@@ -685,7 +690,7 @@
             this.buttonFixSRAMChecks.Text = "Remove SRAM Checks";
             this.buttonFixSRAMChecks.UseVisualStyleBackColor = true;
             this.buttonFixSRAMChecks.Visible = false;
-            this.buttonFixSRAMChecks.Click += new System.EventHandler(this.buttonFixSRAMChecks_Click);
+            this.buttonFixSRAMChecks.Click += new System.EventHandler(this.ButtonFixSRAMChecks_Click);
             // 
             // Form1
             // 
