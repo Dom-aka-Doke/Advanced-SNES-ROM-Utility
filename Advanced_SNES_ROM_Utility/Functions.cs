@@ -557,32 +557,13 @@ namespace Advanced_SNES_ROM_Utility
 
         public bool RemoveSlowROMChecks(bool unlock)
         {
-            List<byte[]> lockingCodes = new List<byte[]>();
-            List<byte[]> unlockingCodes = new List<byte[]>();
-            List<bool[]> lockingCodePattern = new List<bool[]>();
+            IDictionary<string, string> lockingCodeDictionary = new Dictionary<string, string>();
 
-            lockingCodes.Add(new byte[] { 0xA9, 0x01, 0x8D, 0x0D, 0x42 });
-            lockingCodes.Add(new byte[] { 0xA9, 0x01, 0x8E, 0x0D, 0x42 });
-            lockingCodes.Add(new byte[] { 0xA2, 0x01, 0x8D, 0x0D, 0x42 });
-            lockingCodes.Add(new byte[] { 0xA2, 0x01, 0x8E, 0x0D, 0x42 });
-            lockingCodes.Add(new byte[] { 0xA9, 0x01, 0x00, 0x8D, 0x0D, 0x42 });
-            lockingCodes.Add(new byte[] { 0xA9, 0x01, 0x8F, 0x0D, 0x42, 0x00 });
+            lockingCodeDictionary.Add(@"(A2|A9)(01)(8D|8E)(0D42)", "$1 00 $3 $4");
+            lockingCodeDictionary.Add(@"(A9)(01)(008D0D42)", "$1 00 $3");
+            lockingCodeDictionary.Add(@"(A9)(01)(8F0D4200)", "$1 00 $3");
 
-            unlockingCodes.Add(new byte[] { 0xA9, 0x00, 0x8D ,0x0D, 0x42 });
-            unlockingCodes.Add(new byte[] { 0xA9, 0x00, 0x8E ,0x0D, 0x42 });
-            unlockingCodes.Add(new byte[] { 0xA2, 0x00, 0x8D ,0x0D, 0x42 });
-            unlockingCodes.Add(new byte[] { 0xA2, 0x00, 0x8E ,0x0D, 0x42 });
-            unlockingCodes.Add(new byte[] { 0xA9, 0x00, 0x00 ,0x8D, 0x0D, 0x42 });
-            unlockingCodes.Add(new byte[] { 0xA9, 0x00, 0x8F ,0x0D, 0x42, 0x00 });
-
-            lockingCodePattern.Add(new bool[] { false, false, false, false, false });
-            lockingCodePattern.Add(new bool[] { false, false, false, false, false });
-            lockingCodePattern.Add(new bool[] { false, false, false, false, false });
-            lockingCodePattern.Add(new bool[] { false, false, false, false, false });
-            lockingCodePattern.Add(new bool[] { false, false, false, false, false, false });
-            lockingCodePattern.Add(new bool[] { false, false, false, false, false, false });
-
-            return FindAndReplace(lockingCodes, unlockingCodes, lockingCodePattern, unlock);
+            return FindAndReplaceByRegEx(lockingCodeDictionary, unlock);
         }
 
         public bool RemoveSRAMChecks(bool unlock)
