@@ -689,7 +689,6 @@
             this.buttonFixSRAMChecks.TabIndex = 67;
             this.buttonFixSRAMChecks.Text = "Remove SRAM Checks";
             this.buttonFixSRAMChecks.UseVisualStyleBackColor = true;
-            this.buttonFixSRAMChecks.Visible = false;
             this.buttonFixSRAMChecks.Click += new System.EventHandler(this.ButtonFixSRAMChecks_Click);
             // 
             // Form1
@@ -725,7 +724,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "Advanced SNES ROM Utility v0.9.7";
+            this.Text = "Advanced SNES ROM Utility v1.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.groupBoxInfo.ResumeLayout(false);
             this.groupBoxInfo.PerformLayout();

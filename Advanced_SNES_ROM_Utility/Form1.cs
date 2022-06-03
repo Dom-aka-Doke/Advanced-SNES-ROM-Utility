@@ -89,7 +89,6 @@ namespace Advanced_SNES_ROM_Utility
                 }
 
                 // Check if ROM contains SRAM checks
-                /*
                 if (sourceROM.RemoveSRAMChecks(false))
                 {
                     buttonFixSRAMChecks.Enabled = true;
@@ -99,7 +98,7 @@ namespace Advanced_SNES_ROM_Utility
                 {
                     buttonFixSRAMChecks.Enabled = false;
                 }
-                */
+
                 // Initialize combo box for country and region
                 comboBoxCountryRegion.DataSource = listCountryRegion;
                 comboBoxCountryRegion.DisplayMember = "Name";
