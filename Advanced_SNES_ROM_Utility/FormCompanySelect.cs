@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace Advanced_SNES_ROM_Utility
 {
-    public partial class Form3 : Form
+    public partial class FormCompanySelect : Form
     {
         private byte[] sourceROMCopy = null;
         private byte[] sourceROMSMCHeaderCopy = null;
@@ -20,7 +20,7 @@ namespace Advanced_SNES_ROM_Utility
         private int calcFileSizeCopy = 0;
         private bool isBROMCopy = false;
 
-        public Form3(byte[] sourceROM, byte[] sourceROMSMCHeader, uint romHeaderOffset, string title, byte[] byteTitle, string version, byte country, string company, int intROMSize, int calcFileSize, string romSavePath, string romName, bool isBSROM)
+        public FormCompanySelect(byte[] sourceROM, byte[] sourceROMSMCHeader, uint romHeaderOffset, string title, byte[] byteTitle, string version, byte country, string company, int intROMSize, int calcFileSize, string romSavePath, string romName, bool isBSROM)
         {
             InitializeComponent();
 

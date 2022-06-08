@@ -253,7 +253,7 @@ namespace Advanced_SNES_ROM_Utility
             else if ((!ufo && !gd) || SourceROMSMCHeader == null)
             {
                 DialogResult dialogResult = new DialogResult();
-                Form2 chooseCopier = new Form2();
+                FormChooseCopier chooseCopier = new FormChooseCopier();
                 dialogResult = chooseCopier.ShowDialog();
 
                 if (dialogResult == DialogResult.OK)

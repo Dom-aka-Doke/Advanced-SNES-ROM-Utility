@@ -3,9 +3,9 @@ using System.Windows.Forms;
 
 namespace Advanced_SNES_ROM_Utility
 {
-    public partial class Form4 : Form
+    public partial class FormAbout : Form
     {
-        public Form4()
+        public FormAbout()
         {
             InitializeComponent();
         }

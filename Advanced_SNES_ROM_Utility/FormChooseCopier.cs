@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Advanced_SNES_ROM_Utility
 {
-    public partial class Form2 : Form
+    public partial class FormChooseCopier : Form
     {
-        public Form2()
+        public FormChooseCopier()
         {
             InitializeComponent();
         }
