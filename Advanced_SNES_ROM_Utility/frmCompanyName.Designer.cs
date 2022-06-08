@@ -1,6 +1,6 @@
 ﻿namespace Advanced_SNES_ROM_Utility
 {
-    partial class Form3
+    partial class frmCompanyName
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form3));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmCompanyName));
             this.labelChangeCompany = new System.Windows.Forms.Label();
             this.comboBoxChangeCompany = new System.Windows.Forms.ComboBox();
             this.buttonCancelChages = new System.Windows.Forms.Button();

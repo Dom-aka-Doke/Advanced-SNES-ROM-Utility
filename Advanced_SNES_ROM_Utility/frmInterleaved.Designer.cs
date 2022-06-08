@@ -1,6 +1,6 @@
 ﻿namespace Advanced_SNES_ROM_Utility
 {
-    partial class Form2
+    partial class frmInterleaved
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmInterleaved));
             this.buttonUFO = new System.Windows.Forms.Button();
             this.buttonStandard = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();

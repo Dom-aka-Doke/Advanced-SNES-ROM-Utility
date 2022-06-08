@@ -1,6 +1,7 @@
 ﻿namespace Advanced_SNES_ROM_Utility
+
 {
-    partial class Form1
+    partial class frmMain
     {
         /// <summary>
         /// Erforderliche Designervariable.
@@ -28,7 +29,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.openROMFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.buttonSelectROM = new System.Windows.Forms.Button();
             this.textBoxROMName = new System.Windows.Forms.TextBox();

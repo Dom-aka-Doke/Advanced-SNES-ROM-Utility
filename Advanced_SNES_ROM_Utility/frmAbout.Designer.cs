@@ -1,6 +1,6 @@
 ﻿namespace Advanced_SNES_ROM_Utility
 {
-    partial class Form4
+    partial class frmAbout
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form4));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmAbout));
             this.buttonAboutClose = new System.Windows.Forms.Button();
             this.labelAboutLicense = new System.Windows.Forms.Label();
             this.labelAboutLogo = new System.Windows.Forms.Label();

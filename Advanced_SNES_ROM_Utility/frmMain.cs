@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Advanced_SNES_ROM_Utility
 {
-    public partial class Form1 : Form
+    public partial class frmMain : Form
     {
         // Create empty ROM
         SNESROM sourceROM;
@@ -22,7 +22,7 @@ namespace Advanced_SNES_ROM_Utility
         List<ComboBoxExpandROMList> listExpandROM = new List<ComboBoxExpandROMList>();
         List<ComboBoxSplitROMList> listSplitROM = new List<ComboBoxSplitROMList>();
 
-        public Form1()
+        public frmMain()
         {
             InitializeComponent();
 
@@ -588,13 +588,13 @@ namespace Advanced_SNES_ROM_Utility
 
         private void ButtonHelp_Click(object sender, EventArgs e)
         {
-            Form5 helpForm = new Form5();
+            frmManual helpForm = new frmManual();
             helpForm.Show();
         }
 
         private void ButtonAbout_Click(object sender, EventArgs e)
         {
-            Form4 aboutForm = new Form4();
+            frmAbout aboutForm = new frmAbout();
             aboutForm.Show();
         }
 

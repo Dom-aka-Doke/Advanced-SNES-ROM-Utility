@@ -1,6 +1,6 @@
 ﻿namespace Advanced_SNES_ROM_Utility
 {
-    partial class Form5
+    partial class frmManual
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form5));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmManual));
             this.labelAboutFunctions = new System.Windows.Forms.Label();
             this.buttonManualClose = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
