@@ -440,6 +440,17 @@ namespace Advanced_SNES_ROM_Utility
             }
         }
 
+        private void TextBoxGetCode_TextChanged(object sender, EventArgs e)
+        {
+            textBoxCode.Text = textBoxCode.Text.ToUpper();
+
+            if (!sourceROM.StringGameCode.Trim().Equals(textBoxCode.Text.Trim()))
+            {
+                sourceROM.SetGameCode(textBoxCode.Text);
+                RefreshLabelsAndButtons();
+            }
+        }
+
         private void ComboBoxCountryRegion_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!comboBoxCountryRegion.Enabled || comboBoxCountryRegion.SelectedIndex < 0) { return; }
@@ -538,6 +549,8 @@ namespace Advanced_SNES_ROM_Utility
             textBoxROMName.Text = sourceROM.ROMFullPath;
             textBoxTitle.Text = sourceROM.StringTitle.Trim();
             textBoxVersion.Text = sourceROM.StringVersion;
+            textBoxCode.Text = sourceROM.StringGameCode.Trim();
+            if (sourceROM.StringGameCode.Trim() != "N/A") { textBoxCode.Enabled = true; } else { textBoxCode.Enabled = false; }
 
             // Set labels
             labelGetMapMode.Text = sourceROM.StringMapMode;

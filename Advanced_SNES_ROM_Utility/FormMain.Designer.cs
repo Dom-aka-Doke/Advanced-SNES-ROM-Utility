@@ -86,6 +86,8 @@
             this.buttonExit = new System.Windows.Forms.Button();
             this.buttonFixSlowROMChecks = new System.Windows.Forms.Button();
             this.buttonFixSRAMChecks = new System.Windows.Forms.Button();
+            this.labelCode = new System.Windows.Forms.Label();
+            this.textBoxCode = new System.Windows.Forms.TextBox();
             this.groupBoxInfo.SuspendLayout();
             this.groupBoxChecksums.SuspendLayout();
             this.groupBoxROMInfo.SuspendLayout();
@@ -602,6 +604,8 @@
             // 
             // groupBoxInfo
             // 
+            this.groupBoxInfo.Controls.Add(this.textBoxCode);
+            this.groupBoxInfo.Controls.Add(this.labelCode);
             this.groupBoxInfo.Controls.Add(this.labelTitle);
             this.groupBoxInfo.Controls.Add(this.labelCompany);
             this.groupBoxInfo.Controls.Add(this.labelCountry);
@@ -691,7 +695,26 @@
             this.buttonFixSRAMChecks.UseVisualStyleBackColor = true;
             this.buttonFixSRAMChecks.Click += new System.EventHandler(this.ButtonFixSRAMChecks_Click);
             // 
-            // Form1
+            // labelCode
+            // 
+            this.labelCode.AutoSize = true;
+            this.labelCode.Location = new System.Drawing.Point(125, 99);
+            this.labelCode.Name = "labelCode";
+            this.labelCode.Size = new System.Drawing.Size(63, 13);
+            this.labelCode.TabIndex = 58;
+            this.labelCode.Text = "Game Code";
+            // 
+            // textBoxCode
+            // 
+            this.textBoxCode.Enabled = false;
+            this.textBoxCode.Location = new System.Drawing.Point(194, 96);
+            this.textBoxCode.MaxLength = 4;
+            this.textBoxCode.Name = "textBoxCode";
+            this.textBoxCode.Size = new System.Drawing.Size(45, 20);
+            this.textBoxCode.TabIndex = 59;
+            this.textBoxCode.TextChanged += new System.EventHandler(this.TextBoxGetCode_TextChanged);
+            // 
+            // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -723,7 +746,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.Name = "Form1";
+            this.Name = "FormMain";
             this.Text = "Advanced SNES ROM Utility v1.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.groupBoxInfo.ResumeLayout(false);
@@ -796,6 +819,8 @@
         private System.Windows.Forms.Button buttonExit;
         private System.Windows.Forms.Button buttonFixSlowROMChecks;
         private System.Windows.Forms.Button buttonFixSRAMChecks;
+        private System.Windows.Forms.TextBox textBoxCode;
+        private System.Windows.Forms.Label labelCode;
     }
 }
 

@@ -163,6 +163,25 @@ namespace Advanced_SNES_ROM_Utility
             Initialize();
         }
 
+        public void SetGameCode(string newGameCode)
+        {
+            Encoding newEncodedGameCode = Encoding.GetEncoding(932);
+            byte[] newByteGameCode = newEncodedGameCode.GetBytes(newGameCode.Trim());
+
+            byte[] byteArrayGameCode = new byte[4] { 0x20, 0x20, 0x20, 0x20 };
+
+            Buffer.BlockCopy(newByteGameCode, 0, byteArrayGameCode, 0, newByteGameCode.Length);
+
+            Buffer.BlockCopy(byteArrayGameCode, 0, SourceROM, (int)UIntROMHeaderOffset + 0x02, 4);
+
+            if (UIntROMHeaderOffset == 0x407FB0 || UIntROMHeaderOffset == 0x40FFB0)
+            {
+                Buffer.BlockCopy(byteArrayGameCode, 0, SourceROM, (int)UIntROMHeaderOffset + 0x02 - 0x400000, 4);
+            }
+
+            Initialize();
+        }
+
         public void SwapBin()
         {
             // Check if ROM is multiple of 8 MBit, otherwise swapping is not possible

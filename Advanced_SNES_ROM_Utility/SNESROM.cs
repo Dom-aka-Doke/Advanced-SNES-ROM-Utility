@@ -41,6 +41,7 @@ namespace Advanced_SNES_ROM_Utility
         public byte[] ByteArrayTitle;
         public byte ByteCountry;
         public int IntCompany;
+        public byte[] ByteArrayGameCode;
 
         public string StringROMType;
         public string StringMapMode;
@@ -53,6 +54,7 @@ namespace Advanced_SNES_ROM_Utility
         public string StringCompany;
         public string StringRegion;
         public string StringSMCHeader;
+        public string StringGameCode;
 
         public SNESROM(string @romPath)
         {
@@ -102,6 +104,7 @@ namespace Advanced_SNES_ROM_Utility
             GetExRAMSize();
             GetCountry();
             GetVersion();
+            GetGameCode();
             GetChecksum();
             GetInverseChecksum();
             CalculateFileSize();
@@ -1214,6 +1217,22 @@ namespace Advanced_SNES_ROM_Utility
             ByteVersion = version[0];
 
             StringVersion = "1." + ByteVersion;
+        }
+
+        private void GetGameCode()
+        {
+            if (IsNewHeader)
+            {
+                byte[] gamecode = new byte[4];
+                Buffer.BlockCopy(SourceROMHeader, 0x02, gamecode, 0, 4);
+                ByteArrayGameCode = gamecode;
+                StringGameCode = Encoding.GetEncoding(932).GetString(ByteArrayGameCode);
+            }
+
+            else
+            {
+                StringGameCode = "N/A";
+            }
         }
 
         private void CalculateCrc32Hash()
