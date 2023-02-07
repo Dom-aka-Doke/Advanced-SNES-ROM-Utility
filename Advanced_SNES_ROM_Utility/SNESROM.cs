@@ -1221,7 +1221,7 @@ namespace Advanced_SNES_ROM_Utility
 
         private void GetGameCode()
         {
-            if (IsNewHeader)
+            if (IsNewHeader && !IsBSROM)
             {
                 byte[] gamecode = new byte[4];
                 Buffer.BlockCopy(SourceROMHeader, 0x02, gamecode, 0, 4);
