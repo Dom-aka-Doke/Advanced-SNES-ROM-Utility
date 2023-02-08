@@ -392,50 +392,25 @@ namespace Advanced_SNES_ROM_Utility
             List<byte[]> unlockingCodes = new List<byte[]>();
             List<bool[]> lockingCodePattern = new List<bool[]>();
 
+            IDictionary<string, string> lockingCodeDictionary = new Dictionary<string, string>();
+
             // Load bad codes into list
             if (StringRegion.Equals("PAL"))
             {
-                // Bad codes in PAL games
-                lockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0x10, 0x00, 0xd0 });
-                lockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x89, 0x10, 0x00, 0xd0 });
-                lockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xcf, 0xbd, 0xff, 0x00, 0xf0 });
-                lockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x89, 0x10, 0xd0 });
-                lockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0xd0 });
-                lockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0x00, 0xd0 });
-                lockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x00, 0xc9, 0x00, 0xf0 });
-                lockingCodes.Add(new byte[] { 0xa2, 0x18, 0x01, 0xbd, 0x27, 0x20, 0x89, 0x10, 0x00, 0xf0, 0x01 });
-                lockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x89, 0x10, 0x00 });                           // Asterix & Obelix
-                lockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0xc2, 0x20, 0x29, 0x10, 0x00 });               // 90 Minutes - European Prime Goal
-                lockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0xc2 });                           // California Games 2
-                lockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0x10, 0x85, 0x62, 0xc2 });                     // Dirt Racer
+                lockingCodeDictionary.Add(@"(AD3F21291000)(D0)", "$1 80");
+                lockingCodeDictionary.Add(@"(AD3F21)(891000D0)", "A9 10 00 $2");
+                lockingCodeDictionary.Add(@"(AD3F212910CFBDFF)(\w{2})(F0)", "$1 $2 80");
+                lockingCodeDictionary.Add(@"(AD3F218910)(D0)", "$1 80");
+                lockingCodeDictionary.Add(@"(AF3F21002910)(D0)", "$1 80");
+                lockingCodeDictionary.Add(@"(AF3F2100291000)(D0)", "$1 EA EA");
+                lockingCodeDictionary.Add(@"(AF3F210029)(\w{2})(C9)(\w{2})(F0)", "$1 $2 $3 $4 80");
+                lockingCodeDictionary.Add(@"(A21801BD2720891000)(F001)", "$1 EA EA");
+                lockingCodeDictionary.Add(@"(AF3F2100)(89)(1000)", "$1 A9 $3");                         // Asterix & Obelix
+                lockingCodeDictionary.Add(@"(AF3F2100C220)(29)(1000)", "$1 A9 $3");                     // 90 Minutes - European Prime Goal
+                lockingCodeDictionary.Add(@"(AF3F2100)(29)(10C2)", "$1 A9 $3");                         // California Games 2
+                lockingCodeDictionary.Add(@"(AD3F21)(29)(108562C2)", "$1 A9 $3");                       // Dirt Racer
 
-                // Good codes for PAL games
-                unlockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0x10, 0x00, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xa9, 0x10, 0x00, 0x89, 0x10, 0x00, 0xd0 });
-                unlockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xcf, 0xbd, 0xff, 0x00, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x89, 0x10, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0x00, 0xea, 0xea });
-                unlockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x00, 0xc9, 0x00, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xa2, 0x18, 0x01, 0xbd, 0x27, 0x20, 0x89, 0x10, 0x00, 0xea, 0xea });
-                unlockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0xA9, 0x10, 0x00 });
-                unlockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0xc2, 0x20, 0xa9, 0x10, 0x00 });
-                unlockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0xa9, 0x10, 0xc2 });
-                unlockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0xa9, 0x10, 0x85, 0x62, 0xc2 });
-
-                // Pattern for PAL games
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false, true, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, true, false, true, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false });
+                return FindAndReplaceByRegEx(lockingCodeDictionary, unlock);
             }
 
             else
@@ -569,9 +544,9 @@ namespace Advanced_SNES_ROM_Utility
                 lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false, false, false, false });
                 lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false, false, false });
                 lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false });
-            }
 
-            return FindAndReplace(lockingCodes, unlockingCodes, lockingCodePattern, unlock);
+                return FindAndReplace(lockingCodes, unlockingCodes, lockingCodePattern, unlock);
+            }
         }
 
         public bool RemoveSlowROMChecks(bool unlock)

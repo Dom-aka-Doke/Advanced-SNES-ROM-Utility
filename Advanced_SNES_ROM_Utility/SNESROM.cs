@@ -1064,11 +1064,7 @@ namespace Advanced_SNES_ROM_Utility
             byte[] byteChksm = new byte[2];
 
             // For clearing out checksum - checksum = 0x0000 , inverse = 0xFFFF
-            byte[] clearSum = new byte[4];
-            clearSum[0] = 0xFF;
-            clearSum[1] = 0xFF;
-            clearSum[2] = 0x00;
-            clearSum[3] = 0x00;
+            byte[] clearSum = new byte[4] { 0xFF, 0xFF, 0x00, 0x00 };
 
             // Make a copy with clean checksum of the ROM for independent calculation
             byte[] noChecksumSourceROM = new byte[SourceROM.Length];
@@ -1163,6 +1159,7 @@ namespace Advanced_SNES_ROM_Utility
 
             ByteArrayCalcChecksum = byteChksm;
         }
+
         private void CalculateInverseChecksum()
         {
             UInt16 calcInvChksm = 0;
