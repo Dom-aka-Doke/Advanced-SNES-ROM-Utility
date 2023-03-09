@@ -81,13 +81,13 @@
             this.buttonSaveAs = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.groupBoxInfo = new System.Windows.Forms.GroupBox();
+            this.textBoxCode = new System.Windows.Forms.TextBox();
+            this.labelCode = new System.Windows.Forms.Label();
             this.groupBoxChecksums = new System.Windows.Forms.GroupBox();
             this.groupBoxROMInfo = new System.Windows.Forms.GroupBox();
             this.buttonExit = new System.Windows.Forms.Button();
             this.buttonFixSlowROMChecks = new System.Windows.Forms.Button();
             this.buttonFixSRAMChecks = new System.Windows.Forms.Button();
-            this.labelCode = new System.Windows.Forms.Label();
-            this.textBoxCode = new System.Windows.Forms.TextBox();
             this.groupBoxInfo.SuspendLayout();
             this.groupBoxChecksums.SuspendLayout();
             this.groupBoxROMInfo.SuspendLayout();
@@ -621,6 +621,25 @@
             this.groupBoxInfo.TabStop = false;
             this.groupBoxInfo.Text = "GENERAL INFORMATION";
             // 
+            // textBoxCode
+            // 
+            this.textBoxCode.Enabled = false;
+            this.textBoxCode.Location = new System.Drawing.Point(194, 96);
+            this.textBoxCode.MaxLength = 4;
+            this.textBoxCode.Name = "textBoxCode";
+            this.textBoxCode.Size = new System.Drawing.Size(45, 20);
+            this.textBoxCode.TabIndex = 59;
+            this.textBoxCode.TextChanged += new System.EventHandler(this.TextBoxGetCode_TextChanged);
+            // 
+            // labelCode
+            // 
+            this.labelCode.AutoSize = true;
+            this.labelCode.Location = new System.Drawing.Point(125, 99);
+            this.labelCode.Name = "labelCode";
+            this.labelCode.Size = new System.Drawing.Size(63, 13);
+            this.labelCode.TabIndex = 58;
+            this.labelCode.Text = "Game Code";
+            // 
             // groupBoxChecksums
             // 
             this.groupBoxChecksums.Controls.Add(this.labelIntChksm);
@@ -676,7 +695,7 @@
             // buttonFixSlowROMChecks
             // 
             this.buttonFixSlowROMChecks.Enabled = false;
-            this.buttonFixSlowROMChecks.Location = new System.Drawing.Point(366, 284);
+            this.buttonFixSlowROMChecks.Location = new System.Drawing.Point(365, 313);
             this.buttonFixSlowROMChecks.Name = "buttonFixSlowROMChecks";
             this.buttonFixSlowROMChecks.Size = new System.Drawing.Size(166, 23);
             this.buttonFixSlowROMChecks.TabIndex = 66;
@@ -687,32 +706,13 @@
             // buttonFixSRAMChecks
             // 
             this.buttonFixSRAMChecks.Enabled = false;
-            this.buttonFixSRAMChecks.Location = new System.Drawing.Point(366, 313);
+            this.buttonFixSRAMChecks.Location = new System.Drawing.Point(366, 284);
             this.buttonFixSRAMChecks.Name = "buttonFixSRAMChecks";
             this.buttonFixSRAMChecks.Size = new System.Drawing.Size(166, 23);
             this.buttonFixSRAMChecks.TabIndex = 67;
             this.buttonFixSRAMChecks.Text = "Remove SRAM Checks";
             this.buttonFixSRAMChecks.UseVisualStyleBackColor = true;
             this.buttonFixSRAMChecks.Click += new System.EventHandler(this.ButtonFixSRAMChecks_Click);
-            // 
-            // labelCode
-            // 
-            this.labelCode.AutoSize = true;
-            this.labelCode.Location = new System.Drawing.Point(125, 99);
-            this.labelCode.Name = "labelCode";
-            this.labelCode.Size = new System.Drawing.Size(63, 13);
-            this.labelCode.TabIndex = 58;
-            this.labelCode.Text = "Game Code";
-            // 
-            // textBoxCode
-            // 
-            this.textBoxCode.Enabled = false;
-            this.textBoxCode.Location = new System.Drawing.Point(194, 96);
-            this.textBoxCode.MaxLength = 4;
-            this.textBoxCode.Name = "textBoxCode";
-            this.textBoxCode.Size = new System.Drawing.Size(45, 20);
-            this.textBoxCode.TabIndex = 59;
-            this.textBoxCode.TextChanged += new System.EventHandler(this.TextBoxGetCode_TextChanged);
             // 
             // FormMain
             // 

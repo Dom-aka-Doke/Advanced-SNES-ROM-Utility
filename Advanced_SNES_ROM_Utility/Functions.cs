@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -388,13 +387,8 @@ namespace Advanced_SNES_ROM_Utility
 
         public bool UnlockRegion(bool unlock)
         {
-            List<byte[]> lockingCodes = new List<byte[]>();
-            List<byte[]> unlockingCodes = new List<byte[]>();
-            List<bool[]> lockingCodePattern = new List<bool[]>();
-
             IDictionary<string, string> lockingCodeDictionary = new Dictionary<string, string>();
 
-            // Load bad codes into list
             if (StringRegion.Equals("PAL"))
             {
                 lockingCodeDictionary.Add(@"(AD3F21291000)(D0)", "$1 80");
@@ -409,144 +403,44 @@ namespace Advanced_SNES_ROM_Utility
                 lockingCodeDictionary.Add(@"(AF3F2100C220)(29)(1000)", "$1 A9 $3");                     // 90 Minutes - European Prime Goal
                 lockingCodeDictionary.Add(@"(AF3F2100)(29)(10C2)", "$1 A9 $3");                         // California Games 2
                 lockingCodeDictionary.Add(@"(AD3F21)(29)(108562C2)", "$1 A9 $3");                       // Dirt Racer
-
-                return FindAndReplaceByRegEx(lockingCodeDictionary, unlock);
             }
 
             else
             {
-                // Bad codes in NTSC games
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0x29, 0x10, 0xf0 });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0x89, 0x10, 0xf0 });
-                lockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xd0 });
-                lockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x89, 0x10, 0xd0 });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0x29, 0x10, 0x00, 0xf0 });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0x89, 0x10, 0x00, 0xf0 });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0x29, 0x10, 0x00, 0xd0 });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0x89, 0x10, 0x00, 0xd0 });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0x89, 0x10, 0xc2, 0x00, 0xf0 });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0x89, 0x10, 0xc2, 0x00, 0xd0 });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x10, 0xf0 });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0x89, 0x10, 0xc9, 0x10, 0xf0 });
-                lockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x00, 0xf0 });
-                lockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x00, 0xd0 });
-                lockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x10, 0xd0 });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0x29, 0x10, 0xcf, 0x00, 0x00, 0x80, 0xf0 });
-                lockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x8d, 0x00, 0x00, 0x29, 0x10, 0x8d });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0x00, 0x29, 0x10, 0xf0 });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0x00, 0x89, 0x10, 0xf0 });
-                lockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0xd0 });
-                lockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x89, 0x10, 0xd0 });
-                lockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0x00, 0xf0 });
-                lockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x89, 0x10, 0x00, 0xf0 });
-                lockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x00, 0xc9, 0x00, 0xf0 });
-                lockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0x80, 0x2d, 0x00, 0x1b });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0x00, 0x89, 0x10, 0xc2, 0x00, 0xf0 });
-                lockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x00, 0x00, 0x29, 0x10, 0x00, 0xd0 });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0xc2, 0x00, 0x29, 0x10, 0x00, 0xf0 });
-                lockingCodes.Add(new byte[] { 0x3f, 0x21, 0xc2, 0x00, 0x29, 0x10, 0x00, 0xd0 });
-                lockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0xea, 0x89, 0x10, 0x00, 0xd0 });
-                lockingCodes.Add(new byte[] { 0xa2, 0x18, 0x01, 0xbd, 0x27, 0x20, 0x89, 0x10, 0x00, 0xd0, 0x01 });
-                lockingCodes.Add(new byte[] { 0x29, 0x10, 0x00, 0xa2, 0x00, 0x00, 0xc9, 0x10, 0x00, 0xd0 });
-                lockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0x0f });       // Dezaemon - Kaite Tsukutte Asoberu
-                lockingCodes.Add(new byte[] { 0xad, 0x39, 0xb5, 0xd0, 0x1a, 0x22 });     // Earthbound
-                lockingCodes.Add(new byte[] { 0x1a, 0x8f, 0xf0, 0x7f, 0x31, 0xcf, 0xf0 });   // Earthbound
-                lockingCodes.Add(new byte[] { 0x1a, 0x8f, 0xf0, 0x7f, 0x32, 0xcf, 0xf0 });   // Earthbound
-                lockingCodes.Add(new byte[] { 0x1a, 0x8f, 0xf0, 0x7f, 0x31, 0xcf, 0xf0 });   // Earthbound
-                lockingCodes.Add(new byte[] { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xef, 0xf2, 0xfd, 0xc3, 0xf0 });     // Earthbound
-                lockingCodes.Add(new byte[] { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0xef, 0x38, 0xf2, 0xfd, 0xc3, 0xf0 });   // Earthbound
-                lockingCodes.Add(new byte[] { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xef, 0xef, 0xff, 0xc1 });     // Earthbound
-                lockingCodes.Add(new byte[] { 0xad, 0xff, 0x1f, 0xd0, 0x06, 0x22, 0x64, 0x5f, 0xc0, 0x80, 0x04, 0x22, 0x00, 0x8a, 0x0f, 0xc2, 0x30, 0xab, 0x2b, 0x7a, 0xfa, 0x68, 0x40 });     // Cooly Skunk
-
-                // Good codes for NTSC games
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0x29, 0x10, 0x80 });
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0x89, 0x10, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xea, 0xea });
-                unlockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x89, 0x10, 0xea, 0xea });         // Could also be 0xad, 0x3f, 0x21, 0x89, 0x10, 0x80 but uCON64 uses (ea ea)
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0x29, 0x10, 0x00, 0x80 });
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0x89, 0x10, 0x00, 0x80 });
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0x29, 0x10, 0x00, 0xea, 0xea });
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0x89, 0x10, 0x00, 0xea, 0xea });
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0x89, 0x10, 0xc2, 0x00, 0x80 });
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0x89, 0x10, 0xc2, 0x00, 0xea, 0xea });
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x10, 0x80 });
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0x89, 0x10, 0xc9, 0x10, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x00, 0xea, 0xea });
-                unlockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x00, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0x10, 0xc9, 0x10, 0xea, 0xea });
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0x29, 0x10, 0xcf, 0x00, 0x00, 0x80, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x8d, 0x00, 0x00, 0x29, 0x00, 0x8d });
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0x00, 0x29, 0x10, 0x80 });
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0x00, 0x89, 0x10, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0xea, 0xea });
-                unlockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x89, 0x10, 0xea, 0xea });
-                unlockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x10, 0x00, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x89, 0x10, 0x00, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x00, 0xc9, 0x00, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x29, 0x00, 0x80, 0x2d, 0x00, 0x1b });
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0x00, 0x89, 0x10, 0xc2, 0x00, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xaf, 0x3f, 0x21, 0x00, 0x00, 0x00, 0x29, 0x10, 0x00, 0xea, 0xea });
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0xc2, 0x00, 0x29, 0x10, 0x00, 0x80 });
-                unlockingCodes.Add(new byte[] { 0x3f, 0x21, 0xc2, 0x00, 0x29, 0x10, 0x00, 0xea, 0xea });
-                unlockingCodes.Add(new byte[] { 0xa9, 0x00, 0x00, 0xea, 0x89, 0x10, 0x00, 0xd0 });
-                unlockingCodes.Add(new byte[] { 0xa2, 0x18, 0x01, 0xbd, 0x27, 0x20, 0x89, 0x10, 0x00, 0xea, 0xea });
-                unlockingCodes.Add(new byte[] { 0x29, 0x10, 0x00, 0xa2, 0x00, 0x00, 0xc9, 0x10, 0x00, 0x80 });
-                unlockingCodes.Add(new byte[] { 0xad, 0x3f, 0x21, 0x29, 0xff });       // Dezaemon - Kaite Tsukutte Asoberu
-                unlockingCodes.Add(new byte[] { 0xad, 0x39, 0xb5, 0xea, 0xea, 0x22 });       // Earthbound
-                unlockingCodes.Add(new byte[] { 0x1a, 0x8f, 0xf0, 0x7f, 0x30, 0xcf, 0xf0 });     // Earthbound
-                unlockingCodes.Add(new byte[] { 0x1a, 0x8f, 0xf0, 0x7f, 0x30, 0xcf, 0xf0 });     // Earthbound
-                unlockingCodes.Add(new byte[] { 0x1a, 0x8f, 0xf0, 0x7f, 0x30, 0xcf, 0xf0 });     // Earthbound
-                unlockingCodes.Add(new byte[] { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xea, 0xa9, 0x00, 0x00, 0x80 });       // Earthbound
-                unlockingCodes.Add(new byte[] { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xea, 0xa9, 0x00, 0x00, 0x80 });     // Earthbound
-                unlockingCodes.Add(new byte[] { 0xa1, 0xc0, 0xca, 0x10, 0xf8, 0x38, 0xea, 0xa9, 0x00, 0x00 });       // Earthbound
-                unlockingCodes.Add(new byte[] { 0xea, 0xea, 0xea, 0xea, 0xea, 0x22, 0x64, 0x5f, 0xc0, 0x80, 0x04, 0xea, 0xea, 0xea, 0xea, 0xc2, 0x30, 0xab, 0x2b, 0x7a, 0xfa, 0x68, 0x40 });       //  Cooly Skunk
-
-
-                // Pattern for NTSC games
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, true, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, true, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, true, true, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, true, true, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, true, false, true, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, true, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, true, true, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, true, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, true, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false, false, false });
-                lockingCodePattern.Add(new bool[] { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false });
-
-                return FindAndReplace(lockingCodes, unlockingCodes, lockingCodePattern, unlock);
+                lockingCodeDictionary.Add(@"(3F21)(29|89)(10)(F0)", "$1 $2 $3 80");
+                lockingCodeDictionary.Add(@"(AD3F21)(29|89)(10)(D0)", "$1 $2 $3 EA EA");
+                lockingCodeDictionary.Add(@"(3F21)(29|89)(1000)(F0)", "$1  $2 $3 80");
+                lockingCodeDictionary.Add(@"(3F21)(29|89)(1000)(D0)", "$1 $2 $3 EA EA");
+                lockingCodeDictionary.Add(@"(3F218910C2)(\w{2})(F0)", "$1 $2 80");
+                lockingCodeDictionary.Add(@"(3F218910C2)(\w{2})(D0)", "$1 $2 EA EA");
+                lockingCodeDictionary.Add(@"(3F21)(29|89)(10C910)(F0)", "$1  $2 $3 80");
+                lockingCodeDictionary.Add(@"(AD3F212910C900)(F0)", "$1 EA EA");
+                lockingCodeDictionary.Add(@"(AD3F212910C900)(D0)", "$1 80");
+                lockingCodeDictionary.Add(@"(AD3F212910C910)(D0)", "$1 EA EA");
+                lockingCodeDictionary.Add(@"(3F212910CF)(\w{4})(80)(F0)", "$1 $2 $3 80");
+                lockingCodeDictionary.Add(@"(AD3F218D)(\w{4})(29)(10)(8D)", "$1 $2 $3 00 $5");
+                lockingCodeDictionary.Add(@"(3F2100)(29|89)(10)(F0)", "$1 $2 $3 80");
+                lockingCodeDictionary.Add(@"(AF3F2100)(29|89)(10)(D0)", "$1 $2 $3 EA EA");
+                lockingCodeDictionary.Add(@"(AF3F2100)(29|89)(1000)(F0)", "$1 $2 $3 80");
+                lockingCodeDictionary.Add(@"(AF3F210029)(\w{2})(C9)(\w{2})(F0)", "$1 $2 $3 $4 80");
+                lockingCodeDictionary.Add(@"(AF3F210029)(10)(802D001B)", "$1 00 $3");
+                lockingCodeDictionary.Add(@"(3F21008910C2)(\w{2})(F0)", "$1 $2 80");
+                lockingCodeDictionary.Add(@"(AF3F2100)(\w{4})(291000)(D0)", "$1 $2 $3 EA EA");
+                lockingCodeDictionary.Add(@"(3F21C2)(\w{2})(291000)(F0)", "$1 $2 $3 80");
+                lockingCodeDictionary.Add(@"(3F21C2)(\w{2})(291000)(D0)", "$1 $2 $3 EA EA");
+                lockingCodeDictionary.Add(@"(AF3F21)(EA891000D0)", "A9 00 00 $2");
+                lockingCodeDictionary.Add(@"(A21801BD2720891000)(D001)", "$1 EA EA");
+                lockingCodeDictionary.Add(@"(291000A20000C91000)(D0)", "$1 80");   
+                lockingCodeDictionary.Add(@"(AD3F2129)(0F)", "$1 FF");   // Dezaemon - Kaite Tsukutte Asoberu
+                lockingCodeDictionary.Add(@"(ADFF1FD006)(22645FC08004)(22008A0F)(C230AB2B7AFA6840)", "EA EA EA EA EA $2 EA EA EA EA $4");   // Cooly Skunk
+                // Earthbound
+                lockingCodeDictionary.Add(@"(AD39B5)(D01A)(22)", "$1 EA EA $3");
+                lockingCodeDictionary.Add(@"(A1C0CA10F838)(EFF2FDC3F0)", "$1 EA A9 00 00 80");
+                lockingCodeDictionary.Add(@"(A1C0CA10F8)(EF38F2FDC3F0)", "$1 38 EA A9 00 00 80");
+                lockingCodeDictionary.Add(@"(A1C0CA10F838)(EFEFFFC1)", "$1 EA A9 00 00");
             }
+
+            return FindAndReplaceByRegEx(lockingCodeDictionary, unlock);
         }
 
         public bool RemoveSlowROMChecks(bool unlock)
@@ -597,7 +491,8 @@ namespace Advanced_SNES_ROM_Utility
                     if (StringTitle.Contains("DONKEY KONG COUNTRY")) { lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(30|31|32|33)(CF|DF)(\w{4})(30|31|32|33)(D0)", "$1 $2 $3 $4 $5 $6 EA EA"); }
                     else { lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(30|31|32|33)(CF|DF)(\w{4})(30|31|32|33)(D0)", "$1 $2 $3 $4 $5 $6 80"); }
 
-                    lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(30|31|32|33)(CF|DF)(\w{4})(30|31|32|33)(F0)", "$1 $2 $3 $4 $5 $6 EA EA");
+                    if (!StringTitle.Contains("EARTH BOUND")) { lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(30|31|32|33)(CF|DF)(\w{4})(30|31|32|33)(F0)", "$1 $2 $3 $4 $5 $6 EA EA"); }
+
                     lockingCodeDictionary.Add(@"(8F|9F)(\w{4})(30|31|32|33)(AF)(\w{4})(30|31|32|33)(C9)(\w{4})(D0)", "$1 $2 $3 $4 $5 $6 $7 $8 80");
 
                     lockingCodeDictionary.Add(@"(AF|BF)(\w{2})(FF)(80|C0)(CF|DF)(\w{2})(FF40)(F0)", "$1 $2 $3 $4 $5 $6 $7 80");                    // Breath of Fire II
@@ -608,6 +503,7 @@ namespace Advanced_SNES_ROM_Utility
                     lockingCodeDictionary.Add(@"(4B4F4E4700F8)(F7)", "$1 F8");                                                                     // Donkey Kong Country 2 - Diddy's Kong Quest
                     lockingCodeDictionary.Add(@"(A9C3)(80DD)(FFFF)(F06C)", "$1 F0 CC $3 80 7D");                                                   // Donkey Kong Country 3 - Dixie Kong's Double Trouble
                     lockingCodeDictionary.Add(@"(D0F4ABCFAEFF00D0)(01)", "$1 00");                                                                 // Front Mission - Gun Hazard
+                    lockingCodeDictionary.Add(@"(1A8FF07F)(31|32)(CFF0)", "$1 30 $3");                                                             // Earthbound
 
                     return FindAndReplaceByRegEx(lockingCodeDictionary, unlock);
                 }
@@ -636,76 +532,6 @@ namespace Advanced_SNES_ROM_Utility
 
                     return FindAndReplaceByRegEx(lockingCodeDictionary, unlock);
                 }
-            }
-
-            return false;
-        }
-
-        public bool FindAndReplace(List<byte[]> lockingCodes, List<byte[]> unlockingCodes, List<bool[]> lockingCodePattern, bool unlock)
-        {
-            bool foundBadCode = false;
-            int index = 0;
-
-            byte[] regionFixedSourceROM = null;
-
-            if (unlock)
-            {
-                regionFixedSourceROM = new byte[SourceROM.Length];
-                Buffer.BlockCopy(SourceROM, 0, regionFixedSourceROM, 0, SourceROM.Length);
-            }
-
-            foreach (byte[] lockingCode in lockingCodes)
-            {
-                byte[] unlockingCode = unlockingCodes[index];
-                bool[] lockingPattern = lockingCodePattern[index];
-
-                int offset = -1;
-                int c = SourceROM.Length - lockingCode.Length + 1;
-                int j;
-
-                for (int i = 0; i < c; i++)
-                {
-                    if (SourceROM[i] != lockingCode[0])
-                    {
-                        continue;
-                    }
-
-                    for (j = lockingCode.Length - 1; j >= 1 && SourceROM[i + j] == lockingCode[j] || lockingPattern[j]; j--)
-                    {
-                        if (lockingPattern[j])
-                        {
-                            unlockingCode[j] = SourceROM[i + j];
-                        }
-                    }
-
-                    if (j == 0)
-                    {
-                        offset = i;
-                        foundBadCode = true;
-
-                        // If bad code was found replace it with good code
-                        if (foundBadCode && unlock)
-                        {
-                            Buffer.BlockCopy(unlockingCode, 0, regionFixedSourceROM, offset, unlockingCode.Length);
-                        }
-
-                        // If only check is needed, tell that bad code was found in ROM and leave
-                        else if (foundBadCode && !unlock)
-                        {
-                            return true;
-                        }
-                    }
-                }
-
-                index++;
-            }
-
-            // Save file if found bad codes and unlocking is enabled
-            if (foundBadCode && unlock)
-            {
-                SourceROM = regionFixedSourceROM;
-                Initialize();
-                return true;
             }
 
             return false;
