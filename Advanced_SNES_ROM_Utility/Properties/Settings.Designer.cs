@@ -22,5 +22,29 @@ namespace Advanced_SNES_ROM_Utility.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MirrorROMSetting {
+            get {
+                return ((bool)(this["MirrorROMSetting"]));
+            }
+            set {
+                this["MirrorROMSetting"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ScanROMSetting {
+            get {
+                return ((bool)(this["ScanROMSetting"]));
+            }
+            set {
+                this["ScanROMSetting"] = value;
+            }
+        }
     }
 }

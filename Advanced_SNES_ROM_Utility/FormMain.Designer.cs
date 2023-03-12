@@ -75,8 +75,6 @@
             this.textBoxVersion = new System.Windows.Forms.TextBox();
             this.comboBoxCountryRegion = new System.Windows.Forms.ComboBox();
             this.buttonFixROMSize = new System.Windows.Forms.Button();
-            this.buttonAbout = new System.Windows.Forms.Button();
-            this.buttonHelp = new System.Windows.Forms.Button();
             this.buttonPatch = new System.Windows.Forms.Button();
             this.buttonSaveAs = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
@@ -85,12 +83,23 @@
             this.labelCode = new System.Windows.Forms.Label();
             this.groupBoxChecksums = new System.Windows.Forms.GroupBox();
             this.groupBoxROMInfo = new System.Windows.Forms.GroupBox();
-            this.buttonExit = new System.Windows.Forms.Button();
             this.buttonFixSlowROMChecks = new System.Windows.Forms.Button();
             this.buttonFixSRAMChecks = new System.Windows.Forms.Button();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.manualToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkBoxExpandMirroring = new System.Windows.Forms.CheckBox();
+            this.groupBoxOptions = new System.Windows.Forms.GroupBox();
+            this.checkBoxScan = new System.Windows.Forms.CheckBox();
+            this.buttonExit = new System.Windows.Forms.Button();
             this.groupBoxInfo.SuspendLayout();
             this.groupBoxChecksums.SuspendLayout();
             this.groupBoxROMInfo.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
+            this.groupBoxOptions.SuspendLayout();
             this.SuspendLayout();
             // 
             // openROMFileDialog
@@ -102,7 +111,7 @@
             // 
             // buttonSelectROM
             // 
-            this.buttonSelectROM.Location = new System.Drawing.Point(13, 11);
+            this.buttonSelectROM.Location = new System.Drawing.Point(12, 27);
             this.buttonSelectROM.Name = "buttonSelectROM";
             this.buttonSelectROM.Size = new System.Drawing.Size(430, 23);
             this.buttonSelectROM.TabIndex = 0;
@@ -113,7 +122,7 @@
             // textBoxROMName
             // 
             this.textBoxROMName.Enabled = false;
-            this.textBoxROMName.Location = new System.Drawing.Point(13, 41);
+            this.textBoxROMName.Location = new System.Drawing.Point(12, 57);
             this.textBoxROMName.Name = "textBoxROMName";
             this.textBoxROMName.Size = new System.Drawing.Size(431, 20);
             this.textBoxROMName.TabIndex = 1;
@@ -123,9 +132,9 @@
             // buttonSwapBinROM
             // 
             this.buttonSwapBinROM.Enabled = false;
-            this.buttonSwapBinROM.Location = new System.Drawing.Point(366, 186);
+            this.buttonSwapBinROM.Location = new System.Drawing.Point(363, 293);
             this.buttonSwapBinROM.Name = "buttonSwapBinROM";
-            this.buttonSwapBinROM.Size = new System.Drawing.Size(166, 23);
+            this.buttonSwapBinROM.Size = new System.Drawing.Size(169, 23);
             this.buttonSwapBinROM.TabIndex = 2;
             this.buttonSwapBinROM.Text = "SwapBin ROM (27C801)";
             this.buttonSwapBinROM.UseVisualStyleBackColor = true;
@@ -310,7 +319,7 @@
             // buttonRemoveHeader
             // 
             this.buttonRemoveHeader.Enabled = false;
-            this.buttonRemoveHeader.Location = new System.Drawing.Point(405, 72);
+            this.buttonRemoveHeader.Location = new System.Drawing.Point(405, 88);
             this.buttonRemoveHeader.Name = "buttonRemoveHeader";
             this.buttonRemoveHeader.Size = new System.Drawing.Size(127, 23);
             this.buttonRemoveHeader.TabIndex = 30;
@@ -321,7 +330,7 @@
             // buttonAddHeader
             // 
             this.buttonAddHeader.Enabled = false;
-            this.buttonAddHeader.Location = new System.Drawing.Point(269, 72);
+            this.buttonAddHeader.Location = new System.Drawing.Point(268, 88);
             this.buttonAddHeader.Name = "buttonAddHeader";
             this.buttonAddHeader.Size = new System.Drawing.Size(127, 23);
             this.buttonAddHeader.TabIndex = 31;
@@ -404,9 +413,9 @@
             // buttonSplitROM
             // 
             this.buttonSplitROM.Enabled = false;
-            this.buttonSplitROM.Location = new System.Drawing.Point(269, 159);
+            this.buttonSplitROM.Location = new System.Drawing.Point(268, 187);
             this.buttonSplitROM.Name = "buttonSplitROM";
-            this.buttonSplitROM.Size = new System.Drawing.Size(90, 23);
+            this.buttonSplitROM.Size = new System.Drawing.Size(92, 23);
             this.buttonSplitROM.TabIndex = 41;
             this.buttonSplitROM.Text = "Split ROM";
             this.buttonSplitROM.UseVisualStyleBackColor = true;
@@ -418,17 +427,17 @@
             this.comboBoxSplitROM.Enabled = false;
             this.comboBoxSplitROM.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.comboBoxSplitROM.FormattingEnabled = true;
-            this.comboBoxSplitROM.Location = new System.Drawing.Point(366, 159);
+            this.comboBoxSplitROM.Location = new System.Drawing.Point(366, 187);
             this.comboBoxSplitROM.Name = "comboBoxSplitROM";
-            this.comboBoxSplitROM.Size = new System.Drawing.Size(166, 21);
+            this.comboBoxSplitROM.Size = new System.Drawing.Size(168, 21);
             this.comboBoxSplitROM.TabIndex = 42;
             // 
             // buttonExpandROM
             // 
             this.buttonExpandROM.Enabled = false;
-            this.buttonExpandROM.Location = new System.Drawing.Point(269, 130);
+            this.buttonExpandROM.Location = new System.Drawing.Point(268, 158);
             this.buttonExpandROM.Name = "buttonExpandROM";
-            this.buttonExpandROM.Size = new System.Drawing.Size(90, 23);
+            this.buttonExpandROM.Size = new System.Drawing.Size(92, 23);
             this.buttonExpandROM.TabIndex = 43;
             this.buttonExpandROM.Text = "Expand ROM";
             this.buttonExpandROM.UseVisualStyleBackColor = true;
@@ -440,15 +449,15 @@
             this.comboBoxExpandROM.Enabled = false;
             this.comboBoxExpandROM.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.comboBoxExpandROM.FormattingEnabled = true;
-            this.comboBoxExpandROM.Location = new System.Drawing.Point(366, 130);
+            this.comboBoxExpandROM.Location = new System.Drawing.Point(366, 158);
             this.comboBoxExpandROM.Name = "comboBoxExpandROM";
-            this.comboBoxExpandROM.Size = new System.Drawing.Size(166, 21);
+            this.comboBoxExpandROM.Size = new System.Drawing.Size(168, 21);
             this.comboBoxExpandROM.TabIndex = 44;
             // 
             // buttonFixChksm
             // 
             this.buttonFixChksm.Enabled = false;
-            this.buttonFixChksm.Location = new System.Drawing.Point(269, 101);
+            this.buttonFixChksm.Location = new System.Drawing.Point(268, 117);
             this.buttonFixChksm.Name = "buttonFixChksm";
             this.buttonFixChksm.Size = new System.Drawing.Size(127, 23);
             this.buttonFixChksm.TabIndex = 45;
@@ -459,9 +468,9 @@
             // buttonFixRegion
             // 
             this.buttonFixRegion.Enabled = false;
-            this.buttonFixRegion.Location = new System.Drawing.Point(366, 255);
+            this.buttonFixRegion.Location = new System.Drawing.Point(363, 351);
             this.buttonFixRegion.Name = "buttonFixRegion";
-            this.buttonFixRegion.Size = new System.Drawing.Size(166, 23);
+            this.buttonFixRegion.Size = new System.Drawing.Size(169, 23);
             this.buttonFixRegion.TabIndex = 46;
             this.buttonFixRegion.Text = "Remove Region Locks";
             this.buttonFixRegion.UseVisualStyleBackColor = true;
@@ -488,9 +497,9 @@
             // buttonDeinterleave
             // 
             this.buttonDeinterleave.Enabled = false;
-            this.buttonDeinterleave.Location = new System.Drawing.Point(366, 215);
+            this.buttonDeinterleave.Location = new System.Drawing.Point(363, 322);
             this.buttonDeinterleave.Name = "buttonDeinterleave";
-            this.buttonDeinterleave.Size = new System.Drawing.Size(166, 23);
+            this.buttonDeinterleave.Size = new System.Drawing.Size(169, 23);
             this.buttonDeinterleave.TabIndex = 49;
             this.buttonDeinterleave.Text = "Deinterleave";
             this.buttonDeinterleave.UseVisualStyleBackColor = true;
@@ -531,7 +540,7 @@
             // buttonFixROMSize
             // 
             this.buttonFixROMSize.Enabled = false;
-            this.buttonFixROMSize.Location = new System.Drawing.Point(405, 101);
+            this.buttonFixROMSize.Location = new System.Drawing.Point(405, 117);
             this.buttonFixROMSize.Name = "buttonFixROMSize";
             this.buttonFixROMSize.Size = new System.Drawing.Size(127, 23);
             this.buttonFixROMSize.TabIndex = 58;
@@ -539,34 +548,14 @@
             this.buttonFixROMSize.UseVisualStyleBackColor = true;
             this.buttonFixROMSize.Click += new System.EventHandler(this.ButtonFixROMSize_Click);
             // 
-            // buttonAbout
-            // 
-            this.buttonAbout.Location = new System.Drawing.Point(366, 426);
-            this.buttonAbout.Name = "buttonAbout";
-            this.buttonAbout.Size = new System.Drawing.Size(166, 23);
-            this.buttonAbout.TabIndex = 59;
-            this.buttonAbout.Text = "About";
-            this.buttonAbout.UseVisualStyleBackColor = true;
-            this.buttonAbout.Click += new System.EventHandler(this.ButtonAbout_Click);
-            // 
-            // buttonHelp
-            // 
-            this.buttonHelp.Location = new System.Drawing.Point(366, 397);
-            this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(166, 23);
-            this.buttonHelp.TabIndex = 60;
-            this.buttonHelp.Text = "Help";
-            this.buttonHelp.UseVisualStyleBackColor = true;
-            this.buttonHelp.Click += new System.EventHandler(this.ButtonHelp_Click);
-            // 
             // buttonPatch
             // 
             this.buttonPatch.Enabled = false;
             this.buttonPatch.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.ips_patch_icon;
             this.buttonPatch.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonPatch.Location = new System.Drawing.Point(366, 351);
+            this.buttonPatch.Location = new System.Drawing.Point(363, 436);
             this.buttonPatch.Name = "buttonPatch";
-            this.buttonPatch.Size = new System.Drawing.Size(166, 28);
+            this.buttonPatch.Size = new System.Drawing.Size(168, 32);
             this.buttonPatch.TabIndex = 61;
             this.buttonPatch.Text = "Apply Patch";
             this.buttonPatch.UseVisualStyleBackColor = true;
@@ -577,7 +566,7 @@
             this.buttonSaveAs.Enabled = false;
             this.buttonSaveAs.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.save_as_icon;
             this.buttonSaveAs.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSaveAs.Location = new System.Drawing.Point(453, 38);
+            this.buttonSaveAs.Location = new System.Drawing.Point(452, 54);
             this.buttonSaveAs.Margin = new System.Windows.Forms.Padding(2);
             this.buttonSaveAs.Name = "buttonSaveAs";
             this.buttonSaveAs.Size = new System.Drawing.Size(80, 23);
@@ -592,7 +581,7 @@
             this.buttonSave.Enabled = false;
             this.buttonSave.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.save_icon;
             this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSave.Location = new System.Drawing.Point(453, 11);
+            this.buttonSave.Location = new System.Drawing.Point(452, 27);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(2);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(80, 23);
@@ -614,7 +603,7 @@
             this.groupBoxInfo.Controls.Add(this.labelGetCompany);
             this.groupBoxInfo.Controls.Add(this.textBoxVersion);
             this.groupBoxInfo.Controls.Add(this.textBoxTitle);
-            this.groupBoxInfo.Location = new System.Drawing.Point(13, 67);
+            this.groupBoxInfo.Location = new System.Drawing.Point(12, 83);
             this.groupBoxInfo.Name = "groupBoxInfo";
             this.groupBoxInfo.Size = new System.Drawing.Size(250, 127);
             this.groupBoxInfo.TabIndex = 62;
@@ -652,7 +641,7 @@
             this.groupBoxChecksums.Controls.Add(this.labelCalcInvChksm);
             this.groupBoxChecksums.Controls.Add(this.labelGetCalcInvChksm);
             this.groupBoxChecksums.Controls.Add(this.labelGetIntInvChksm);
-            this.groupBoxChecksums.Location = new System.Drawing.Point(13, 388);
+            this.groupBoxChecksums.Location = new System.Drawing.Point(12, 404);
             this.groupBoxChecksums.Name = "groupBoxChecksums";
             this.groupBoxChecksums.Size = new System.Drawing.Size(346, 93);
             this.groupBoxChecksums.TabIndex = 63;
@@ -675,29 +664,19 @@
             this.groupBoxROMInfo.Controls.Add(this.labelSRAM);
             this.groupBoxROMInfo.Controls.Add(this.labelROMSpeed);
             this.groupBoxROMInfo.Controls.Add(this.labelGetROMSpeed);
-            this.groupBoxROMInfo.Location = new System.Drawing.Point(13, 200);
+            this.groupBoxROMInfo.Location = new System.Drawing.Point(12, 216);
             this.groupBoxROMInfo.Name = "groupBoxROMInfo";
             this.groupBoxROMInfo.Size = new System.Drawing.Size(346, 182);
             this.groupBoxROMInfo.TabIndex = 64;
             this.groupBoxROMInfo.TabStop = false;
             this.groupBoxROMInfo.Text = "ROM INFORMATION";
             // 
-            // buttonExit
-            // 
-            this.buttonExit.Location = new System.Drawing.Point(366, 455);
-            this.buttonExit.Name = "buttonExit";
-            this.buttonExit.Size = new System.Drawing.Size(166, 23);
-            this.buttonExit.TabIndex = 65;
-            this.buttonExit.Text = "Exit";
-            this.buttonExit.UseVisualStyleBackColor = true;
-            this.buttonExit.Click += new System.EventHandler(this.ButtonExit_Click);
-            // 
             // buttonFixSlowROMChecks
             // 
             this.buttonFixSlowROMChecks.Enabled = false;
-            this.buttonFixSlowROMChecks.Location = new System.Drawing.Point(365, 313);
+            this.buttonFixSlowROMChecks.Location = new System.Drawing.Point(363, 409);
             this.buttonFixSlowROMChecks.Name = "buttonFixSlowROMChecks";
-            this.buttonFixSlowROMChecks.Size = new System.Drawing.Size(166, 23);
+            this.buttonFixSlowROMChecks.Size = new System.Drawing.Size(169, 23);
             this.buttonFixSlowROMChecks.TabIndex = 66;
             this.buttonFixSlowROMChecks.Text = "Remove SlowROM Checks";
             this.buttonFixSlowROMChecks.UseVisualStyleBackColor = true;
@@ -706,27 +685,120 @@
             // buttonFixSRAMChecks
             // 
             this.buttonFixSRAMChecks.Enabled = false;
-            this.buttonFixSRAMChecks.Location = new System.Drawing.Point(366, 284);
+            this.buttonFixSRAMChecks.Location = new System.Drawing.Point(363, 380);
             this.buttonFixSRAMChecks.Name = "buttonFixSRAMChecks";
-            this.buttonFixSRAMChecks.Size = new System.Drawing.Size(166, 23);
+            this.buttonFixSRAMChecks.Size = new System.Drawing.Size(169, 23);
             this.buttonFixSRAMChecks.TabIndex = 67;
             this.buttonFixSRAMChecks.Text = "Remove SRAM Checks";
             this.buttonFixSRAMChecks.UseVisualStyleBackColor = true;
             this.buttonFixSRAMChecks.Click += new System.EventHandler(this.ButtonFixSRAMChecks_Click);
             // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.helpToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(545, 24);
+            this.menuStrip1.TabIndex = 68;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exitToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(93, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.manualToolStripMenuItem,
+            this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // manualToolStripMenuItem
+            // 
+            this.manualToolStripMenuItem.Name = "manualToolStripMenuItem";
+            this.manualToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.manualToolStripMenuItem.Text = "Manual";
+            this.manualToolStripMenuItem.Click += new System.EventHandler(this.manualToolStripMenuItem_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // checkBoxExpandMirroring
+            // 
+            this.checkBoxExpandMirroring.AutoSize = true;
+            this.checkBoxExpandMirroring.Enabled = false;
+            this.checkBoxExpandMirroring.Location = new System.Drawing.Point(6, 21);
+            this.checkBoxExpandMirroring.Name = "checkBoxExpandMirroring";
+            this.checkBoxExpandMirroring.Size = new System.Drawing.Size(147, 17);
+            this.checkBoxExpandMirroring.TabIndex = 69;
+            this.checkBoxExpandMirroring.Text = "Mirror ROM on expanding";
+            this.checkBoxExpandMirroring.UseVisualStyleBackColor = true;
+            this.checkBoxExpandMirroring.CheckedChanged += new System.EventHandler(this.checkBoxExpandMirroring_CheckedChanged);
+            // 
+            // groupBoxOptions
+            // 
+            this.groupBoxOptions.Controls.Add(this.checkBoxScan);
+            this.groupBoxOptions.Controls.Add(this.checkBoxExpandMirroring);
+            this.groupBoxOptions.Location = new System.Drawing.Point(367, 216);
+            this.groupBoxOptions.Name = "groupBoxOptions";
+            this.groupBoxOptions.Size = new System.Drawing.Size(168, 71);
+            this.groupBoxOptions.TabIndex = 70;
+            this.groupBoxOptions.TabStop = false;
+            this.groupBoxOptions.Text = "Options";
+            // 
+            // checkBoxScan
+            // 
+            this.checkBoxScan.AutoSize = true;
+            this.checkBoxScan.Enabled = false;
+            this.checkBoxScan.Location = new System.Drawing.Point(6, 44);
+            this.checkBoxScan.Name = "checkBoxScan";
+            this.checkBoxScan.Size = new System.Drawing.Size(158, 17);
+            this.checkBoxScan.TabIndex = 70;
+            this.checkBoxScan.Text = "Scan protections on loading";
+            this.checkBoxScan.UseVisualStyleBackColor = true;
+            this.checkBoxScan.CheckedChanged += new System.EventHandler(this.checkBoxScan_CheckedChanged);
+            // 
+            // buttonExit
+            // 
+            this.buttonExit.Location = new System.Drawing.Point(363, 473);
+            this.buttonExit.Name = "buttonExit";
+            this.buttonExit.Size = new System.Drawing.Size(168, 23);
+            this.buttonExit.TabIndex = 71;
+            this.buttonExit.Text = "Exit";
+            this.buttonExit.UseVisualStyleBackColor = true;
+            this.buttonExit.Click += new System.EventHandler(this.buttonExit_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(544, 491);
-            this.Controls.Add(this.buttonFixSRAMChecks);
+            this.ClientSize = new System.Drawing.Size(545, 508);
             this.Controls.Add(this.buttonExit);
+            this.Controls.Add(this.groupBoxOptions);
+            this.Controls.Add(this.buttonFixSRAMChecks);
             this.Controls.Add(this.groupBoxROMInfo);
             this.Controls.Add(this.buttonFixSlowROMChecks);
             this.Controls.Add(this.groupBoxChecksums);
             this.Controls.Add(this.buttonPatch);
-            this.Controls.Add(this.buttonHelp);
-            this.Controls.Add(this.buttonAbout);
             this.Controls.Add(this.buttonFixROMSize);
             this.Controls.Add(this.buttonSaveAs);
             this.Controls.Add(this.buttonSave);
@@ -743,18 +815,24 @@
             this.Controls.Add(this.textBoxROMName);
             this.Controls.Add(this.buttonSelectROM);
             this.Controls.Add(this.groupBoxInfo);
+            this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "FormMain";
             this.Text = "Advanced SNES ROM Utility v1.0";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.groupBoxInfo.ResumeLayout(false);
             this.groupBoxInfo.PerformLayout();
             this.groupBoxChecksums.ResumeLayout(false);
             this.groupBoxChecksums.PerformLayout();
             this.groupBoxROMInfo.ResumeLayout(false);
             this.groupBoxROMInfo.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            this.groupBoxOptions.ResumeLayout(false);
+            this.groupBoxOptions.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -810,17 +888,24 @@
         private System.Windows.Forms.TextBox textBoxVersion;
         private System.Windows.Forms.ComboBox comboBoxCountryRegion;
         private System.Windows.Forms.Button buttonFixROMSize;
-        private System.Windows.Forms.Button buttonAbout;
-        private System.Windows.Forms.Button buttonHelp;
         private System.Windows.Forms.Button buttonPatch;
         private System.Windows.Forms.GroupBox groupBoxInfo;
         private System.Windows.Forms.GroupBox groupBoxChecksums;
         private System.Windows.Forms.GroupBox groupBoxROMInfo;
-        private System.Windows.Forms.Button buttonExit;
         private System.Windows.Forms.Button buttonFixSlowROMChecks;
         private System.Windows.Forms.Button buttonFixSRAMChecks;
         private System.Windows.Forms.TextBox textBoxCode;
         private System.Windows.Forms.Label labelCode;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem manualToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.CheckBox checkBoxExpandMirroring;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupBoxOptions;
+        private System.Windows.Forms.CheckBox checkBoxScan;
+        private System.Windows.Forms.Button buttonExit;
     }
 }
 

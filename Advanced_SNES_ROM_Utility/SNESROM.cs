@@ -1084,50 +1084,8 @@ namespace Advanced_SNES_ROM_Utility
             // Mirror ROM if neccessary | not working for Momotarou Dentetsu Happy and Tengai Makyou Zero / Tengai Makyou Zero - Shounen Jump no Shou (3 MByte ROMs with Special Chip + RAM + SRAM)
             if ((IntROMSize > IntCalcFileSize) && ByteROMType != 0xF5 && ByteROMType != 0xF9)
             {
-                try
-                {
-                    // Create new ROM for mirroring
-                    byte[] mirroredROM = new byte[(IntROMSize * 131072)];
-
-                    int ctr = 0;
-                    int romSize1 = IntROMSize;
-
-                    // Get size of ROM #1
-                    do
-                    {
-                        ctr = romSize1 / IntCalcFileSize;
-                        romSize1 /= 2;
-                    }
-
-                    while (ctr > 1);
-
-                    // Get size of ROM #2 and its multiplier
-                    int romSize2 = IntCalcFileSize - romSize1;
-                    int romRest = IntROMSize - romSize1;
-                    int romSize2Multiplicator = romRest / romSize2;
-                
-                    //Debugging
-                    //MessageBox.Show("ROM 1: " + romSize1 + "\nROM 2: " + romSize2 + "\nMultiplier ROM 2: " + romSize2Multiplicator);
-
-                    // Mirror ROM
-                    Buffer.BlockCopy(noChecksumSourceROM, 0, mirroredROM, 0, romSize1 * 131072);
-                    
-                    for (int i=0; i < romSize2Multiplicator; i++)
-                    {
-                        Buffer.BlockCopy(noChecksumSourceROM, romSize1 * 131072, mirroredROM, (romSize1 * 131072) + (i * romSize2 * 131072), romSize2 * 131072);
-                    }
-
-                    // Put mirrored ROM into noChecksumSourceROM for calculation
-                    noChecksumSourceROM = mirroredROM;
-
-                    // Debugging
-                    //File.WriteAllBytes(@"C:\Temp\Test.bin", noChecksumSourceROM);
-                }
-
-                catch(Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
+                // Get mirrored ROM
+                noChecksumSourceROM = Mirror(noChecksumSourceROM);
             }
 
             // Momotarou Dentetsu Happy fix | This didn't work with expanded ROM: else if (calcFileSize == 24 && romType == 0xF5)
