@@ -95,6 +95,7 @@
             this.groupBoxOptions = new System.Windows.Forms.GroupBox();
             this.checkBoxScan = new System.Windows.Forms.CheckBox();
             this.buttonExit = new System.Windows.Forms.Button();
+            this.buttonScan = new System.Windows.Forms.Button();
             this.groupBoxInfo.SuspendLayout();
             this.groupBoxChecksums.SuspendLayout();
             this.groupBoxROMInfo.SuspendLayout();
@@ -470,7 +471,7 @@
             this.buttonFixRegion.Enabled = false;
             this.buttonFixRegion.Location = new System.Drawing.Point(363, 351);
             this.buttonFixRegion.Name = "buttonFixRegion";
-            this.buttonFixRegion.Size = new System.Drawing.Size(169, 23);
+            this.buttonFixRegion.Size = new System.Drawing.Size(145, 23);
             this.buttonFixRegion.TabIndex = 46;
             this.buttonFixRegion.Text = "Remove Region Locks";
             this.buttonFixRegion.UseVisualStyleBackColor = true;
@@ -676,7 +677,7 @@
             this.buttonFixSlowROMChecks.Enabled = false;
             this.buttonFixSlowROMChecks.Location = new System.Drawing.Point(363, 409);
             this.buttonFixSlowROMChecks.Name = "buttonFixSlowROMChecks";
-            this.buttonFixSlowROMChecks.Size = new System.Drawing.Size(169, 23);
+            this.buttonFixSlowROMChecks.Size = new System.Drawing.Size(145, 23);
             this.buttonFixSlowROMChecks.TabIndex = 66;
             this.buttonFixSlowROMChecks.Text = "Remove SlowROM Checks";
             this.buttonFixSlowROMChecks.UseVisualStyleBackColor = true;
@@ -687,7 +688,7 @@
             this.buttonFixSRAMChecks.Enabled = false;
             this.buttonFixSRAMChecks.Location = new System.Drawing.Point(363, 380);
             this.buttonFixSRAMChecks.Name = "buttonFixSRAMChecks";
-            this.buttonFixSRAMChecks.Size = new System.Drawing.Size(169, 23);
+            this.buttonFixSRAMChecks.Size = new System.Drawing.Size(145, 23);
             this.buttonFixSRAMChecks.TabIndex = 67;
             this.buttonFixSRAMChecks.Text = "Remove SRAM Checks";
             this.buttonFixSRAMChecks.UseVisualStyleBackColor = true;
@@ -787,11 +788,23 @@
             this.buttonExit.UseVisualStyleBackColor = true;
             this.buttonExit.Click += new System.EventHandler(this.buttonExit_Click);
             // 
+            // buttonScan
+            // 
+            this.buttonScan.Enabled = false;
+            this.buttonScan.Location = new System.Drawing.Point(514, 351);
+            this.buttonScan.Name = "buttonScan";
+            this.buttonScan.Size = new System.Drawing.Size(17, 81);
+            this.buttonScan.TabIndex = 72;
+            this.buttonScan.Text = "Scan";
+            this.buttonScan.UseVisualStyleBackColor = true;
+            this.buttonScan.Click += new System.EventHandler(this.buttonScan_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(545, 508);
+            this.Controls.Add(this.buttonScan);
             this.Controls.Add(this.buttonExit);
             this.Controls.Add(this.groupBoxOptions);
             this.Controls.Add(this.buttonFixSRAMChecks);
@@ -906,6 +919,7 @@
         private System.Windows.Forms.GroupBox groupBoxOptions;
         private System.Windows.Forms.CheckBox checkBoxScan;
         private System.Windows.Forms.Button buttonExit;
+        private System.Windows.Forms.Button buttonScan;
     }
 }
 
