@@ -32,3 +32,5 @@
 - Remove Slow ROM Checks: Useful if you want to play your FastROMs on a copy station without FastROM support or burn them on (E)EPROMs slower than 120ns.
 
 - Apply Patch: Patch your loaded ROM! Supports IPS, UPS, BPS, BDF and XDELTA!
+
+Download on GitHub: https://www.romhacking.net/utilities/1638/
