@@ -1,0 +1,155 @@
+<h1><a name="top"></a><span style="font-family:Arial,Helvetica,sans-serif">Table of Contents</span>
+</h1>
+
+<ol>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#info">Edit ROM Information</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#addheader">Add Header</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#removeheader">Remove Header</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#fixchecksum">Fix Checksum</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#fixsize">Fix Internal ROM size</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#expand">Expand ROM</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#split">Split ROM</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#swapbin">SwapBin ROM</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#deinterleave">Deinterleave</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#regionlock">Remove Region Locks</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#sramcheck">Remove SRAM Checks</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#slowcheck">Remove Slow ROM Checks</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#patch">Apply Patch</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#options">Options</a></span></span></li>
+</ol>
+
+<p>&nbsp;</p>
+
+<h1><a name="info" /><span style="font-family:Arial,Helvetica,sans-serif">Edit ROM Information</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Change basic ROM information like title, country/region, version and game code.</span></p>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="addheader" /><span style="font-family:Arial,Helvetica,sans-serif">Add Header</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Adds an empty header.</span></p>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="removeheader" /><span style="font-family:Arial,Helvetica,sans-serif">Remove Header</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Removes an existing header.</span></p>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="fixchecksum" /><span style="font-family:Arial,Helvetica,sans-serif">Fix Checksum</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Fixes a broken checksum. You always should do this before saving, if possible.</span></p>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Please note that some beta or demo ROMs have an odd checksum anyway &hellip;</span></p>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="fixsize" /><span style="font-family:Arial,Helvetica,sans-serif">Fix Internal ROM size</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Fixes wrong internal ROM size information. Do this after expanding a ROM. Also useful to fix some ROM hacks.</span></p>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="expand" /><span style="font-family:Arial,Helvetica,sans-serif">Expand ROM</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Expands ROM to a specific size up to 64 Mbit (BS-X up to 32 Mbit). Mirror option should only be used, when there are problems with standard expanding. Always check if your ROM still works after doing this!</span></p>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="split" /><span style="font-family:Arial,Helvetica,sans-serif">Split ROM</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Splits ROM into equal sized multiple parts.</span></p>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="swapbin" /><span style="font-family:Arial,Helvetica,sans-serif">SwapBin ROM</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Swaps binaries to get a &quot;Close-to-SNES-Mask-ROM&quot;-layout.</span></p>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Use 27C801 EPROM(s) and rewire pins as followed:</span></p>
+
+<table align="left" border="0" cellpadding="1" cellspacing="1" style="height:103px; width:300px">
+    <tbody>
+        <tr>
+            <td style="text-align:center"><span style="font-family:Arial,Helvetica,sans-serif"><strong>27C801 -&gt; Nintendo Mask ROM</strong></span></td>
+        </tr>
+        <tr>
+            <td style="text-align:center"><span style="font-family:Arial,Helvetica,sans-serif">24&nbsp;&nbsp;&nbsp;&nbsp; -&gt;&nbsp;&nbsp;&nbsp;&nbsp; 31</span></td>
+        </tr>
+        <tr>
+            <td style="text-align:center"><span style="font-family:Arial,Helvetica,sans-serif">31&nbsp;&nbsp;&nbsp;&nbsp; -&gt;&nbsp;&nbsp;&nbsp;&nbsp; 24</span></td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    <br />
+    <br />
+    &nbsp;
+</p>
+
+<p>&nbsp;</p>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="deinterleave" /><span style="font-family:Arial,Helvetica,sans-serif">Deinterleave</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Some copy stations like &quot;Game Doctor SF&quot; or &quot;Super UFO&quot; use interleaving when dumping HiROM games. This function will reverse this process. Please use ROMs with copy station header, unless you know which copy station was used!</span></p>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="regionlock" /><span style="font-family:Arial,Helvetica,sans-serif">Remove Region Locks</span></h1>
+
+<p>
+    <span style="font-family:Arial,Helvetica,sans-serif">
+        Some games have a copy protection preventing the ROM from running on systems with another region (PAL/NTSC lock).<br />
+        Use this function to remove most known region locks.
+    </span>
+</p>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="sramcheck" /><span style="font-family:Arial,Helvetica,sans-serif">Remove SRAM Checks</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Some games have a copy protection preventing the ROM from running, when cartridges have more SRAM than needed (copy stations/some cheap flashcards/deprecated emulators). Use this function to remove most known SRAM checks.</span></p>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="slowcheck" /><span style="font-family:Arial,Helvetica,sans-serif">Remove Slow ROM Checks</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Useful if you want to play your FastROMs on a copy station without FastROM support or burn them on (E)EPROMs slower than 120ns.</span></p>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="patch" /><span style="font-family:Arial,Helvetica,sans-serif">Apply Patch</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Patch your loaded ROM!</span></p>
+
+<ul>
+    <li>
+        <span style="font-family:Arial,Helvetica,sans-serif">IPS</span>
+
+        <ul>
+            <li><span style="font-family:Arial,Helvetica,sans-serif">RLE hunks</span></li>
+            <li><span style="font-family:Arial,Helvetica,sans-serif">truncating</span></li>
+            <li><span style="font-family:Arial,Helvetica,sans-serif">avoids EOF offset bug</span></li>
+        </ul>
+    </li>
+    <li>
+        <span style="font-family:Arial,Helvetica,sans-serif">UPS</span>
+        <ul>
+            <li><span style="font-family:Arial,Helvetica,sans-serif">revert a patch, if applied a second time</span></li>
+        </ul>
+    </li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif">BPS</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif">BDF</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif">XDELTA</span></li>
+</ul>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="options" /><span style="font-family:Arial,Helvetica,sans-serif">Options</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif"><strong>Miror ROM on expanding</strong></span></p>
+
+<ul>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Checked:</strong> ROMs&#39; content gets mirrored when it gets expanded.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Unchecked:</strong> normal expanding will be perfomed to get more space available.</span></li>
+</ul>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif"><strong>Scan protections on loading</strong></span></p>
+
+<ul>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Checked:</strong> ROM will be scanned instantly for copy protections on loading. This might take a few seconds.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Unchecked:</strong> You have to manually click the Scan button to check for copy protections.</span></li>
+</ul>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>

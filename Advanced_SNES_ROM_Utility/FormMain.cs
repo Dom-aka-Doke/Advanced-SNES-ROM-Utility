@@ -144,8 +144,8 @@ namespace Advanced_SNES_ROM_Utility
 
             foreach (byte singleByte in expandedROM) { expandedROM[singleByte] = 0x00; }
 
-            // Mirror ROM if possible (only up to 32 Mbit)
-            if (checkBoxExpandMirroring.Checked && (_sourceROM.IntROMSize > _sourceROM.IntCalcFileSize) && sizeExpandedROM <= 32)
+            // Mirror ROM if option is selected (only up to 32 Mbit possible)
+            if (checkBoxExpandMirroring.Checked && sizeExpandedROM <= 32)
             {
                 byte[] mirroredROM = _sourceROM.Mirror(_sourceROM.SourceROM);
                 int i = 0;

@@ -29,64 +29,47 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormHelp));
-            this.labelAboutFunctions = new System.Windows.Forms.Label();
             this.buttonManualClose = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox1.SuspendLayout();
+            this.webBrowserHelp = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
-            // 
-            // labelAboutFunctions
-            // 
-            this.labelAboutFunctions.AutoSize = true;
-            this.labelAboutFunctions.Location = new System.Drawing.Point(10, 21);
-            this.labelAboutFunctions.Name = "labelAboutFunctions";
-            this.labelAboutFunctions.Size = new System.Drawing.Size(389, 533);
-            this.labelAboutFunctions.TabIndex = 7;
-            this.labelAboutFunctions.Text = resources.GetString("labelAboutFunctions.Text");
             // 
             // buttonManualClose
             // 
-            this.buttonManualClose.Location = new System.Drawing.Point(12, 575);
+            this.buttonManualClose.Location = new System.Drawing.Point(0, 563);
             this.buttonManualClose.Name = "buttonManualClose";
-            this.buttonManualClose.Size = new System.Drawing.Size(405, 23);
+            this.buttonManualClose.Size = new System.Drawing.Size(583, 23);
             this.buttonManualClose.TabIndex = 8;
             this.buttonManualClose.Text = "Close";
             this.buttonManualClose.UseVisualStyleBackColor = true;
             this.buttonManualClose.Click += new System.EventHandler(this.buttonManualClose_Click);
             // 
-            // groupBox1
+            // webBrowserHelp
             // 
-            this.groupBox1.Controls.Add(this.labelAboutFunctions);
-            this.groupBox1.Location = new System.Drawing.Point(12, 6);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(405, 563);
-            this.groupBox1.TabIndex = 9;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Manual";
+            this.webBrowserHelp.Location = new System.Drawing.Point(0, 0);
+            this.webBrowserHelp.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowserHelp.Name = "webBrowserHelp";
+            this.webBrowserHelp.Size = new System.Drawing.Size(583, 557);
+            this.webBrowserHelp.TabIndex = 8;
             // 
-            // Form5
+            // FormHelp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(431, 605);
-            this.Controls.Add(this.groupBox1);
+            this.ClientSize = new System.Drawing.Size(584, 587);
+            this.Controls.Add(this.webBrowserHelp);
             this.Controls.Add(this.buttonManualClose);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "Form5";
+            this.Name = "FormHelp";
             this.Text = "Manual of the Advanced SNES ROM Utility v1.0";
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label labelAboutFunctions;
         private System.Windows.Forms.Button buttonManualClose;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.WebBrowser webBrowserHelp;
     }
 }

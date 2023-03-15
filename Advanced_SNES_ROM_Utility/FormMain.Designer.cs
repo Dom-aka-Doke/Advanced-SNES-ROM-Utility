@@ -764,7 +764,7 @@
             this.groupBoxOptions.Size = new System.Drawing.Size(168, 71);
             this.groupBoxOptions.TabIndex = 70;
             this.groupBoxOptions.TabStop = false;
-            this.groupBoxOptions.Text = "Options";
+            this.groupBoxOptions.Text = "OPTIONS";
             // 
             // checkBoxScan
             // 

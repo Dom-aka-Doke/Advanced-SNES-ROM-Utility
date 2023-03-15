@@ -117,49 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="labelAboutFunctions.Text" xml:space="preserve">
-    <value>- Add Header: Adds an empty header
-
-- Remove Header: Removes an existing header
-
-- Edit ROM Information: Change title, country / region and version
-
-- SwapBin ROM: Swaps binaries to get a "Close-to-SNES-Mask-ROM"-layout
-                            Use 27C801 EPROM(s) and rewire pins as followed:
-
-                                   27C801 -&gt; Nintendo Mask ROM
-                                       24     -&gt;     31
-                                       31     -&gt;     24
-
-- Expand ROM: Expands ROM to a specific size up to 64 Mbit!
-                          Only use mirroring, if normal expanding didn't work.
-
-- Split ROM: Splits ROM into equal multiple parts
-
-- Deinterleave: Some copy stations like "Game Doctor SF" or "Super UFO"
-                        use interleaving when dumping HiROM games. This function
-                        will reverse this process. Please use ROMs with copy station
-                        header, unless you know which copy station was used!
-
-- Remove Slow ROM Checks: Useful if you want to play your FastROMs on a
-                                                 copy station without FastROM support or burn
-                                                 them on (E)EPROMs slower than 120ns.
-
-- Fix Checksum: Fixes a broken checksum. You always should do this after
-                          using other functionalities. Please note that some beta or demo
-                          ROMs have an odd checksum anyway.
-
-- Fix ROM size: Fixes a wrong internal ROM size.
-
-- Region Unlock: Some games have a copy protection preventing the ROM from
-                            running on systems with another region (PAL/NTSC lock).
-                            Use this function to remove most known region locks.
-
-- Apply Patch: Patch your loaded ROM!
-                          - IPS supports RLE hunks, truncating and avoids EOF offset bug
-                          - UPS is able to revert a patch, if applied a second time
-                          - BPS, BDF and XDELTA are supported in general</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
