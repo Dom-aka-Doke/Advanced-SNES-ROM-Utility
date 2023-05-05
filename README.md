@@ -33,4 +33,4 @@
 
 - Apply Patch: Patch your loaded ROM! Supports IPS, UPS, BPS, BDF and XDELTA!
 
-Download on GitHub: https://www.romhacking.net/utilities/1638/
+Download on RHDN: https://www.romhacking.net/utilities/1638/
