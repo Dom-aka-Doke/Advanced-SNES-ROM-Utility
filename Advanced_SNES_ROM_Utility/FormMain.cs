@@ -375,6 +375,13 @@ namespace Advanced_SNES_ROM_Utility
             }
         }
 
+        private void buttonConvertMapMode_Click(object sender, EventArgs e)
+        {
+            _sourceROM.SourceROM = _sourceROM.ConvertMapMode(_sourceROM);
+            _sourceROM.Initialize();
+            RefreshLabelsAndButtons();
+        }
+
         private void ButtonSave_Click(object sender, EventArgs e)
         {
             Save(_sourceROM.ROMFullPath, "ROM file has successfully been saved!", _saveWithHeader);
@@ -782,11 +789,6 @@ namespace Advanced_SNES_ROM_Utility
             aboutForm.Show();
         }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private void buttonExit_Click(object sender, EventArgs e)
         {
             Close();
         }

@@ -94,8 +94,8 @@
             this.checkBoxExpandMirroring = new System.Windows.Forms.CheckBox();
             this.groupBoxOptions = new System.Windows.Forms.GroupBox();
             this.checkBoxScan = new System.Windows.Forms.CheckBox();
-            this.buttonExit = new System.Windows.Forms.Button();
             this.buttonScan = new System.Windows.Forms.Button();
+            this.buttonConvertMapMode = new System.Windows.Forms.Button();
             this.groupBoxInfo.SuspendLayout();
             this.groupBoxChecksums.SuspendLayout();
             this.groupBoxROMInfo.SuspendLayout();
@@ -133,7 +133,7 @@
             // buttonSwapBinROM
             // 
             this.buttonSwapBinROM.Enabled = false;
-            this.buttonSwapBinROM.Location = new System.Drawing.Point(363, 293);
+            this.buttonSwapBinROM.Location = new System.Drawing.Point(363, 331);
             this.buttonSwapBinROM.Name = "buttonSwapBinROM";
             this.buttonSwapBinROM.Size = new System.Drawing.Size(169, 23);
             this.buttonSwapBinROM.TabIndex = 2;
@@ -469,7 +469,7 @@
             // buttonFixRegion
             // 
             this.buttonFixRegion.Enabled = false;
-            this.buttonFixRegion.Location = new System.Drawing.Point(363, 351);
+            this.buttonFixRegion.Location = new System.Drawing.Point(363, 389);
             this.buttonFixRegion.Name = "buttonFixRegion";
             this.buttonFixRegion.Size = new System.Drawing.Size(145, 23);
             this.buttonFixRegion.TabIndex = 46;
@@ -498,7 +498,7 @@
             // buttonDeinterleave
             // 
             this.buttonDeinterleave.Enabled = false;
-            this.buttonDeinterleave.Location = new System.Drawing.Point(363, 322);
+            this.buttonDeinterleave.Location = new System.Drawing.Point(363, 360);
             this.buttonDeinterleave.Name = "buttonDeinterleave";
             this.buttonDeinterleave.Size = new System.Drawing.Size(169, 23);
             this.buttonDeinterleave.TabIndex = 49;
@@ -554,9 +554,9 @@
             this.buttonPatch.Enabled = false;
             this.buttonPatch.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.ips_patch_icon;
             this.buttonPatch.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonPatch.Location = new System.Drawing.Point(363, 436);
+            this.buttonPatch.Location = new System.Drawing.Point(363, 293);
             this.buttonPatch.Name = "buttonPatch";
-            this.buttonPatch.Size = new System.Drawing.Size(168, 32);
+            this.buttonPatch.Size = new System.Drawing.Size(169, 32);
             this.buttonPatch.TabIndex = 61;
             this.buttonPatch.Text = "Apply Patch";
             this.buttonPatch.UseVisualStyleBackColor = true;
@@ -644,7 +644,7 @@
             this.groupBoxChecksums.Controls.Add(this.labelGetIntInvChksm);
             this.groupBoxChecksums.Location = new System.Drawing.Point(12, 404);
             this.groupBoxChecksums.Name = "groupBoxChecksums";
-            this.groupBoxChecksums.Size = new System.Drawing.Size(346, 93);
+            this.groupBoxChecksums.Size = new System.Drawing.Size(346, 95);
             this.groupBoxChecksums.TabIndex = 63;
             this.groupBoxChecksums.TabStop = false;
             this.groupBoxChecksums.Text = "CHECKSUMS";
@@ -675,7 +675,7 @@
             // buttonFixSlowROMChecks
             // 
             this.buttonFixSlowROMChecks.Enabled = false;
-            this.buttonFixSlowROMChecks.Location = new System.Drawing.Point(363, 409);
+            this.buttonFixSlowROMChecks.Location = new System.Drawing.Point(363, 447);
             this.buttonFixSlowROMChecks.Name = "buttonFixSlowROMChecks";
             this.buttonFixSlowROMChecks.Size = new System.Drawing.Size(145, 23);
             this.buttonFixSlowROMChecks.TabIndex = 66;
@@ -686,7 +686,7 @@
             // buttonFixSRAMChecks
             // 
             this.buttonFixSRAMChecks.Enabled = false;
-            this.buttonFixSRAMChecks.Location = new System.Drawing.Point(363, 380);
+            this.buttonFixSRAMChecks.Location = new System.Drawing.Point(363, 418);
             this.buttonFixSRAMChecks.Name = "buttonFixSRAMChecks";
             this.buttonFixSRAMChecks.Size = new System.Drawing.Size(145, 23);
             this.buttonFixSRAMChecks.TabIndex = 67;
@@ -761,7 +761,7 @@
             this.groupBoxOptions.Controls.Add(this.checkBoxExpandMirroring);
             this.groupBoxOptions.Location = new System.Drawing.Point(367, 216);
             this.groupBoxOptions.Name = "groupBoxOptions";
-            this.groupBoxOptions.Size = new System.Drawing.Size(168, 71);
+            this.groupBoxOptions.Size = new System.Drawing.Size(165, 71);
             this.groupBoxOptions.TabIndex = 70;
             this.groupBoxOptions.TabStop = false;
             this.groupBoxOptions.Text = "OPTIONS";
@@ -778,20 +778,10 @@
             this.checkBoxScan.UseVisualStyleBackColor = true;
             this.checkBoxScan.CheckedChanged += new System.EventHandler(this.checkBoxScan_CheckedChanged);
             // 
-            // buttonExit
-            // 
-            this.buttonExit.Location = new System.Drawing.Point(363, 473);
-            this.buttonExit.Name = "buttonExit";
-            this.buttonExit.Size = new System.Drawing.Size(168, 23);
-            this.buttonExit.TabIndex = 71;
-            this.buttonExit.Text = "Exit";
-            this.buttonExit.UseVisualStyleBackColor = true;
-            this.buttonExit.Click += new System.EventHandler(this.buttonExit_Click);
-            // 
             // buttonScan
             // 
             this.buttonScan.Enabled = false;
-            this.buttonScan.Location = new System.Drawing.Point(514, 351);
+            this.buttonScan.Location = new System.Drawing.Point(515, 389);
             this.buttonScan.Name = "buttonScan";
             this.buttonScan.Size = new System.Drawing.Size(17, 81);
             this.buttonScan.TabIndex = 72;
@@ -799,13 +789,23 @@
             this.buttonScan.UseVisualStyleBackColor = true;
             this.buttonScan.Click += new System.EventHandler(this.buttonScan_Click);
             // 
+            // buttonConvertMapMode
+            // 
+            this.buttonConvertMapMode.Location = new System.Drawing.Point(363, 476);
+            this.buttonConvertMapMode.Name = "buttonConvertMapMode";
+            this.buttonConvertMapMode.Size = new System.Drawing.Size(169, 23);
+            this.buttonConvertMapMode.TabIndex = 73;
+            this.buttonConvertMapMode.Text = "LoROM <-> HiROM";
+            this.buttonConvertMapMode.UseVisualStyleBackColor = true;
+            this.buttonConvertMapMode.Click += new System.EventHandler(this.buttonConvertMapMode_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(545, 508);
+            this.Controls.Add(this.buttonConvertMapMode);
             this.Controls.Add(this.buttonScan);
-            this.Controls.Add(this.buttonExit);
             this.Controls.Add(this.groupBoxOptions);
             this.Controls.Add(this.buttonFixSRAMChecks);
             this.Controls.Add(this.groupBoxROMInfo);
@@ -918,8 +918,8 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBoxOptions;
         private System.Windows.Forms.CheckBox checkBoxScan;
-        private System.Windows.Forms.Button buttonExit;
         private System.Windows.Forms.Button buttonScan;
+        private System.Windows.Forms.Button buttonConvertMapMode;
     }
 }
 

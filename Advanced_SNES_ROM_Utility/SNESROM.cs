@@ -158,12 +158,12 @@ namespace Advanced_SNES_ROM_Utility
             UIntROMHeaderOffset = 0x7FB0;
             IsBSROM = false;
 
-            int mapModeScoreLoROM = GetMapModeScore(SourceROM, 0x7FB0, false);
-            int mapModeScoreBSLoROM = GetMapModeScore(SourceROM, 0x7FB0, true);
-            int mapModeScoreHiROM = GetMapModeScore(SourceROM, 0xFFB0, false);
-            int mapModeScoreBSHiROM = GetMapModeScore(SourceROM, 0xFFB0, true);
-            int mapModeScoreExLoROM = GetMapModeScore(SourceROM, 0x407FB0, false);
-            int mapModeScoreExHiROM = GetMapModeScore(SourceROM, 0x40FFB0, false);
+            int mapModeScoreLoROM = CalculateMapModeScore(SourceROM, 0x7FB0, false);
+            int mapModeScoreBSLoROM = CalculateMapModeScore(SourceROM, 0x7FB0, true);
+            int mapModeScoreHiROM = CalculateMapModeScore(SourceROM, 0xFFB0, false);
+            int mapModeScoreBSHiROM = CalculateMapModeScore(SourceROM, 0xFFB0, true);
+            int mapModeScoreExLoROM = CalculateMapModeScore(SourceROM, 0x407FB0, false);
+            int mapModeScoreExHiROM = CalculateMapModeScore(SourceROM, 0x40FFB0, false);
 
             if (mapModeScoreLoROM >= mapModeScoreHiROM && mapModeScoreLoROM >= mapModeScoreExLoROM && mapModeScoreLoROM >= mapModeScoreExHiROM)
             {
@@ -200,190 +200,7 @@ namespace Advanced_SNES_ROM_Utility
             Buffer.BlockCopy(SourceROM, (int)UIntROMHeaderOffset, SourceROMHeader, 0, 80);
         }
 
-        public static int GetMapModeScore(byte[] sourceROM, uint offset, bool isBSROM)
-        {
-            // Check if ROM has normal or extended size
-            if (sourceROM.Length < offset + 0x50)
-            {
-                return -100;
-            }
 
-            // Define score variable
-            int score = 0;
-
-            // Get all necessary values from ROM
-            byte[] resetVector = new byte[2];
-            Buffer.BlockCopy(sourceROM, (int)offset + 0x4C, resetVector, 0, 2);
-
-            byte[] checksum = new byte[2];
-            Buffer.BlockCopy(sourceROM, (int)offset + 0x2E, checksum, 0, 2);
-
-            byte[] checksumInverse = new byte[2];
-            Buffer.BlockCopy(sourceROM, (int)offset + 0x2C, checksumInverse, 0, 2);
-
-            byte[] mapMode = new byte[1];
-            if (isBSROM) { Buffer.BlockCopy(sourceROM, (int)offset + 0x28, mapMode, 0, 1); } else { Buffer.BlockCopy(sourceROM, (int)offset + 0x25, mapMode, 0, 1); }
-            
-            // Bitmask this byte, because non relevant bits are not clearly defined
-            mapMode[0] &= 0x37;
-
-            byte[] romSize = new byte[1];
-            Buffer.BlockCopy(sourceROM, (int)offset + 0x27, romSize, 0, 1);
-
-            byte[] destinationCode = new byte[1];
-            Buffer.BlockCopy(sourceROM, (int)offset + 0x29, destinationCode, 0, 1);
-
-            byte[] fixedValue33 = new byte[1];
-            Buffer.BlockCopy(sourceROM, (int)offset + 0x2A, fixedValue33, 0, 1);
-
-            byte[] fixedValue00 = new byte[7];
-            Buffer.BlockCopy(sourceROM, (int)offset + 0x06, fixedValue00, 0, 7);
-
-            byte[] opCode = new byte[1];
-            Buffer.BlockCopy(sourceROM, BitConverter.ToUInt16(resetVector, 0), opCode, 0, 1);
-
-            // Check if reset vector is pointing to an address greater than or equal to 0x8000
-            if (BitConverter.ToUInt16(resetVector, 0) < 0x8000)
-            {
-                return -100;
-            }
-
-            // Some values must be in big endian
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(resetVector);
-                Array.Reverse(opCode);
-                Array.Reverse(checksum);
-                Array.Reverse(checksumInverse);
-            }
-
-            // Check opcodes
-
-            // Most likely opcodes
-            if (opCode[0] == 0x78  //sei
-            || opCode[0] == 0x18  //clc (clc; xce)
-            || opCode[0] == 0x38  //sec (sec; xce)
-            || opCode[0] == 0x9c  //stz $nnnn (stz $4200)
-            || opCode[0] == 0x4c  //jmp $nnnn
-            || opCode[0] == 0x5c  //jml $nnnnnn
-            )
-            {
-                score += 8;
-            }
-
-            // Plausible opcodes
-            if (opCode[0] == 0xc2  //rep #$nn
-            || opCode[0] == 0xe2  //sep #$nn
-            || opCode[0] == 0xad  //lda $nnnn
-            || opCode[0] == 0xae  //ldx $nnnn
-            || opCode[0] == 0xac  //ldy $nnnn
-            || opCode[0] == 0xaf  //lda $nnnnnn
-            || opCode[0] == 0xa9  //lda #$nn
-            || opCode[0] == 0xa2  //ldx #$nn
-            || opCode[0] == 0xa0  //ldy #$nn
-            || opCode[0] == 0x20  //jsr $nnnn
-            || opCode[0] == 0x22  //jsl $nnnnnn
-            )
-            {
-                score += 4;
-            }
-
-            // Implausible opcodes
-            if (opCode[0] == 0x40  //rti
-            || opCode[0] == 0x60  //rts
-            || opCode[0] == 0x6b  //rtl
-            || opCode[0] == 0xcd  //cmp $nnnn
-            || opCode[0] == 0xec  //cpx $nnnn
-            || opCode[0] == 0xcc  //cpy $nnnn
-            )
-            {
-                score -= 4;
-            }
-
-            // Least likely opcodes
-            if (opCode[0] == 0x00  //brk #$nn
-            || opCode[0] == 0x02  //cop #$nn
-            || opCode[0] == 0xdb  //stp
-            || opCode[0] == 0x42  //wdm
-            || opCode[0] == 0xff  //sbc $nnnnnn,x
-            )
-            {
-                score -= 8;
-            }
-
-            // Check if checksums add up to 0xFFFF
-            if (BitConverter.ToUInt16(checksum, 0) + BitConverter.ToUInt16(checksumInverse, 0) == 0xFFFF)
-            {
-                score += 4;
-            }
-
-            // Check if internal ROM type is valid
-            // LoROM
-            if (offset == 0x7FB0 && (mapMode[0] == 0x20 || mapMode[0] == 0x30))
-            {
-                score += 2;
-            }
-            // HiROM
-            if (offset == 0xFFB0 && (mapMode[0] == 0x21 || mapMode[0] == 0x31))
-            {
-                score += 2;
-            }
-            // ExLoROM - f.e. Star Ocean
-            if (offset == 0x407FB0 && mapMode[0] == 0x32)
-            {
-                score += 4;
-            }
-            // ExHiROM - f.e. Tales Of Phantasia
-            if (offset == 0x40FFB0 && mapMode[0] == 0x35)
-            {
-                score += 4;
-            }
-
-            // Check if internal ROM size is vaild
-            if (romSize[0] >= 0x07 && romSize[0] <= 0x0D)
-            {
-                score += 2;
-            }
-
-            // Check if destination code size is vaild
-            if (destinationCode[0] <= 0x14)
-            {
-                score += 2;
-            }
-
-            // Check for some fixed ROM values
-            if (fixedValue33[0] == 0x33)
-            {
-                score += 4;
-            }
-
-            if (fixedValue00[0] == 0x00 &&
-                fixedValue00[1] == 0x00 &&
-                fixedValue00[2] == 0x00 &&
-                fixedValue00[3] == 0x00 &&
-                fixedValue00[4] == 0x00 &&
-                fixedValue00[5] == 0x00 &&
-                fixedValue00[6] == 0x00)
-            {
-                score += 2;
-            }
-
-            // If game is tested for being BS-X
-            if (isBSROM)
-            {
-                // If title starts with 'BS' like most of them do
-                byte[] titleBS = new byte[2];
-                Buffer.BlockCopy(sourceROM, (int)offset + 0x10, titleBS, 0, 2);
-
-                if (titleBS[0] == 0x42 && titleBS[1] == 0x53)
-                {
-                    score += 2;
-                }
-            }
-
-            // Return score
-            return score;
-        }
 
         private void GetTitle()
         {
@@ -629,12 +446,6 @@ namespace Advanced_SNES_ROM_Utility
             {
                 StringRAMSize = "Yes (" + Math.Pow(2, ByteExRAMSize) + " kByte)";
             }
-        }
-
-        private void CalculateFileSize()
-        {
-            int filesize = (SourceROM.Length * 8) / 1048576;
-            IntCalcFileSize = filesize;
         }
 
         private void GetCountry()
@@ -1056,83 +867,6 @@ namespace Advanced_SNES_ROM_Utility
             }
         }
 
-        private void CalculateChecksum()
-        {
-            uint offsetChksm = UIntROMHeaderOffset + 0x2C;
-            ulong checksum = 0;
-            uint multiplier = 1;
-            byte[] byteChksm = new byte[2];
-
-            // For clearing out checksum - checksum = 0x0000 , inverse = 0xFFFF
-            byte[] clearSum = new byte[4] { 0xFF, 0xFF, 0x00, 0x00 };
-
-            // Make a copy with clean checksum of the ROM for independent calculation
-            byte[] noChecksumSourceROM = new byte[SourceROM.Length];
-            Buffer.BlockCopy(SourceROM, 0, noChecksumSourceROM, 0, SourceROM.Length);
-            Buffer.BlockCopy(clearSum, 0, noChecksumSourceROM, (int)offsetChksm, clearSum.Length);
-
-            // For BS-X ROMs fill header with 0x00
-            if (IsBSROM)
-            {
-                byte[] clearBSHeader = new byte [48] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                                       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                                       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
-                Buffer.BlockCopy(clearBSHeader, 0, noChecksumSourceROM, (int)UIntROMHeaderOffset, clearBSHeader.Length);
-            }
-
-            // Mirror ROM if neccessary | not working for Momotarou Dentetsu Happy and Tengai Makyou Zero / Tengai Makyou Zero - Shounen Jump no Shou (3 MByte ROMs with Special Chip + RAM + SRAM)
-            if ((IntROMSize > IntCalcFileSize) && ByteROMType != 0xF5 && ByteROMType != 0xF9)
-            {
-                // Get mirrored ROM
-                noChecksumSourceROM = Mirror(noChecksumSourceROM);
-            }
-
-            // Momotarou Dentetsu Happy fix | This didn't work with expanded ROM: else if (calcFileSize == 24 && romType == 0xF5)
-            else if (IntROMSize == 32 && ByteROMType == 0xF5)
-            {
-                multiplier = 2;
-            }
-
-            // Calculate checksum
-            foreach(byte singleByte in noChecksumSourceROM)
-            {
-                checksum += singleByte;
-            }
-
-            // Because of Momotarou Dentetsu Happy... again...
-            checksum *= multiplier;
-
-            // Take only first 16 bit from checksum
-            checksum &= 0xFFFF;
-            UInt16 checksum16 = (UInt16)checksum;
-
-            // Return checksum as big endian byte[]
-            byteChksm = BitConverter.GetBytes(checksum16);
-
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(byteChksm);
-            }
-
-            ByteArrayCalcChecksum = byteChksm;
-        }
-
-        private void CalculateInverseChecksum()
-        {
-            UInt16 calcInvChksm = 0;
-            byte[] byteInvChksm = new byte[2];
-
-            // Calculate inverse checksum (XOR with 0xFFFF)
-            calcInvChksm = BitConverter.ToUInt16(ByteArrayCalcChecksum, 0);
-            calcInvChksm ^= 0xFFFF;
-
-            // Return checksum as byte[]
-            byteInvChksm = BitConverter.GetBytes(calcInvChksm);
-
-            ByteArrayCalcInvChecksum = byteInvChksm;
-        }
-
         private void GetChecksum()
         {
             byte[] checksum = new byte[2];
@@ -1190,30 +924,77 @@ namespace Advanced_SNES_ROM_Utility
             }
         }
 
-        private void CalculateCrc32Hash()
+        public void SetTitle(string newTitle, int maxLength)
         {
-            Crc32 crc32 = new Crc32();
-            string hash = null;
-            byte[] CRC32SourceROM = new byte[SourceROM.Length + UIntSMCHeader];
+            Encoding newEncodedTitle = Encoding.GetEncoding(932);
+            byte[] newByteTitle = newEncodedTitle.GetBytes(newTitle.Trim());
 
-            if (SourceROMSMCHeader != null && UIntSMCHeader > 0)
+            byte[] byteArrayTitle = new byte[maxLength];
+
+            for (int i = 0; i < maxLength; i++)
             {
-                // Merge header with ROM if header exists
-                Buffer.BlockCopy(SourceROMSMCHeader, 0, CRC32SourceROM, 0, SourceROMSMCHeader.Length);
-                Buffer.BlockCopy(SourceROM, 0, CRC32SourceROM, SourceROMSMCHeader.Length, SourceROM.Length);
+                byteArrayTitle[i] = 0x20;
             }
 
-            else
+            int newByteTitleTempLenght = newByteTitle.Length;
+
+            if (newByteTitle.Length > byteArrayTitle.Length) { newByteTitleTempLenght = byteArrayTitle.Length; }
+
+            Buffer.BlockCopy(newByteTitle, 0, byteArrayTitle, 0, newByteTitleTempLenght);
+
+            Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)UIntROMHeaderOffset + 0x10, byteArrayTitle.Length);
+
+            if (UIntROMHeaderOffset == 0x407FB0 || UIntROMHeaderOffset == 0x40FFB0)
             {
-                Buffer.BlockCopy(SourceROM, 0, CRC32SourceROM, 0, SourceROM.Length);
+                Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)UIntROMHeaderOffset + 0x10 - 0x400000, byteArrayTitle.Length);
             }
 
-            foreach (byte singleByte in crc32.ComputeHash(CRC32SourceROM))
+            Initialize();
+        }
+
+        public void SetVersion(byte newVersion)
+        {
+            byte[] byteArrayVersion = { newVersion };
+            Buffer.BlockCopy(byteArrayVersion, 0, SourceROM, (int)UIntROMHeaderOffset + 0x2B, 1);
+
+            if (UIntROMHeaderOffset == 0x407FB0 || UIntROMHeaderOffset == 0x40FFB0)
             {
-                hash += singleByte.ToString("X2").ToUpper();
+                Buffer.BlockCopy(byteArrayVersion, 0, SourceROM, (int)UIntROMHeaderOffset + 0x2B - 0x400000, 1);
             }
 
-            CRC32Hash = hash;
+            Initialize();
+        }
+
+        public void SetCountryRegion(byte newCountryRegion)
+        {
+            byte[] byteArrayCountryRegion = { newCountryRegion };
+            Buffer.BlockCopy(byteArrayCountryRegion, 0, SourceROM, (int)UIntROMHeaderOffset + 0x29, 1);
+
+            if (UIntROMHeaderOffset == 0x407FB0 || UIntROMHeaderOffset == 0x40FFB0)
+            {
+                Buffer.BlockCopy(byteArrayCountryRegion, 0, SourceROM, (int)UIntROMHeaderOffset + 0x29 - 0x400000, 1);
+            }
+
+            Initialize();
+        }
+
+        public void SetGameCode(string newGameCode)
+        {
+            Encoding newEncodedGameCode = Encoding.GetEncoding(932);
+            byte[] newByteGameCode = newEncodedGameCode.GetBytes(newGameCode.Trim());
+
+            byte[] byteArrayGameCode = new byte[4] { 0x20, 0x20, 0x20, 0x20 };
+
+            Buffer.BlockCopy(newByteGameCode, 0, byteArrayGameCode, 0, newByteGameCode.Length);
+
+            Buffer.BlockCopy(byteArrayGameCode, 0, SourceROM, (int)UIntROMHeaderOffset + 0x02, 4);
+
+            if (UIntROMHeaderOffset == 0x407FB0 || UIntROMHeaderOffset == 0x40FFB0)
+            {
+                Buffer.BlockCopy(byteArrayGameCode, 0, SourceROM, (int)UIntROMHeaderOffset + 0x02 - 0x400000, 4);
+            }
+
+            Initialize();
         }
     }
 }
