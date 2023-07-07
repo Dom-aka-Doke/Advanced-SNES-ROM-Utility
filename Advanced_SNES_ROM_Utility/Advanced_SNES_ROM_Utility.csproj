@@ -170,7 +170,7 @@
     <Compile Include="Patcher\IPS.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SNESROM.cs" />
+    <Compile Include="Models\SNESROM.cs" />
     <Compile Include="Patcher\UPS.cs" />
     <Compile Include="Patcher\XDELTA.cs" />
     <EmbeddedResource Include="FormMain.resx">
@@ -230,7 +230,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Enums\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
