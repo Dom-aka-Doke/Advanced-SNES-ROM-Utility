@@ -135,6 +135,7 @@
     <Compile Include="Functions\RemoveSlowROMChecks.cs" />
     <Compile Include="Functions\RemoveSRAMChecks.cs" />
     <Compile Include="Functions\UnlockRegion.cs" />
+    <Compile Include="Helper\ReadEnumDescription.cs" />
     <Compile Include="Helper\RegExReplace.cs" />
     <Compile Include="Patcher\BDF.cs" />
     <Compile Include="Patcher\BPS.cs" />

@@ -320,14 +320,7 @@ namespace Advanced_SNES_ROM_Utility
             // Bitmask first nibble, because only this information is needed
             byte speed = (byte)(ByteMapMode & 0xF0);
             ByteROMSpeed = speed;
-
-            switch (ByteROMSpeed)
-            {
-                // If bitmasked map mode is 0x30 ROM is FastROM, if it is 0x20 then it is SlowROM
-                case 32: StringROMSpeed = "SlowROM (200 ns)"; break;
-                case 48: StringROMSpeed = "FastROM (120 ns)"; break;
-                default: StringROMSpeed = "Unknown"; break;
-            }
+            StringROMSpeed = string.IsNullOrEmpty(GetEnumDescription((Speed)speed)) ? "Unknown" : GetEnumDescription((Speed)speed);
         }
 
         private void GetROMSize()
