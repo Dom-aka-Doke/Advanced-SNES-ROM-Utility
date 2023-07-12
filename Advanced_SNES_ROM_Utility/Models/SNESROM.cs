@@ -204,7 +204,7 @@ namespace Advanced_SNES_ROM_Utility
         {
             byte[] title = new byte[21];
 
-            if (IsBSROM) { title = new byte[16]; Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.title, title, 0, 16); } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.title, title, 0, 21); if (title[20] == 0x00) { title = new byte[20]; Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.title, title, 0, 20); } }
+            if (IsBSROM) { title = new byte[16]; Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.title, title, 0, 16); } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.title, title, 0, 21); if (title[20] == 0x00) { title = new byte[20]; Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.title, title, 0, 20); } }
 
             // Return title as little endian byte[]
             if (!BitConverter.IsLittleEndian)
@@ -220,12 +220,12 @@ namespace Advanced_SNES_ROM_Utility
         public void GetMapMode()
         {
             byte[] mapMode = new byte[1];
-            if (IsBSROM) { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.bs_mapmode, mapMode, 0, 1); } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.mapmode, mapMode, 0, 1); }
+            if (IsBSROM) { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.bs_mapmode, mapMode, 0, 1); } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.mapmode, mapMode, 0, 1); }
             
             // SPC7110 games have an odd value in their header but actually are HiROM
-            if (mapMode[0] == 0x3A)
+            if (mapMode[0] == (byte)MapMode.hirom_spc7110)
             {
-                mapMode[0] = 0x21;
+                mapMode[0] = (byte)MapMode.hirom_2;
             }
 
             // Bitmask this byte, because non relevant bits are not clearly defined
@@ -267,7 +267,7 @@ namespace Advanced_SNES_ROM_Utility
         private void GetROMType()
         {
             byte[] type = new byte[1];
-            if (IsBSROM) { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.bs_type, type, 0, 1); } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.type, type, 0, 1); }
+            if (IsBSROM) { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.bs_type, type, 0, 1); } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.type, type, 0, 1); }
 
             ByteROMType = type[0];
 
@@ -337,7 +337,7 @@ namespace Advanced_SNES_ROM_Utility
             if (IsBSROM)
             {
                 size = new byte[4];
-                Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.bs_size, size, 0, 4);
+                Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.bs_size, size, 0, 4);
                 uint byteSize = BitConverter.ToUInt32(size, 0);
 
                 if (byteSize > 0 && byteSize <= 4294967295)
@@ -363,7 +363,7 @@ namespace Advanced_SNES_ROM_Utility
             
             else
             { 
-                Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.size, size, 0, 1);
+                Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.size, size, 0, 1);
                 ByteROMSize = size[0];
 
                 if (ByteROMSize >= 0x07 && ByteROMSize <= 0x0E)
@@ -394,7 +394,7 @@ namespace Advanced_SNES_ROM_Utility
             bool isNewHeader = false;
 
             byte[] value = new byte[1];
-            Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.company, value, 0, 1);
+            Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.company, value, 0, 1);
 
             if(value[0] == 0x33)
             {
@@ -407,7 +407,7 @@ namespace Advanced_SNES_ROM_Utility
         private void GetSRAMSize()
         {
             byte[] sramsize = new byte[1];
-            if (IsBSROM) { sramsize[0] = 0x00; } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.sram, sramsize, 0, 1); }
+            if (IsBSROM) { sramsize[0] = 0x00; } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.sram, sramsize, 0, 1); }
 
             ByteSRAMSize = sramsize[0];
         }
@@ -421,7 +421,7 @@ namespace Advanced_SNES_ROM_Utility
             {
                 if(IsNewHeader)
                 {
-                    Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.exram, exramsize, 0, 1);
+                    Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.exram, exramsize, 0, 1);
                 }
 
                 // Star Fox/Star Wing RAM fix
@@ -449,7 +449,7 @@ namespace Advanced_SNES_ROM_Utility
         {
             byte[] country = new byte[1];
 
-            if (IsBSROM) { country[0] = 0x00; } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.country, country, 0, 1); }
+            if (IsBSROM) { country[0] = 0x00; } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.country, country, 0, 1); }
 
             ByteCountry = country[0];
 
@@ -484,7 +484,7 @@ namespace Advanced_SNES_ROM_Utility
             byte[] company = new byte[1];
             int companyCode = -1;
 
-            Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.company, company, 0, 1);
+            Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.company, company, 0, 1);
 
             if (company[0] != 0x33)
             {
@@ -868,7 +868,7 @@ namespace Advanced_SNES_ROM_Utility
         {
             byte[] checksum = new byte[2];
 
-            Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.checksum, checksum, 0, 2);
+            Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.checksum, checksum, 0, 2);
 
             // Return checksum as big endian byte[]
             if (BitConverter.IsLittleEndian)
@@ -883,7 +883,7 @@ namespace Advanced_SNES_ROM_Utility
         {
             byte[] checksum = new byte[2];
 
-            Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.inverse_checksum, checksum, 0, 2);
+            Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.inverse_checksum, checksum, 0, 2);
 
             // Return checksum as big endian byte[]
             if (BitConverter.IsLittleEndian)
@@ -898,7 +898,7 @@ namespace Advanced_SNES_ROM_Utility
         {
             byte[] version = new byte[1];
 
-            Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.version, version, 0, 1);
+            Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.version, version, 0, 1);
 
             ByteVersion = version[0];
 
@@ -910,7 +910,7 @@ namespace Advanced_SNES_ROM_Utility
             if (IsNewHeader && !IsBSROM)
             {
                 byte[] gamecode = new byte[4];
-                Buffer.BlockCopy(SourceROMHeader, (int)HeaderValuePosition.gamecode, gamecode, 0, 4);
+                Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.gamecode, gamecode, 0, 4);
                 ByteArrayGameCode = gamecode;
                 StringGameCode = Encoding.GetEncoding(932).GetString(ByteArrayGameCode);
             }
@@ -939,11 +939,11 @@ namespace Advanced_SNES_ROM_Utility
 
             Buffer.BlockCopy(newByteTitle, 0, byteArrayTitle, 0, newByteTitleTempLenght);
 
-            Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValuePosition.title, byteArrayTitle.Length);
+            Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.title, byteArrayTitle.Length);
 
             if (UIntROMHeaderOffset == (uint)HeaderOffset.exlorom || UIntROMHeaderOffset == (uint)HeaderOffset.exhirom)
             {
-                Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValuePosition.title - 0x400000, byteArrayTitle.Length);
+                Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.title - 0x400000, byteArrayTitle.Length);
             }
 
             Initialize();
@@ -952,11 +952,11 @@ namespace Advanced_SNES_ROM_Utility
         public void SetVersion(byte newVersion)
         {
             byte[] byteArrayVersion = { newVersion };
-            Buffer.BlockCopy(byteArrayVersion, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValuePosition.version, 1);
+            Buffer.BlockCopy(byteArrayVersion, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.version, 1);
 
             if (UIntROMHeaderOffset == (uint)HeaderOffset.exlorom || UIntROMHeaderOffset == (uint)HeaderOffset.exhirom)
             {
-                Buffer.BlockCopy(byteArrayVersion, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValuePosition.version - 0x400000, 1);
+                Buffer.BlockCopy(byteArrayVersion, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.version - 0x400000, 1);
             }
 
             Initialize();
@@ -965,11 +965,11 @@ namespace Advanced_SNES_ROM_Utility
         public void SetCountryRegion(byte newCountryRegion)
         {
             byte[] byteArrayCountryRegion = { newCountryRegion };
-            Buffer.BlockCopy(byteArrayCountryRegion, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValuePosition.country, 1);
+            Buffer.BlockCopy(byteArrayCountryRegion, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.country, 1);
 
             if (UIntROMHeaderOffset == (uint)HeaderOffset.exlorom || UIntROMHeaderOffset == (uint)HeaderOffset.exhirom)
             {
-                Buffer.BlockCopy(byteArrayCountryRegion, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValuePosition.country - 0x400000, 1);
+                Buffer.BlockCopy(byteArrayCountryRegion, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.country - 0x400000, 1);
             }
 
             Initialize();
@@ -984,11 +984,11 @@ namespace Advanced_SNES_ROM_Utility
 
             Buffer.BlockCopy(newByteGameCode, 0, byteArrayGameCode, 0, newByteGameCode.Length);
 
-            Buffer.BlockCopy(byteArrayGameCode, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValuePosition.gamecode, 4);
+            Buffer.BlockCopy(byteArrayGameCode, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.gamecode, 4);
 
             if (UIntROMHeaderOffset == (uint)HeaderOffset.exlorom || UIntROMHeaderOffset == (uint)HeaderOffset.exhirom)
             {
-                Buffer.BlockCopy(byteArrayGameCode, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValuePosition.gamecode - 0x400000, 4);
+                Buffer.BlockCopy(byteArrayGameCode, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.gamecode - 0x400000, 4);
             }
 
             Initialize();

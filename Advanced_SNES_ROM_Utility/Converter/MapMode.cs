@@ -11,7 +11,7 @@ namespace Advanced_SNES_ROM_Utility
             // LoROM -> HiROM
             // https://github.com/danielburgess/LoHiROM
 
-            if (!sourceROM.IsInterleaved && (sourceROM.ByteMapMode == 0x20 || sourceROM.ByteMapMode == 0x30))
+            if (!sourceROM.IsInterleaved && (sourceROM.ByteMapMode == (byte)MapMode.lorom_1 || sourceROM.ByteMapMode == (byte)MapMode.lorom_2))
             {
                 try
                 {
@@ -33,6 +33,10 @@ namespace Advanced_SNES_ROM_Utility
                             convertedSourceROM[newPos + chunkSize] = sourceROM.SourceROM[sourcePos];
                         }
                     }
+
+                    byte[] newByteMapMode = new byte[] { (byte)MapMode.hirom_1 };
+                    int newHeaderMapModePosition = (int)HeaderOffset.hirom + (int)HeaderValue.mapmode;
+                    Buffer.BlockCopy(newByteMapMode, 0, convertedSourceROM, newHeaderMapModePosition, 1);
                 }
 
                 catch (Exception ex)
@@ -42,9 +46,31 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             // HiROM -> LoROM
-            else if (!sourceROM.IsInterleaved && (sourceROM.ByteMapMode == 0x21 || sourceROM.ByteMapMode == 0x31))
+            else if (!sourceROM.IsInterleaved && (sourceROM.ByteMapMode == (byte)MapMode.hirom_1 || sourceROM.ByteMapMode == (byte)MapMode.hirom_2))
             {
+                try
+                {
+                    convertedSourceROM = new byte[sourceROM.SourceROM.Length / 2];
 
+                    int chunkSize = 65536;
+                    int chunks = (sourceROM.SourceROM.Length / chunkSize);
+
+                    int newPos = 0;
+                    int sourcePos = 0;
+
+                    /*
+                     Here comes code to convert HiROM to LoROM
+                     */
+
+                    byte[] newByteMapMode = new byte[] { (byte)MapMode.lorom_1 };
+                    int newHeaderMapModePosition = (int)HeaderOffset.lorom + (int)HeaderValue.mapmode;
+                    Buffer.BlockCopy(newByteMapMode, 0, convertedSourceROM, newHeaderMapModePosition, 1);
+                }
+
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
 
             return convertedSourceROM;

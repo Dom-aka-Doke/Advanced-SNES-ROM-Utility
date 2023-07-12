@@ -123,22 +123,22 @@ namespace Advanced_SNES_ROM_Utility
 
             // Check if internal ROM type is valid
             // LoROM
-            if (offset == 0x7FB0 && (mapMode[0] == 0x20 || mapMode[0] == 0x30))
+            if (offset == (int)HeaderOffset.lorom && (mapMode[0] == (int)MapMode.lorom_1 || mapMode[0] == (int)MapMode.lorom_2))
             {
                 score += 2;
             }
             // HiROM
-            if (offset == 0xFFB0 && (mapMode[0] == 0x21 || mapMode[0] == 0x31))
+            if (offset == (int)HeaderOffset.hirom && (mapMode[0] == (int)MapMode.hirom_1 || mapMode[0] == (int)MapMode.hirom_2 || mapMode[0] == (int)MapMode.hirom_spc7110))
             {
                 score += 2;
             }
             // ExLoROM - f.e. Star Ocean
-            if (offset == 0x407FB0 && mapMode[0] == 0x32)
+            if (offset == (int)HeaderOffset.exlorom && mapMode[0] == (int)MapMode.exlorom)
             {
                 score += 4;
             }
             // ExHiROM - f.e. Tales Of Phantasia
-            if (offset == 0x40FFB0 && mapMode[0] == 0x35)
+            if (offset == (int)HeaderOffset.exhirom && (mapMode[0] == (int)MapMode.exhirom_1 || mapMode[0] == (int)MapMode.exhirom_2))
             {
                 score += 4;
             }

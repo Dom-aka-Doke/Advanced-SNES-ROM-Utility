@@ -30,5 +30,8 @@ enum MapMode : byte
     lorom_sa1_2 = 0x33,
 
     [Description("ExHiROM")]
-    exhirom_2 = 0x35
+    exhirom_2 = 0x35,
+
+    [Description("HiROM")]
+    hirom_spc7110 = 0x3A
 }

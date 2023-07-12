@@ -1,4 +1,4 @@
-﻿enum HeaderValuePosition : byte
+﻿enum HeaderValue : byte
 {
     gamecode = 0x02,
     exram = 0x0D,

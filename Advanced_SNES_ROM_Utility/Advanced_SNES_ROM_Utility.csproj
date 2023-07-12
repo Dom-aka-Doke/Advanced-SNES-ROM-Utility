@@ -117,7 +117,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enums\EnumHeaderValuePosition.cs" />
+    <Compile Include="Converter\Expand.cs" />
+    <Compile Include="Converter\Split.cs" />
+    <Compile Include="Enums\EnumHeaderValue.cs" />
     <Compile Include="Enums\EnumMapMode.cs" />
     <Compile Include="Enums\EnumHeaderOffset.cs" />
     <Compile Include="Enums\EnumSpeed.cs" />
