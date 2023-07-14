@@ -139,7 +139,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormAbout";
-            this.Text = "About the Advanced SNES ROM Utility v1.0";
+            this.Text = "About the Advanced SNES ROM Utility v1.1";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
