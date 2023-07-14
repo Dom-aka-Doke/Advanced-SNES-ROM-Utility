@@ -5,8 +5,8 @@ namespace Advanced_SNES_ROM_Utility
     public partial class SNESROM
     {
         public void FixInternalROMSize()
-        {
-            if (IntROMSize < IntCalcFileSize)
+        {   
+            if (IntROMSize < IntCalcFileSize || IntCalcFileSize <= (IntROMSize / 2))
             {
                 IntROMSize = 1;
 

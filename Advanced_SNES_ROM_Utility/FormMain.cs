@@ -61,6 +61,7 @@ namespace Advanced_SNES_ROM_Utility
                 if (buttonFixRegion.Enabled) { buttonFixRegion.Enabled = false; }
                 if (buttonFixSlowROMChecks.Enabled) { buttonFixSlowROMChecks.Enabled = false; }
                 if (buttonFixSRAMChecks.Enabled) { buttonFixSRAMChecks.Enabled = false; }
+                if (buttonConvertMapMode.Enabled) { buttonConvertMapMode.Enabled = false; }
 
                 // Load values into labels and enable / disable buttons
                 RefreshLabelsAndButtons();
@@ -265,9 +266,23 @@ namespace Advanced_SNES_ROM_Utility
 
         private void buttonConvertMapMode_Click(object sender, EventArgs e)
         {
-            _sourceROM.SourceROM = _sourceROM.ConvertMapMode(_sourceROM);
-            _sourceROM.Initialize();
-            RefreshLabelsAndButtons();
+            DialogResult dialogResult = MessageBox.Show("Converting map mode from LoROM <-> HiROM might not work in every case.\n\n" +
+                                            "This will only rearrange ROM banks to fit the right memory format.\n\n" +
+                                            "If your ROM uses (S)RAM or enhancement chips, you have to do some manual corrections.\n\n" +
+                                            "You should always test your ROM in detail after doing this operation.\n\n\n" +
+                                            "Do you want to proceed anyway?", "Attention!", MessageBoxButtons.YesNo);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                _sourceROM.SourceROM = _sourceROM.ConvertMapMode(_sourceROM);
+                _sourceROM.Initialize();
+                RefreshLabelsAndButtons();
+            }
+
+            else
+            {
+                return;
+            }
         }
 
         private void ButtonSave_Click(object sender, EventArgs e)
@@ -459,7 +474,8 @@ namespace Advanced_SNES_ROM_Utility
             if (!buttonScan.Enabled) { buttonScan.Enabled = true; }
             if (_sourceROM.SourceROMSMCHeader == null) { buttonAddHeader.Enabled = true; buttonRemoveHeader.Enabled = false; _saveWithHeader = false; } else { buttonAddHeader.Enabled = false; buttonRemoveHeader.Enabled = true; _saveWithHeader = true; }
             if (_sourceROM.SourceROM.Length % 1048576 == 0) { buttonSwapBinROM.Enabled = true; } else { buttonSwapBinROM.Enabled = false; }
-            if (_sourceROM.IntROMSize < _sourceROM.IntCalcFileSize) { buttonFixROMSize.Enabled = true; } else { buttonFixROMSize.Enabled = false; }
+            if (!_sourceROM.IsInterleaved && (_sourceROM.ByteMapMode == (byte)MapMode.lorom_1 || _sourceROM.ByteMapMode == (byte)MapMode.lorom_2 || _sourceROM.ByteMapMode == (byte)MapMode.hirom_1 || _sourceROM.ByteMapMode == (byte)MapMode.hirom_2)) { buttonConvertMapMode.Enabled = true; } else { buttonConvertMapMode.Enabled = false; }
+            if (_sourceROM.IntROMSize < _sourceROM.IntCalcFileSize || _sourceROM.IntCalcFileSize <= (_sourceROM.IntROMSize / 2)) { buttonFixROMSize.Enabled = true; } else { buttonFixROMSize.Enabled = false; }
             if (_sourceROM.IsInterleaved) { buttonDeinterleave.Enabled = true; buttonFixChksm.Enabled = false; return; } else { buttonDeinterleave.Enabled = false; }
             if (!_sourceROM.ByteArrayChecksum.SequenceEqual(_sourceROM.ByteArrayCalcChecksum)) { buttonFixChksm.Enabled = true; } else { buttonFixChksm.Enabled = false; }
         }

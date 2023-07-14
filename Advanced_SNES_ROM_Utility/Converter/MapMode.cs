@@ -28,7 +28,7 @@ namespace Advanced_SNES_ROM_Utility
                         for (int chunkByteCtr = 0; chunkByteCtr < chunkSize; chunkByteCtr++)
                         {
                             sourcePos = chunkByteCtr + (chunkCtr * chunkSize);
-                            newPos = chunkByteCtr + (chunkCtr * 0x10000);
+                            newPos = chunkByteCtr + (chunkCtr * 65536);
                             convertedSourceROM[newPos] = ((chunkCtr == 0) ? (byte)0xFF : sourceROM.SourceROM[sourcePos]);
                             convertedSourceROM[newPos + chunkSize] = sourceROM.SourceROM[sourcePos];
                         }
@@ -46,6 +46,8 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             // HiROM -> LoROM
+            // https://github.com/pimaster/LoHiROM/blob/Allow-High-to-Low-conversion
+
             else if (!sourceROM.IsInterleaved && (sourceROM.ByteMapMode == (byte)MapMode.hirom_1 || sourceROM.ByteMapMode == (byte)MapMode.hirom_2))
             {
                 try
@@ -58,9 +60,15 @@ namespace Advanced_SNES_ROM_Utility
                     int newPos = 0;
                     int sourcePos = 0;
 
-                    /*
-                     Here comes code to convert HiROM to LoROM
-                     */
+                    for (int chunkCtr = 0; chunkCtr < chunks; chunkCtr++)
+                    {
+                        for (int chunkByteCtr = 0; chunkByteCtr < 32768; chunkByteCtr++)
+                        {
+                            sourcePos = ((chunkCtr == 0) ? chunkByteCtr + (chunkCtr * chunkSize) + 32768 : chunkByteCtr + (chunkCtr * chunkSize));
+                            newPos = chunkByteCtr + (chunkCtr * 32768);
+                            convertedSourceROM[newPos] = sourceROM.SourceROM[sourcePos];
+                        }
+                    }
 
                     byte[] newByteMapMode = new byte[] { (byte)MapMode.lorom_1 };
                     int newHeaderMapModePosition = (int)HeaderOffset.lorom + (int)HeaderValue.mapmode;

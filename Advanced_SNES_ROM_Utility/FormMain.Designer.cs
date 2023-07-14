@@ -791,6 +791,7 @@
             // 
             // buttonConvertMapMode
             // 
+            this.buttonConvertMapMode.Enabled = false;
             this.buttonConvertMapMode.Location = new System.Drawing.Point(363, 476);
             this.buttonConvertMapMode.Name = "buttonConvertMapMode";
             this.buttonConvertMapMode.Size = new System.Drawing.Size(169, 23);
