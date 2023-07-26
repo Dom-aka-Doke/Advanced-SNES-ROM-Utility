@@ -1,25 +1,26 @@
 ﻿using System;
+using Advanced_SNES_ROM_Utility.Helper;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Functions
 {
-    public partial class SNESROM
+    public static partial class SNESROMFunction
     {
-        private void CalculateCrc32Hash()
+        public static string CalculateCrc32Hash(byte[] sourceROM, byte[] sourceROMSMCHeader, uint uIntSMCHeader)
         {
             Crc32 crc32 = new Crc32();
             string hash = null;
-            byte[] CRC32SourceROM = new byte[SourceROM.Length + UIntSMCHeader];
+            byte[] CRC32SourceROM = new byte[sourceROM.Length + uIntSMCHeader];
 
-            if (SourceROMSMCHeader != null && UIntSMCHeader > 0)
+            if (sourceROMSMCHeader != null && uIntSMCHeader > 0)
             {
                 // Merge header with ROM if header exists
-                Buffer.BlockCopy(SourceROMSMCHeader, 0, CRC32SourceROM, 0, SourceROMSMCHeader.Length);
-                Buffer.BlockCopy(SourceROM, 0, CRC32SourceROM, SourceROMSMCHeader.Length, SourceROM.Length);
+                Buffer.BlockCopy(sourceROMSMCHeader, 0, CRC32SourceROM, 0, sourceROMSMCHeader.Length);
+                Buffer.BlockCopy(sourceROM, 0, CRC32SourceROM, sourceROMSMCHeader.Length, sourceROM.Length);
             }
 
             else
             {
-                Buffer.BlockCopy(SourceROM, 0, CRC32SourceROM, 0, SourceROM.Length);
+                Buffer.BlockCopy(sourceROM, 0, CRC32SourceROM, 0, sourceROM.Length);
             }
 
             foreach (byte singleByte in crc32.ComputeHash(CRC32SourceROM))
@@ -27,7 +28,7 @@ namespace Advanced_SNES_ROM_Utility
                 hash += singleByte.ToString("X2").ToUpper();
             }
 
-            CRC32Hash = hash;
+            return hash;
         }
     }
 }

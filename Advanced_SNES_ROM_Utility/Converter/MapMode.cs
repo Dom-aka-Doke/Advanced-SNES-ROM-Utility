@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Converter
 {
-    public partial class SNESROM
+    public static partial class SNESROMConvert
     {
-        public byte[] ConvertMapMode(SNESROM sourceROM)
+        public static void ConvertMapMode(this SNESROM sourceROM)
         {
             byte[] convertedSourceROM = null;
 
@@ -81,7 +81,8 @@ namespace Advanced_SNES_ROM_Utility
                 }
             }
 
-            return convertedSourceROM;
+            sourceROM.SourceROM = convertedSourceROM;
+            sourceROM.Initialize();
         }
     }
 }

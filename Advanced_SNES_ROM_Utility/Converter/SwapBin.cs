@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Converter
 {
-    public partial class SNESROM
+    public static partial class SNESROMConvert
     {
-        public void SwapBin()
+        public static void SwapBin(this SNESROM sourceROM)
         {
             // Check if ROM is multiple of 8 MBit, otherwise swapping is not possible
-            if (SourceROM.Length % 1048576 == 0)
+            if (sourceROM.SourceROM.Length % 1048576 == 0)
             {
-                int romChunks = SourceROM.Length / 1048576;
+                int romChunks = sourceROM.SourceROM.Length / 1048576;
 
                 if (romChunks > 1)
                 {
@@ -20,18 +20,18 @@ namespace Advanced_SNES_ROM_Utility
 
                     for (int index = 0; index < romChunks; index++)
                     {
-                        string romChunkName = ROMName + "_[" + index + "]";
+                        string romChunkName = sourceROM.ROMName + "_[" + index + "]";
                         byte[] sourceROMChunk = new byte[chunkSize];
 
-                        Buffer.BlockCopy(SourceROM, index * chunkSize, sourceROMChunk, 0, chunkSize);
+                        Buffer.BlockCopy(sourceROM.SourceROM, index * chunkSize, sourceROMChunk, 0, chunkSize);
 
-                        SwapBinChunk(sourceROMChunk, romChunkName);
+                        SwapBinChunk(sourceROMChunk, sourceROM.ROMFolder, romChunkName);
                     }
                 }
 
                 else
                 {
-                    SwapBinChunk(SourceROM, ROMName);
+                    SwapBinChunk(sourceROM.SourceROM, sourceROM.ROMFolder, sourceROM.ROMName);
                 }
             }
 
@@ -41,7 +41,7 @@ namespace Advanced_SNES_ROM_Utility
             }
         }
 
-        private void SwapBinChunk(byte[] sourceROM, string romName)
+        private static void SwapBinChunk(byte[] sourceROM, string romFolder, string romName)
         {
             // Make a copy of the ROM for swapping
             byte[] swappedSourceROM = new byte[sourceROM.Length];
@@ -64,7 +64,7 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             // Save swapped file
-            File.WriteAllBytes(ROMFolder + @"\" + romName + "_[swapped]" + ".bin", swappedSourceROM);
+            File.WriteAllBytes(romFolder + @"\" + romName + "_[swapped]" + ".bin", swappedSourceROM);
         }
     }
 }

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Helper
 {
-    public partial class SNESROM
+    public static partial class SNESROMHelper
     {
-        public bool FindAndReplaceByRegEx(IDictionary<string, string> lockingCodeDictionary, bool unlock)
+        public static bool FindAndReplaceByRegEx(this SNESROM sourceROM, IDictionary<string, string> lockingCodeDictionary, bool unlock)
         {
-            string sourceROMString = BitConverter.ToString(SourceROM).Replace("-", "");
+            string sourceROMString = BitConverter.ToString(sourceROM.SourceROM).Replace("-", "");
             int ulcCtr = 0;
             int matchCtr = 0;
 
@@ -39,8 +39,8 @@ namespace Advanced_SNES_ROM_Utility
 
             if (matchCtr > 0)
             {
-                SourceROM = StringToByteArray(sourceROMString);
-                Initialize();
+                sourceROM.SourceROM = StringToByteArray(sourceROMString);
+                sourceROM.Initialize();
                 return true;
             }
 

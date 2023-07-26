@@ -4,6 +4,11 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Advanced_SNES_ROM_Utility.Converter;
+using Advanced_SNES_ROM_Utility.Functions;
+using Advanced_SNES_ROM_Utility.Helper;
+using Advanced_SNES_ROM_Utility.Lists;
+using Advanced_SNES_ROM_Utility.Patcher;
 
 namespace Advanced_SNES_ROM_Utility
 {
@@ -17,7 +22,7 @@ namespace Advanced_SNES_ROM_Utility
 
         bool _saveWithHeader;
 
-        // Create combo box for selecting country and region
+        // Create combo boxes for selecting some options
         List<ComboBoxCountryRegionList> _listCountryRegion = new List<ComboBoxCountryRegionList>();
         List<ComboBoxExpandROMList> _listExpandROM = new List<ComboBoxExpandROMList>();
         List<ComboBoxSplitROMList> _listSplitROM = new List<ComboBoxSplitROMList>();
@@ -178,7 +183,7 @@ namespace Advanced_SNES_ROM_Utility
                                                         "This might cause some slow downs while playing.\n\n" +
                                                         "It isn't really recommended or necessary to do this anymore.\n\n" +
                                                         "This only makes sense, if you want to play this ROM on a device slower than 120ns.\n\n\n" +
-                                                        "Do you want to proceed anyway?", "Attention!", MessageBoxButtons.YesNo);
+                                                        "Do you want to proceed anyway?", "Attention!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
             if (dialogResult == DialogResult.Yes)
             {
@@ -270,12 +275,11 @@ namespace Advanced_SNES_ROM_Utility
                                             "This will only rearrange ROM banks to fit the right memory format.\n\n" +
                                             "If your ROM uses (S)RAM or enhancement chips, you have to do some manual corrections.\n\n" +
                                             "You should always test your ROM in detail after doing this operation.\n\n\n" +
-                                            "Do you want to proceed anyway?", "Attention!", MessageBoxButtons.YesNo);
+                                            "Do you want to proceed anyway?", "Attention!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
             if (dialogResult == DialogResult.Yes)
             {
-                _sourceROM.SourceROM = _sourceROM.ConvertMapMode(_sourceROM);
-                _sourceROM.Initialize();
+                _sourceROM.ConvertMapMode();
                 RefreshLabelsAndButtons();
             }
 
@@ -459,9 +463,7 @@ namespace Advanced_SNES_ROM_Utility
             labelGetCRC32Chksm.Text = _sourceROM.CRC32Hash;
 
             // Set combo boxes
-            int selectedCompanyRegion = _sourceROM.ByteCountry;
-            if (selectedCompanyRegion > 12) { selectedCompanyRegion--; }
-            comboBoxCountryRegion.SelectedIndex = selectedCompanyRegion;
+            if (_sourceROM.ByteCountry <= SNESROMList.CountryRegion.GetLength(0)) { comboBoxCountryRegion.SelectedIndex = _sourceROM.ByteCountry; } else { comboBoxCountryRegion.SelectedIndex = -1; }
 
             // Set check boxes
             checkBoxExpandMirroring.Checked = Properties.Settings.Default.MirrorROMSetting;
@@ -550,22 +552,10 @@ namespace Advanced_SNES_ROM_Utility
 
         private void FillComboBoxCountryRegionList()
         {
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 0, Name = "Japan | NTSC" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 1, Name = "USA | NTSC" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 2, Name = "Europe/Oceania/Asia | PAL" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 3, Name = "Sweden/Scandinavia | PAL" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 4, Name = "Finland | PAL" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 5, Name = "Denmark | PAL" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 6, Name = "France | SECAM (PAL-like, 50 Hz)" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 7, Name = "Netherlands | PAL" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 8, Name = "Spain | PAL" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 9, Name = "Germany/Austria/Switzerland | PAL" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 10, Name = "China/Hong Kong | PAL" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 11, Name = "Indonesia | PAL" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 12, Name = "South Korea | NTSC" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 14, Name = "Canada | NTSC" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 15, Name = "Brazil | PAL-M (NTSC-like, 60 Hz)" });
-            _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = 16, Name = "Australia | PAL" });
+            for (int l = 0; l < SNESROMList.CountryRegion.GetLength(0); l++)
+            {
+                _listCountryRegion.Add(new ComboBoxCountryRegionList { Id = l, Name = $"{SNESROMList.CountryRegion[l, 0]} | {SNESROMList.CountryRegion[l, 1]}" });
+            }
         }
 
         private void checkBoxExpandMirroring_CheckedChanged(object sender, EventArgs e)

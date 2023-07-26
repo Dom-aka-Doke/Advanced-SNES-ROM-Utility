@@ -3,22 +3,30 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Helper
 {
-    public partial class SNESROM
+    public static partial class SNESROMHelper
     {
         public static string GetEnumDescription(Enum enumValue)
         {
-            FieldInfo fieldInfo = enumValue.GetType().GetField(enumValue.ToString());
-
-            DescriptionAttribute[] attributes = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
-
-            if (attributes != null && attributes.Any())
+            try
             {
-                return attributes.First().Description;
+                FieldInfo fieldInfo = enumValue.GetType().GetField(enumValue.ToString());
+
+                DescriptionAttribute[] attributes = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
+
+                if (attributes != null && attributes.Any())
+                {
+                    return attributes.First().Description;
+                }
+
+                return enumValue.ToString();
             }
 
-            return enumValue.ToString();
+            catch
+            {
+                return string.Empty;
+            }
         }
     }
 }

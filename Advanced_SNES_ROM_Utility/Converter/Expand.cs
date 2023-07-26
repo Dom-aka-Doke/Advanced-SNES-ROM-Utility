@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Converter
 {
-    public partial class SNESROM
+    public static partial class SNESROMConvert
     {
-        public void Expand(int sizeExpandedROM, bool mirror)
+        public static void Expand(this SNESROM sourceROM, int sizeExpandedROM, bool mirror)
         {
             byte[] expandedROM = new byte[sizeExpandedROM * 131072];
 
@@ -13,7 +13,7 @@ namespace Advanced_SNES_ROM_Utility
             // Mirror ROM if option is selected (only up to 32 Mbit possible)
             if (mirror && sizeExpandedROM <= 32)
             {
-                byte[] mirroredROM = Mirror(SourceROM);
+                byte[] mirroredROM = Mirror(sourceROM.SourceROM, sourceROM.IntROMSize, sourceROM.IntCalcFileSize);
                 int i = 0;
 
                 while (i < expandedROM.Length)
@@ -25,21 +25,21 @@ namespace Advanced_SNES_ROM_Utility
 
             else
             {
-                Buffer.BlockCopy(SourceROM, 0, expandedROM, 0, SourceROM.Length);
+                Buffer.BlockCopy(sourceROM.SourceROM, 0, expandedROM, 0, sourceROM.SourceROM.Length);
             }
 
             // If expanding a non ExROM to ExROM
-            if (sizeExpandedROM >= 48 && IntCalcFileSize <= 32 && !mirror)
+            if (sizeExpandedROM >= 48 && sourceROM.IntCalcFileSize <= 32 && !mirror)
             {
-                if (StringMapMode.StartsWith("LoROM"))
+                if (sourceROM.StringMapMode.StartsWith("LoROM"))
                 {
                     //if (sourceROM.ByteMapMode >= 0x30)
                     //{
 
-                    if (ByteMapMode >= 0x30)          // <-- remove this if block when using uncommented way!
+                    if (sourceROM.ByteMapMode >= 0x30)          // <-- remove this if block when using uncommented way!
                     {
                         byte[] newMapMode = new byte[1] { 0x32 };
-                        Buffer.BlockCopy(newMapMode, 0, expandedROM, (int)UIntROMHeaderOffset + 0x25, 1);
+                        Buffer.BlockCopy(newMapMode, 0, expandedROM, (int)sourceROM.UIntROMHeaderOffset + 0x25, 1);
                     }
 
                     Buffer.BlockCopy(expandedROM, 0, expandedROM, 0x400000, 0x8000);
@@ -61,24 +61,24 @@ namespace Advanced_SNES_ROM_Utility
                     }*/
                 }
 
-                else if (StringMapMode.StartsWith("HiROM"))
+                else if (sourceROM.StringMapMode.StartsWith("HiROM"))
                 {
                     byte[] newMapMode = new byte[1];
-                    newMapMode[0] = (byte)(ByteROMSpeed | 0x05);
-                    Buffer.BlockCopy(newMapMode, 0, expandedROM, (int)UIntROMHeaderOffset + 0x25, 1);
+                    newMapMode[0] = (byte)(sourceROM.ByteROMSpeed | 0x05);
+                    Buffer.BlockCopy(newMapMode, 0, expandedROM, (int)sourceROM.UIntROMHeaderOffset + 0x25, 1);
                     Buffer.BlockCopy(expandedROM, 0x8000, expandedROM, 0x408000, 0x8000);
                 }
             }
 
             // If expanding a non ExROM to ExROM using mirroring
-            if (sizeExpandedROM >= 48 && IntCalcFileSize <= 32 && mirror)
+            if (sizeExpandedROM >= 48 && sourceROM.IntCalcFileSize <= 32 && mirror)
             {
-                if (StringMapMode.Contains("LoROM"))
+                if (sourceROM.StringMapMode.Contains("LoROM"))
                 {
-                    if (ByteMapMode >= 0x30)
+                    if (sourceROM.ByteMapMode >= 0x30)
                     {
                         byte[] newMapMode = new byte[1] { 0x32 };
-                        Buffer.BlockCopy(newMapMode, 0, expandedROM, (int)UIntROMHeaderOffset + 0x25, 1);
+                        Buffer.BlockCopy(newMapMode, 0, expandedROM, (int)sourceROM.UIntROMHeaderOffset + 0x25, 1);
                     }
 
                     int size = 0x400000;
@@ -86,11 +86,11 @@ namespace Advanced_SNES_ROM_Utility
                     Buffer.BlockCopy(expandedROM, 0, expandedROM, 0x400000, size);
                 }
 
-                else if (StringMapMode.Contains("HiROM"))
+                else if (sourceROM.StringMapMode.Contains("HiROM"))
                 {
                     byte[] newMapMode = new byte[1];
-                    newMapMode[0] = (byte)(ByteROMSpeed | 0x05);
-                    Buffer.BlockCopy(newMapMode, 0, expandedROM, (int)UIntROMHeaderOffset + 0x25, 1);
+                    newMapMode[0] = (byte)(sourceROM.ByteROMSpeed | 0x05);
+                    Buffer.BlockCopy(newMapMode, 0, expandedROM, (int)sourceROM.UIntROMHeaderOffset + 0x25, 1);
 
                     int offset = 0x408000;
 
@@ -103,9 +103,8 @@ namespace Advanced_SNES_ROM_Utility
                 }
             }
 
-            SourceROM = expandedROM;
-
-            Initialize();
+            sourceROM.SourceROM = expandedROM;
+            sourceROM.Initialize();
         }
     }
 }

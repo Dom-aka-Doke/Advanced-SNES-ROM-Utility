@@ -1,39 +1,39 @@
 ﻿using System;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Functions
 {
-    public partial class SNESROM
+    public static partial class SNESROMFunction
     {
-        public void FixInternalROMSize()
+        public static void FixInternalROMSize(this SNESROM sourceROM)
         {   
-            if (IntROMSize < IntCalcFileSize || IntCalcFileSize <= (IntROMSize / 2))
+            if (sourceROM.IntROMSize < sourceROM.IntCalcFileSize || sourceROM.IntCalcFileSize <= (sourceROM.IntROMSize / 2))
             {
-                IntROMSize = 1;
+                sourceROM.IntROMSize = 1;
 
-                if (!IsBSROM)
+                if (!sourceROM.IsBSROM)
                 {
                     byte[] byteArrayROMSizeValue = { 0x07 };
 
-                    while (IntROMSize < IntCalcFileSize)
+                    while (sourceROM.IntROMSize < sourceROM.IntCalcFileSize)
                     {
-                        IntROMSize *= 2;
+                        sourceROM.IntROMSize *= 2;
                         byteArrayROMSizeValue[0]++;
                     }
 
-                    Buffer.BlockCopy(byteArrayROMSizeValue, 0, SourceROM, (int)UIntROMHeaderOffset + 0x27, 1);
+                    Buffer.BlockCopy(byteArrayROMSizeValue, 0, sourceROM.SourceROM, (int)sourceROM.UIntROMHeaderOffset + 0x27, 1);
 
-                    if (UIntROMHeaderOffset == (int)HeaderOffset.exlorom || UIntROMHeaderOffset == (int)HeaderOffset.exhirom)
+                    if (sourceROM.UIntROMHeaderOffset == (int)HeaderOffset.exlorom || sourceROM.UIntROMHeaderOffset == (int)HeaderOffset.exhirom)
                     {
-                        Buffer.BlockCopy(byteArrayROMSizeValue, 0, SourceROM, (int)(UIntROMHeaderOffset + 0x27 - 0x400000), 1);
+                        Buffer.BlockCopy(byteArrayROMSizeValue, 0, sourceROM.SourceROM, (int)(sourceROM.UIntROMHeaderOffset + 0x27 - 0x400000), 1);
                     }
                 }
 
                 else
                 {
-                    IntROMSize = IntCalcFileSize;
+                    sourceROM.IntROMSize = sourceROM.IntCalcFileSize;
 
                     uint size = 1;
-                    int sizeCtr = IntROMSize;
+                    int sizeCtr = sourceROM.IntROMSize;
 
                     while (sizeCtr > 1)
                     {
@@ -43,10 +43,10 @@ namespace Advanced_SNES_ROM_Utility
                     }
 
                     byte[] byteArrayROMSizeValue = BitConverter.GetBytes(size);
-                    Buffer.BlockCopy(byteArrayROMSizeValue, 0, SourceROM, (int)UIntROMHeaderOffset + 0x20, 4);
+                    Buffer.BlockCopy(byteArrayROMSizeValue, 0, sourceROM.SourceROM, (int)sourceROM.UIntROMHeaderOffset + 0x20, 4);
                 }
 
-                Initialize();
+                sourceROM.Initialize();
             }
         }
     }

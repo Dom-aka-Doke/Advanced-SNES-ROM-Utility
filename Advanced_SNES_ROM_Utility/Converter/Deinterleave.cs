@@ -1,12 +1,13 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Converter
 {
-    public partial class SNESROM
+    public static partial class SNESROMConvert
     {
-        public void Deinterlave()
+        public static void Deinterlave(this SNESROM sourceROM)
         {
             byte[] ufoTitle = new byte[8];
             byte[] gdTitle = new byte[14];
@@ -15,10 +16,10 @@ namespace Advanced_SNES_ROM_Utility
             bool gd = false;    // Game Doctor SF
 
             // Analyze SMC header
-            if (SourceROMSMCHeader != null)
+            if (sourceROM.SourceROMSMCHeader != null)
             {
-                Buffer.BlockCopy(SourceROMSMCHeader, 8, ufoTitle, 0, 8);
-                Buffer.BlockCopy(SourceROMSMCHeader, 0, gdTitle, 0, 14);
+                Buffer.BlockCopy(sourceROM.SourceROMSMCHeader, 8, ufoTitle, 0, 8);
+                Buffer.BlockCopy(sourceROM.SourceROMSMCHeader, 0, gdTitle, 0, 14);
 
                 if (Encoding.ASCII.GetString(ufoTitle).Equals("SUPERUFO"))
                 {
@@ -32,7 +33,7 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             // If there is no header or header is not Super UFO or Game Doctor, ask user if he wants to proceed
-            else if ((!ufo && !gd) || SourceROMSMCHeader == null)
+            else if ((!ufo && !gd) || sourceROM.SourceROMSMCHeader == null)
             {
                 DialogResult dialogResult = new DialogResult();
                 FormChooseCopier chooseCopier = new FormChooseCopier();
@@ -57,15 +58,15 @@ namespace Advanced_SNES_ROM_Utility
                 }
             }
 
-            byte[] deinterleavedROM = new byte[SourceROM.Length];   // Empty byte array for deinterleaved ROM
+            byte[] deinterleavedROM = new byte[sourceROM.SourceROM.Length];   // Empty byte array for deinterleaved ROM
 
             int chunkSize = 32768;  // Number of bytes for each chunk
-            int chunkItems = SourceROM.Length / chunkSize;    // Number of chunks
+            int chunkItems = sourceROM.SourceROM.Length / chunkSize;    // Number of chunks
 
             // In some special cases of 20, 24 or 48 MBit ROMs, deinterleaving must be done by following one of these pattern
             int[] deintpattern = null;
 
-            if (!ufo && IntCalcFileSize == 20)
+            if (!ufo && sourceROM.IntCalcFileSize == 20)
             {
                 // Array with deinterleaving pattern for 20 MBit ROMs which were NOT dumped with Super UFO
                 deintpattern = new int[] { 1,   3,   5,   7,   9,  11,  13,  15,  17,  19,  21,  23,  25,  27,  29,
@@ -76,7 +77,7 @@ namespace Advanced_SNES_ROM_Utility
                                           22,  24,  26,  28,  30 };
             }
 
-            else if (!ufo && IntCalcFileSize == 24)
+            else if (!ufo && sourceROM.IntCalcFileSize == 24)
             {
                 // Array with deinterleaving pattern for 24 MBit ROMs which were NOT dumped with Super UFO
                 deintpattern = new int[] { 1,   3,   5,   7,   9,  11,  13,  15,  17,  19,  21,  23,  25,  27,  29,
@@ -88,7 +89,7 @@ namespace Advanced_SNES_ROM_Utility
                                           52,  54,  56,  58,  60,  62 };
             }
 
-            else if (gd && IntCalcFileSize == 48)
+            else if (gd && sourceROM.IntCalcFileSize == 48)
             {
                 // Array with deinterleaving pattern for 48 MBit ROMs which were dumped WITH Super Game Doctor
                 deintpattern = new int[] { 129, 131, 133, 135, 137, 139, 141, 143, 145, 147, 149, 151, 153, 155, 157,
@@ -110,7 +111,7 @@ namespace Advanced_SNES_ROM_Utility
             {
                 for (int chunkCtr = 0; chunkCtr < chunkItems; chunkCtr++)
                 {
-                    Buffer.BlockCopy(SourceROM, chunkCtr * chunkSize, deinterleavedROM, deintpattern[chunkCtr] * chunkSize, chunkSize);
+                    Buffer.BlockCopy(sourceROM.SourceROM, chunkCtr * chunkSize, deinterleavedROM, deintpattern[chunkCtr] * chunkSize, chunkSize);
                 }
             }
 
@@ -125,11 +126,11 @@ namespace Advanced_SNES_ROM_Utility
                     int sourcePos = chunkCtr * chunkSize;
                     int destPos = 0;
 
-                    if ((chunkCtr * chunkSize) < (IntCalcFileSize * 131072) / 2)
+                    if ((chunkCtr * chunkSize) < (sourceROM.IntCalcFileSize * 131072) / 2)
                     {
                         destPos = odd * chunkSize;
 
-                        Buffer.BlockCopy(SourceROM, sourcePos, deinterleavedROM, destPos, chunkSize);
+                        Buffer.BlockCopy(sourceROM.SourceROM, sourcePos, deinterleavedROM, destPos, chunkSize);
 
                         odd += 2;
                     }
@@ -138,15 +139,15 @@ namespace Advanced_SNES_ROM_Utility
                     {
                         destPos = even * chunkSize;
 
-                        Buffer.BlockCopy(SourceROM, sourcePos, deinterleavedROM, destPos, chunkSize);
+                        Buffer.BlockCopy(sourceROM.SourceROM, sourcePos, deinterleavedROM, destPos, chunkSize);
 
                         even += 2;
                     }
                 }
             }
 
-            SourceROM = deinterleavedROM;
-            Initialize();
+            sourceROM.SourceROM = deinterleavedROM;
+            sourceROM.Initialize();
         }
     }
 }

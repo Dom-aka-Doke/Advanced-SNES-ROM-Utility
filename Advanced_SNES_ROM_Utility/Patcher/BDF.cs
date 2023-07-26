@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using deltaq;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Patcher
 {
     class BDFPatch
     {

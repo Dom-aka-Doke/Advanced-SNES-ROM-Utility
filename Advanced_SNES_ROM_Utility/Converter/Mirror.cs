@@ -1,15 +1,15 @@
 ﻿using System;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Converter
 {
-    public partial class SNESROM
+    public static partial class SNESROMConvert
     {
-        public byte[] Mirror(byte[] sourceROM)
+        public static byte[] Mirror(byte[] sourceROM, int intROMSize, int IntCalcFileSize)
         {
-            byte[] mirroredROM = new byte[(IntROMSize * 131072)];
+            byte[] mirroredROM = new byte[(intROMSize * 131072)];
 
             int ctr = 0;
-            int romSize1 = IntROMSize;
+            int romSize1 = intROMSize;
 
             // Get size of ROM #1
             do
@@ -22,7 +22,7 @@ namespace Advanced_SNES_ROM_Utility
 
             // Get size of ROM #2 and its multiplier
             int romSize2 = IntCalcFileSize - romSize1;
-            int romRest = IntROMSize - romSize1;
+            int romRest = intROMSize - romSize1;
             int romSize2Multiplicator = romRest / romSize2;
 
             // Mirror ROM

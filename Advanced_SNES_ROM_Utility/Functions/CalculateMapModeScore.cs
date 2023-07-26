@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Functions
 {
-    public partial class SNESROM
+    public static partial class SNESROMFunction
     {
         public static int CalculateMapModeScore(byte[] sourceROM, uint offset, bool isBSROM)
         {

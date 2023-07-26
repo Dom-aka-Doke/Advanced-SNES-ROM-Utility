@@ -1,18 +1,18 @@
 ﻿using System;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Functions
 {
-    public partial class SNESROM
+    public static partial class SNESROMFunction
     {
-        public void FixChecksum()
+        public static void FixChecksum(this SNESROM sourceROM)
         {
-            uint offset = UIntROMHeaderOffset + 0x2C;
+            uint offset = sourceROM.UIntROMHeaderOffset + 0x2C;
             byte[] newChksm = new byte[2];
             byte[] newInvChksm = new byte[2];
             byte[] newChksmSequence = new byte[4];
 
-            newChksm = ByteArrayCalcChecksum;
-            newInvChksm = ByteArrayCalcInvChecksum;
+            newChksm = sourceROM.ByteArrayCalcChecksum;
+            newInvChksm = sourceROM.ByteArrayCalcInvChecksum;
 
             // Reverse checksum for inserting
             if (BitConverter.IsLittleEndian)
@@ -26,14 +26,14 @@ namespace Advanced_SNES_ROM_Utility
             newChksmSequence[2] = newChksm[0];
             newChksmSequence[3] = newChksm[1];
 
-            Buffer.BlockCopy(newChksmSequence, 0, SourceROM, (int)offset, newChksmSequence.Length);
+            Buffer.BlockCopy(newChksmSequence, 0, sourceROM.SourceROM, (int)offset, newChksmSequence.Length);
 
-            if (UIntROMHeaderOffset == (int)HeaderOffset.exlorom || UIntROMHeaderOffset == (int)HeaderOffset.exhirom)
+            if (sourceROM.UIntROMHeaderOffset == (int)HeaderOffset.exlorom || sourceROM.UIntROMHeaderOffset == (int)HeaderOffset.exhirom)
             {
-                Buffer.BlockCopy(newChksmSequence, 0, SourceROM, (int)offset - 0x400000, newChksmSequence.Length);
+                Buffer.BlockCopy(newChksmSequence, 0, sourceROM.SourceROM, (int)offset - 0x400000, newChksmSequence.Length);
             }
 
-            Initialize();
+            sourceROM.Initialize();
         }
     }
 }

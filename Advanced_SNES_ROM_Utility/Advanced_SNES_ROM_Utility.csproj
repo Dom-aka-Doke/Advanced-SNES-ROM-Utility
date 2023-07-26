@@ -119,6 +119,8 @@
   <ItemGroup>
     <Compile Include="Converter\Expand.cs" />
     <Compile Include="Converter\Split.cs" />
+    <Compile Include="Lists\DictionaryCompany.cs" />
+    <Compile Include="Lists\ListCountryRegion.cs" />
     <Compile Include="Enums\EnumHeaderValue.cs" />
     <Compile Include="Enums\EnumMapMode.cs" />
     <Compile Include="Enums\EnumHeaderOffset.cs" />
@@ -144,34 +146,34 @@
     <Compile Include="Converter\Mirror.cs" />
     <Compile Include="Converter\SwapBin.cs" />
     <Compile Include="Helper\Crc32.cs" />
-    <Compile Include="FormMain.cs">
+    <Compile Include="Forms\FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormMain.Designer.cs">
+    <Compile Include="Forms\FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormChooseCopier.cs">
+    <Compile Include="Forms\FormChooseCopier.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormChooseCopier.Designer.cs">
+    <Compile Include="Forms\FormChooseCopier.Designer.cs">
       <DependentUpon>FormChooseCopier.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormCompanySelect.cs">
+    <Compile Include="Forms\FormCompanySelect.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormCompanySelect.Designer.cs">
+    <Compile Include="Forms\FormCompanySelect.Designer.cs">
       <DependentUpon>FormCompanySelect.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormAbout.cs">
+    <Compile Include="Forms\FormAbout.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormAbout.Designer.cs">
+    <Compile Include="Forms\FormAbout.Designer.cs">
       <DependentUpon>FormAbout.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormHelp.cs">
+    <Compile Include="Forms\FormHelp.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormHelp.Designer.cs">
+    <Compile Include="Forms\FormHelp.Designer.cs">
       <DependentUpon>FormHelp.cs</DependentUpon>
     </Compile>
     <Compile Include="Patcher\IPS.cs" />
@@ -180,19 +182,19 @@
     <Compile Include="Models\SNESROM.cs" />
     <Compile Include="Patcher\UPS.cs" />
     <Compile Include="Patcher\XDELTA.cs" />
-    <EmbeddedResource Include="FormMain.resx">
+    <EmbeddedResource Include="Forms\FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormChooseCopier.resx">
+    <EmbeddedResource Include="Forms\FormChooseCopier.resx">
       <DependentUpon>FormChooseCopier.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormCompanySelect.resx">
+    <EmbeddedResource Include="Forms\FormCompanySelect.resx">
       <DependentUpon>FormCompanySelect.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormAbout.resx">
+    <EmbeddedResource Include="Forms\FormAbout.resx">
       <DependentUpon>FormAbout.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormHelp.resx">
+    <EmbeddedResource Include="Forms\FormHelp.resx">
       <DependentUpon>FormHelp.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

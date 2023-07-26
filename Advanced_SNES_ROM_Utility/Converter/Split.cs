@@ -2,24 +2,24 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Converter
 {
-    public partial class SNESROM
+    public static partial class SNESROMConvert
     {
-        public void Split(int splitROMSize)
+        public static void Split(this SNESROM sourceROM, int splitROMSize)
         {
-            int romChunks = SourceROM.Length / (splitROMSize * 131072);
+            int romChunks = sourceROM.SourceROM.Length / (splitROMSize * 131072);
 
             for (int index = 0; index < romChunks; index++)
             {
-                string romChunkName = ROMName + "_[" + index + "]";
+                string romChunkName = sourceROM.ROMName + "_[" + index + "]";
                 byte[] splitROM = new byte[splitROMSize * 131072];
 
-                Buffer.BlockCopy(SourceROM, index * (splitROMSize * 131072), splitROM, 0, splitROMSize * 131072);
+                Buffer.BlockCopy(sourceROM.SourceROM, index * (splitROMSize * 131072), splitROM, 0, splitROMSize * 131072);
 
                 // Save file split
-                File.WriteAllBytes(ROMFolder + @"\" + romChunkName + "_[split]" + ".bin", splitROM);
-                MessageBox.Show("ROM successfully splittet!\n\nFile saved to: '" + ROMFolder + @"\" + romChunkName + "_[split]" + ".bin'\n\nIn case there was a header, it has been removed!");
+                File.WriteAllBytes(sourceROM.ROMFolder + @"\" + romChunkName + "_[split]" + ".bin", splitROM);
+                MessageBox.Show("ROM successfully splittet!\n\nFile saved to: '" + sourceROM.ROMFolder + @"\" + romChunkName + "_[split]" + ".bin'\n\nIn case there was a header, it has been removed!");
             }
         }
     }

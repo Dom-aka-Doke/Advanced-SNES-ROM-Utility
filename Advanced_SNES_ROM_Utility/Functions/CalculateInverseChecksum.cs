@@ -1,22 +1,22 @@
 ﻿using System;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Functions
 {
-    public partial class SNESROM
+    public static partial class SNESROMFunction
     {
-        private void CalculateInverseChecksum()
+        public static byte[] CalculateInverseChecksum(byte[] byteArrayCalcChecksum)
         {
             UInt16 calcInvChksm = 0;
             byte[] byteInvChksm = new byte[2];
 
             // Calculate inverse checksum (XOR with 0xFFFF)
-            calcInvChksm = BitConverter.ToUInt16(ByteArrayCalcChecksum, 0);
+            calcInvChksm = BitConverter.ToUInt16(byteArrayCalcChecksum, 0);
             calcInvChksm ^= 0xFFFF;
 
             // Return checksum as byte[]
             byteInvChksm = BitConverter.GetBytes(calcInvChksm);
 
-            ByteArrayCalcInvChecksum = byteInvChksm;
+            return byteInvChksm;
         }
     }
 }

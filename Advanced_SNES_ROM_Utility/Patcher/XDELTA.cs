@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using xdelta3.net;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Patcher
 {
     class XDELTAPatch
     {

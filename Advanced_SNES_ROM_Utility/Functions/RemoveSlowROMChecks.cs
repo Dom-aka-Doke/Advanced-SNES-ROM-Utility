@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Advanced_SNES_ROM_Utility.Helper;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Functions
 {
-    public partial class SNESROM
+    public static partial class SNESROMFunction
     {
-        public bool RemoveSlowROMChecks(bool unlock)
+        public static bool RemoveSlowROMChecks(this SNESROM sourceROM, bool unlock)
         {
             IDictionary<string, string> lockingCodeDictionary = new Dictionary<string, string>();
 
@@ -12,7 +13,7 @@ namespace Advanced_SNES_ROM_Utility
             lockingCodeDictionary.Add(@"(A9)(01)(008D0D42)", "$1 00 $3");
             lockingCodeDictionary.Add(@"(A9)(01)(8F0D4200)", "$1 00 $3");
 
-            return FindAndReplaceByRegEx(lockingCodeDictionary, unlock);
+            return SNESROMHelper.FindAndReplaceByRegEx(sourceROM, lockingCodeDictionary, unlock);
         }
     }
 }

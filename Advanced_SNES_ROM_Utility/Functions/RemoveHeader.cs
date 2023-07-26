@@ -1,13 +1,13 @@
-﻿namespace Advanced_SNES_ROM_Utility
+﻿namespace Advanced_SNES_ROM_Utility.Functions
 {
-    public partial class SNESROM
+    public static partial class SNESROMFunction
     {
-        public void RemoveHeader()
+        public static void RemoveHeader(this SNESROM sourceROM)
         {
             // Remove existing header
-            SourceROMSMCHeader = null;
-
-            Initialize();
+            sourceROM.SourceROMSMCHeader = null;
+            
+            sourceROM.Initialize();
         }
     }
 }

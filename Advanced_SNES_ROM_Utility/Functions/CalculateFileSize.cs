@@ -1,11 +1,10 @@
-﻿namespace Advanced_SNES_ROM_Utility
+﻿namespace Advanced_SNES_ROM_Utility.Functions
 {
-    public partial class SNESROM
+    public static partial class SNESROMFunction
     {
-        private void CalculateFileSize()
+        public static int CalculateFileSize(byte[] sourceROM)
         {
-            int filesize = (SourceROM.Length * 8) / 1048576;
-            IntCalcFileSize = filesize;
+            return (sourceROM.Length * 8) / 1048576;
         }
     }
 }

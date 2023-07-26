@@ -1,18 +1,18 @@
-﻿namespace Advanced_SNES_ROM_Utility
+﻿namespace Advanced_SNES_ROM_Utility.Functions
 {
-    public partial class SNESROM
+    public static partial class SNESROMFunction
     {
-        public void AddHeader()
+        public static void AddHeader(this SNESROM sourceROM)
         {
             // Create empty header
-            SourceROMSMCHeader = new byte[512];
+            sourceROM.SourceROMSMCHeader = new byte[512];
 
-            foreach (byte singleByte in SourceROMSMCHeader)
+            foreach (byte singleByte in sourceROM.SourceROMSMCHeader)
             {
-                SourceROMSMCHeader[singleByte] = 0x00;
+                sourceROM.SourceROMSMCHeader[singleByte] = 0x00;
             }
 
-            Initialize();
+            sourceROM.Initialize();
         }
     }
 }

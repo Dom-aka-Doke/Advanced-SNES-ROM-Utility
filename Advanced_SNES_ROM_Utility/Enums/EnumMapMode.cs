@@ -2,9 +2,13 @@
 
 enum MapMode : byte
 {
+    bitmask = 0x37,
+
+    // All LoROMs must contain this text in description!
     [Description("LoROM")]
     lorom_1 = 0x20,
 
+    // All HiROMs must contain this text in description!
     [Description("HiROM")]
     hirom_1 = 0x21,
 
@@ -32,6 +36,6 @@ enum MapMode : byte
     [Description("ExHiROM")]
     exhirom_2 = 0x35,
 
-    [Description("HiROM")]
+    [Description("HiROM (SPC7110)")]
     hirom_spc7110 = 0x3A
 }

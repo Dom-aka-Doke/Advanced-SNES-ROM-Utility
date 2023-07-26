@@ -3,10 +3,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Advanced_SNES_ROM_Utility.Functions;
+using Advanced_SNES_ROM_Utility.Helper;
+using Advanced_SNES_ROM_Utility.Lists;
 
 namespace Advanced_SNES_ROM_Utility
 {
-    public partial class SNESROM
+    public class SNESROM
     {
         public string ROMName { get; set; }
         public string ROMFullPath { get; set; }
@@ -107,10 +110,10 @@ namespace Advanced_SNES_ROM_Utility
             GetGameCode();
             GetChecksum();
             GetInverseChecksum();
-            CalculateFileSize();
-            CalculateChecksum();
-            CalculateInverseChecksum();
-            CalculateCrc32Hash();
+            IntCalcFileSize = SNESROMFunction.CalculateFileSize(SourceROM);
+            ByteArrayCalcChecksum = SNESROMFunction.CalculateChecksum(SourceROM, UIntROMHeaderOffset, IsBSROM, IntROMSize, IntCalcFileSize, ByteROMType);
+            ByteArrayCalcInvChecksum = SNESROMFunction.CalculateInverseChecksum(ByteArrayCalcChecksum);
+            CRC32Hash = SNESROMFunction.CalculateCrc32Hash(SourceROM, SourceROMSMCHeader, UIntSMCHeader);
         }
 
         private void GetSMCHeader()
@@ -158,12 +161,12 @@ namespace Advanced_SNES_ROM_Utility
             UIntROMHeaderOffset = (int)HeaderOffset.lorom;
             IsBSROM = false;
 
-            int mapModeScoreLoROM = CalculateMapModeScore(SourceROM, (int)HeaderOffset.lorom, false);
-            int mapModeScoreBSLoROM = CalculateMapModeScore(SourceROM, (int)HeaderOffset.lorom, true);
-            int mapModeScoreHiROM = CalculateMapModeScore(SourceROM, (int)HeaderOffset.hirom, false);
-            int mapModeScoreBSHiROM = CalculateMapModeScore(SourceROM, (int)HeaderOffset.hirom, true);
-            int mapModeScoreExLoROM = CalculateMapModeScore(SourceROM, (int)HeaderOffset.exlorom, false);
-            int mapModeScoreExHiROM = CalculateMapModeScore(SourceROM, (int)HeaderOffset.exhirom, false);
+            int mapModeScoreLoROM = SNESROMFunction.CalculateMapModeScore(SourceROM, (int)HeaderOffset.lorom, false);
+            int mapModeScoreBSLoROM = SNESROMFunction.CalculateMapModeScore(SourceROM, (int)HeaderOffset.lorom, true);
+            int mapModeScoreHiROM = SNESROMFunction.CalculateMapModeScore(SourceROM, (int)HeaderOffset.hirom, false);
+            int mapModeScoreBSHiROM = SNESROMFunction.CalculateMapModeScore(SourceROM, (int)HeaderOffset.hirom, true);
+            int mapModeScoreExLoROM = SNESROMFunction.CalculateMapModeScore(SourceROM, (int)HeaderOffset.exlorom, false);
+            int mapModeScoreExHiROM = SNESROMFunction.CalculateMapModeScore(SourceROM, (int)HeaderOffset.exhirom, false);
 
             if (mapModeScoreLoROM >= mapModeScoreHiROM && mapModeScoreLoROM >= mapModeScoreExLoROM && mapModeScoreLoROM >= mapModeScoreExHiROM)
             {
@@ -213,48 +216,35 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             ByteArrayTitle = title;
-
             StringTitle = Encoding.GetEncoding(932).GetString(ByteArrayTitle);
         }
 
         public void GetMapMode()
         {
             byte[] mapMode = new byte[1];
-            if (IsBSROM) { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.bs_mapmode, mapMode, 0, 1); } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.mapmode, mapMode, 0, 1); }
-            
-            // SPC7110 games have an odd value in their header but actually are HiROM
-            if (mapMode[0] == (byte)MapMode.hirom_spc7110)
-            {
-                mapMode[0] = (byte)MapMode.hirom_2;
-            }
-
-            // Bitmask this byte, because non relevant bits are not clearly defined
-            mapMode[0] &= 0x37;
-
-            ByteMapMode = mapMode[0];
-
-            // Initialize with false
             IsInterleaved = false;
 
-            switch (ByteMapMode)
+            if (IsBSROM) { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.bs_mapmode, mapMode, 0, 1); } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.mapmode, mapMode, 0, 1); }
+            
+            // SPC7110 games have an odd value in their header and don't have to be bitmasked
+            if (mapMode[0] != (byte)MapMode.hirom_spc7110)
             {
-                case 0x20: StringMapMode = "LoROM"; break;
-                case 0x21: StringMapMode = "HiROM"; if (UIntROMHeaderOffset == (uint)HeaderOffset.lorom) { IsInterleaved = true; }; break;
-                case 0x22: StringMapMode = "LoROM (SDD-1)"; break;
-                case 0x23: StringMapMode = "LoROM (SA-1)"; break;
-                case 0x25: StringMapMode = "ExHiROM"; if (UIntROMHeaderOffset == (uint)HeaderOffset.lorom) { IsInterleaved = true; }; break;
-                case 0x30: StringMapMode = "LoROM"; break;
-                case 0x31: StringMapMode = "HiROM"; if (UIntROMHeaderOffset == (uint)HeaderOffset.lorom) { IsInterleaved = true; }; break;
-                case 0x32: StringMapMode = "ExLoROM"; break;
-                case 0x33: StringMapMode = "LoROM (SA-1)"; break;
-                case 0x35: StringMapMode = "ExHiROM"; if (UIntROMHeaderOffset == (uint)HeaderOffset.lorom) { IsInterleaved = true; }; break;
-                default: StringMapMode = "Unknown"; break;
+                // Bitmask this byte, because non relevant bits are not clearly defined
+                mapMode[0] &= (byte)MapMode.bitmask;
+            }
+
+            ByteMapMode = mapMode[0];
+            StringMapMode = string.IsNullOrEmpty(SNESROMHelper.GetEnumDescription((MapMode)ByteMapMode)) ? "Unknown" : SNESROMHelper.GetEnumDescription((MapMode)ByteMapMode);
+
+            if (StringMapMode.Contains(SNESROMHelper.GetEnumDescription((MapMode)0x21)) && (UIntROMHeaderOffset == (uint)HeaderOffset.lorom || UIntROMHeaderOffset == (uint)HeaderOffset.exlorom))
+            {
+                IsInterleaved = true;
             }
 
             // ROM that contains oversized title which overwrites the map mode byte, but actually is LoROM
             if (StringTitle.Equals("YUYU NO QUIZ DE GO!GO"))
             {
-                StringMapMode = "LoROM";
+                StringMapMode = SNESROMHelper.GetEnumDescription((MapMode)0x20);
 
                 // If this ROM is not interleaved set it as not interleaved
                 if (UIntROMHeaderOffset == (uint)HeaderOffset.lorom)
@@ -289,7 +279,7 @@ namespace Advanced_SNES_ROM_Utility
                 case 0x02: StringROMType = "ROM+RAM+Battery"; break;
                 case 0x03: if (ByteROMSpeed == 0x30 && !falseDSP1Games.Contains(StringTitle)) { StringROMType = "ROM+DSP4"; } else { StringROMType = "ROM+DSP1"; }; break;
                 case 0x04: StringROMType = "ROM+DSP1+RAM"; break;
-                case 0x05: if (ByteROMSpeed == 0x20) { StringROMType = "ROM+DSP2+RAM+Battery"; } else if (ByteROMSpeed == 0x30 && IntCompany == 0x018E) { StringROMType = "ROM+DSP3+RAM+Battery"; } else { StringROMType = "ROM+DSP1+RAM+Battery"; }; break;
+                case 0x05: if (ByteROMSpeed == (byte)Speed.slow) { StringROMType = "ROM+DSP2+RAM+Battery"; } else if (ByteROMSpeed == (byte)Speed.fast && IntCompany == 0x018E) { StringROMType = "ROM+DSP3+RAM+Battery"; } else { StringROMType = "ROM+DSP1+RAM+Battery"; }; break;
                 case 0x10: if (IsBSROM) { StringROMType = "BS-X+FLASH"; }; break;
                 case 0x13: StringROMType = "ROM+MarioChip1+RAM"; break;
                 case 0x14: StringROMType = "ROM+GSU1+RAM"; if (ByteROMSize > 0x0A) { StringROMType = "ROM+GSU2+RAM"; }; break;
@@ -308,7 +298,7 @@ namespace Advanced_SNES_ROM_Utility
                 case 0xE3: StringROMType = "ROM+SGB"; break;
                 case 0xE5: StringROMType = "ROM+BS-X"; break;
                 case 0xF3: StringROMType = "ROM+CX-4"; break;
-                case 0xF5: if (StringMapMode.Contains("HiROM")) { StringROMType = "ROM+SPC-7110+RAM+Battery"; } else if (StringMapMode.Contains("LoROM")) { StringROMType = "ROM+ST-018+RAM+Battery"; }; break;
+                case 0xF5: if (StringMapMode.Contains(SNESROMHelper.GetEnumDescription((MapMode)0x21))) { StringROMType = "ROM+SPC-7110+RAM+Battery"; } else if (StringMapMode.Contains(SNESROMHelper.GetEnumDescription((MapMode)0x20))) { StringROMType = "ROM+ST-018+RAM+Battery"; }; break;
                 case 0xF6: if (ByteROMSize == 0x0A) { StringROMType = "ROM+ST-010"; } else { StringROMType = "ROM+ST-011"; }; break;
                 case 0xF9: StringROMType = "ROM+SPC-7110+RTC+RAM+Battery"; break;
                 default: StringROMType = "Unknown"; break;
@@ -320,7 +310,7 @@ namespace Advanced_SNES_ROM_Utility
             // Bitmask first nibble, because only this information is needed
             byte speed = (byte)(ByteMapMode & 0xF0);
             ByteROMSpeed = speed;
-            StringROMSpeed = string.IsNullOrEmpty(GetEnumDescription((Speed)speed)) ? "Unknown" : GetEnumDescription((Speed)speed);
+            StringROMSpeed = string.IsNullOrEmpty(SNESROMHelper.GetEnumDescription((Speed)ByteROMSpeed)) ? "Unknown" : SNESROMHelper.GetEnumDescription((Speed)ByteROMSpeed);
         }
 
         private void GetROMSize()
@@ -446,29 +436,16 @@ namespace Advanced_SNES_ROM_Utility
 
             ByteCountry = country[0];
 
-            switch (ByteCountry)
+            try
             {
-                case 0: StringCountry = "Japan"; StringRegion = "NTSC"; break;
-                case 1: StringCountry = "USA"; StringRegion = "NTSC"; break;
-                case 2: StringCountry = "Europe/Oceania/Asia"; StringRegion = "PAL"; break;
-                case 3: StringCountry = "Sweden/Scandinavia"; StringRegion = "PAL"; break;
-                case 4: StringCountry = "Finland"; StringRegion = "PAL"; break;
-                case 5: StringCountry = "Denmark"; StringRegion = "PAL"; break;
-                case 6: StringCountry = "France"; StringRegion = "SECAM (PAL-like, 50 Hz)"; break;
-                case 7: StringCountry = "Netherlands"; StringRegion = "PAL"; break;
-                case 8: StringCountry = "Spain"; StringRegion = "PAL"; break;
-                case 9: StringCountry = "Germany/Austria/Switzerland"; StringRegion = "PAL"; break;
-                case 10: StringCountry = "China/Hong Kong"; StringRegion = "PAL"; break;
-                case 11: StringCountry = "Indonesia"; StringRegion = "PAL"; break;
-                case 12: StringCountry = "South Korea"; StringRegion = "NTSC"; break;
-                case 13: StringCountry = "Common (?)"; StringRegion = "?"; break;
-                case 14: StringCountry = "Canada"; StringRegion = "NTSC"; break;
-                case 15: StringCountry = "Brazil"; StringRegion = "PAL-M (NTSC-like, 60 Hz)"; break;
-                case 16: StringCountry = "Australia"; StringRegion = "PAL"; break;
-                case 17: StringCountry = "Other variation"; StringRegion = "?"; break;
-                case 18: StringCountry = "Other variation"; StringRegion = "?"; break;
-                case 19: StringCountry = "Other variation"; StringRegion = "?"; break;
-                default: StringCountry = "Unknown"; StringRegion = "?"; break;
+                StringCountry = SNESROMList.CountryRegion[ByteCountry, 0];
+                StringRegion = SNESROMList.CountryRegion[ByteCountry, 1];
+            }
+
+            catch
+            {
+                StringCountry = "Unknown";
+                StringRegion = "?";
             }
         }
 
@@ -519,342 +496,16 @@ namespace Advanced_SNES_ROM_Utility
                 IntCompany = companyCode;
             }
 
-            string companyString = "0x" + IntCompany.ToString("X4");
-
-            switch (companyString)
+            try
             {
-                case "0x0001": StringCompany = "Nintendo"; break;
-                case "0x0002": StringCompany = "Rocket Games/Ajinomoto"; break;
-                case "0x0003": StringCompany = "Imagineer-Zoom"; break;
-                case "0x0004": StringCompany = "Gray Matter"; break;
-                case "0x0005": StringCompany = "Zamuse"; break;
-                case "0x0006": StringCompany = "Falcom"; break;
-                case "0x0008": StringCompany = "Capcom"; break;
-                case "0x0009": StringCompany = "Hot B Co."; break;
-                case "0x000A": StringCompany = "Jaleco"; break;
-                case "0x000B": StringCompany = "Coconuts Japan"; break;
-                case "0x000C": StringCompany = "Coconuts Japan/G.X.Media"; break;
-                case "0x000D": StringCompany = "Micronet"; break;
-                case "0x000E": StringCompany = "Technos"; break;
-                case "0x000F": StringCompany = "Mebio Software"; break;
-                case "0x0010": StringCompany = "Shouei System"; break;
-                case "0x0011": StringCompany = "Starfish"; break;
-                case "0x0013": StringCompany = "Mitsui Fudosan/Dentsu"; break;
-                case "0x0015": StringCompany = "Warashi Inc."; break;
-                case "0x0017": StringCompany = "Nowpro"; break;
-                case "0x0019": StringCompany = "Game Village"; break;
-                case "0x001A": StringCompany = "IE Institute"; break;
-                case "0x0024": StringCompany = "Banarex"; break;
-                case "0x0025": StringCompany = "Starfish"; break;
-                case "0x0026": StringCompany = "Infocom"; break;
-                case "0x0027": StringCompany = "Electronic Arts Japan"; break;
-                case "0x0029": StringCompany = "Cobra Team"; break;
-                case "0x002A": StringCompany = "Human/Field"; break;
-                case "0x002B": StringCompany = "KOEI"; break;
-                case "0x002C": StringCompany = "Hudson Soft"; break;
-                case "0x002D": StringCompany = "S.C.P./Game Village"; break;
-                case "0x002E": StringCompany = "Yanoman"; break;
-                case "0x0030": StringCompany = "Tecmo Products"; break;
-                case "0x0031": StringCompany = "Japan Glary Business"; break;
-                case "0x0032": StringCompany = "Forum/OpenSystem"; break;
-                case "0x0033": StringCompany = "Virgin Games (Japan)"; break;
-                case "0x0034": StringCompany = "SMDE"; break;
-                case "0x0035": StringCompany = "Yojigen"; break;
-                case "0x0037": StringCompany = "Daikokudenki"; break;
-                case "0x003D": StringCompany = "Creatures Inc."; break;
-                case "0x003E": StringCompany = "TDK Deep Impresion"; break;
-                case "0x0048": StringCompany = "Destination Software/KSS"; break;
-                case "0x0049": StringCompany = "Sunsoft/Tokai Engineering"; break;
-                case "0x004A": StringCompany = "POW (Planning Office Wada)/VR 1 Japan"; break;
-                case "0x004B": StringCompany = "Micro World"; break;
-                case "0x004D": StringCompany = "San-X"; break;
-                case "0x004E": StringCompany = "Enix"; break;
-                case "0x004F": StringCompany = "Loriciel/Electro Brain"; break;
-                case "0x0050": StringCompany = "Kemco Japan"; break;
-                case "0x0051": StringCompany = "Seta Co.,Ltd."; break;
-                case "0x0052": StringCompany = "Culture Brain"; break;
-                case "0x0053": StringCompany = "Irem Corp."; break;
-                case "0x0054": StringCompany = "Palsoft"; break;
-                case "0x0055": StringCompany = "Visit Co., Ltd."; break;
-                case "0x0056": StringCompany = "Intec"; break;
-                case "0x0057": StringCompany = "System Sacom"; break;
-                case "0x0058": StringCompany = "Poppo"; break;
-                case "0x0059": StringCompany = "Ubisoft Japan"; break;
-                case "0x005B": StringCompany = "Media Works"; break;
-                case "0x005C": StringCompany = "NEC InterChannel"; break;
-                case "0x005D": StringCompany = "Tam"; break;
-                case "0x005E": StringCompany = "Gajin/Jordan"; break;
-                case "0x005F": StringCompany = "Smilesoft"; break;
-                case "0x0062": StringCompany = "Mediakite"; break;
-                case "0x006C": StringCompany = "Viacom"; break;
-                case "0x006D": StringCompany = "Carrozzeria"; break;
-                case "0x006E": StringCompany = "Dynamic"; break;
-                case "0x0070": StringCompany = "Magifact"; break;
-                case "0x0071": StringCompany = "Hect"; break;
-                case "0x0072": StringCompany = "Codemasters"; break;
-                case "0x0073": StringCompany = "Taito/GAGA Communications"; break;
-                case "0x0074": StringCompany = "Laguna"; break;
-                case "0x0075": StringCompany = "Telstar Fun & Games/Event/Taito"; break;
-                case "0x0077": StringCompany = "Arcade Zone Ltd."; break;
-                case "0x0078": StringCompany = "Entertainment International/Empire Software"; break;
-                case "0x0079": StringCompany = "Loriciel"; break;
-                case "0x007A": StringCompany = "Gremlin Graphics"; break;
-                case "0x0090": StringCompany = "Seika Corp."; break;
-                case "0x0091": StringCompany = "UBI SOFT Entertainment Software"; break;
-                case "0x0092": StringCompany = "Sunsoft US"; break;
-                case "0x0094": StringCompany = "Life Fitness"; break;
-                case "0x0096": StringCompany = "System 3"; break;
-                case "0x0097": StringCompany = "Spectrum Holobyte"; break;
-                case "0x0099": StringCompany = "Irem"; break;
-                case "0x009B": StringCompany = "Raya Systems"; break;
-                case "0x009C": StringCompany = "Renovation Products"; break;
-                case "0x009D": StringCompany = "Malibu Games"; break;
-                case "0x009F": StringCompany = "Eidos/U.S. Gold"; break;
-                case "0x00A0": StringCompany = "Playmates Interactive"; break;
-                case "0x00A3": StringCompany = "Fox Interactive"; break;
-                case "0x00A4": StringCompany = "Time Warner Interactive"; break;
-                case "0x00AA": StringCompany = "Disney Interactive"; break;
-                case "0x00AC": StringCompany = "Black Pearl"; break;
-                case "0x00AE": StringCompany = "Advanced Productions"; break;
-                case "0x00B1": StringCompany = "GT Interactive"; break;
-                case "0x00B2": StringCompany = "RARE"; break;
-                case "0x00B3": StringCompany = "Crave Entertainment"; break;
-                case "0x00B4": StringCompany = "Absolute Entertainment"; break;
-                case "0x00B5": StringCompany = "Acclaim"; break;
-                case "0x00B6": StringCompany = "Activision"; break;
-                case "0x00B7": StringCompany = "American Sammy"; break;
-                case "0x00B8": StringCompany = "Take 2/GameTek"; break;
-                case "0x00B9": StringCompany = "Hi Tech"; break;
-                case "0x00BA": StringCompany = "LJN Ltd."; break;
-                case "0x00BC": StringCompany = "Mattel"; break;
-                case "0x00BE": StringCompany = "Mindscape/Red Orb Entertainment"; break;
-                case "0x00BF": StringCompany = "Romstar"; break;
-                case "0x00C0": StringCompany = "Taxan"; break;
-                case "0x00C1": StringCompany = "Midway/Tradewest"; break;
-                case "0x00C3": StringCompany = "American Softworks Corp."; break;
-                case "0x00C4": StringCompany = "Majesco Sales Inc."; break;
-                case "0x00C5": StringCompany = "3DO"; break;
-                case "0x00C8": StringCompany = "Hasbro"; break;
-                case "0x00C9": StringCompany = "NewKidCo"; break;
-                case "0x00CA": StringCompany = "Telegames"; break;
-                case "0x00CB": StringCompany = "Metro3D"; break;
-                case "0x00CD": StringCompany = "Vatical Entertainment"; break;
-                case "0x00CE": StringCompany = "LEGO Media"; break;
-                case "0x00D0": StringCompany = "Xicat Interactive"; break;
-                case "0x00D1": StringCompany = "Cryo Interactive"; break;
-                case "0x00D4": StringCompany = "Red Storm Entertainment"; break;
-                case "0x00D5": StringCompany = "Microids"; break;
-                case "0x00D7": StringCompany = "Conspiracy/Swing"; break;
-                case "0x00D8": StringCompany = "Titus"; break;
-                case "0x00D9": StringCompany = "Virgin Interactive"; break;
-                case "0x00DA": StringCompany = "Maxis"; break;
-                case "0x00DC": StringCompany = "LucasArts Entertainment"; break;
-                case "0x00DF": StringCompany = "Ocean"; break;
-                case "0x00E1": StringCompany = "Electronic Arts"; break;
-                case "0x00E3": StringCompany = "Laser Beam"; break;
-                case "0x00E6": StringCompany = "Elite Systems"; break;
-                case "0x00E7": StringCompany = "Electro Brain"; break;
-                case "0x00E8": StringCompany = "The Learning Company"; break;
-                case "0x00E9": StringCompany = "BBC"; break;
-                case "0x00EB": StringCompany = "Software 2000"; break;
-                case "0x00ED": StringCompany = "BAM! Entertainment"; break;
-                case "0x00EE": StringCompany = "Studio 3"; break;
-                case "0x00F2": StringCompany = "Classified Games"; break;
-                case "0x00F4": StringCompany = "TDK Mediactive"; break;
-                case "0x00F6": StringCompany = "DreamCatcher"; break;
-                case "0x00F7": StringCompany = "JoWood Produtions"; break;
-                case "0x00F8": StringCompany = "SEGA"; break;
-                case "0x00F9": StringCompany = "Wannado Edition"; break;
-                case "0x00FA": StringCompany = "LSP (Light & Shadow Prod.)"; break;
-                case "0x00FB": StringCompany = "ITE Media"; break;
-                case "0x00FC": StringCompany = "Infogrames"; break;
-                case "0x00FD": StringCompany = "Interplay"; break;
-                case "0x00FE": StringCompany = "JVC (US)"; break;
-                case "0x00FF": StringCompany = "Parker Brothers"; break;
-                case "0x0101": StringCompany = "SCI (Sales Curve Interactive)/Storm"; break;
-                case "0x0104": StringCompany = "THQ Software"; break;
-                case "0x0105": StringCompany = "Accolade Inc."; break;
-                case "0x0106": StringCompany = "Triffix Entertainment"; break;
-                case "0x0108": StringCompany = "Microprose Software"; break;
-                case "0x0109": StringCompany = "Universal Interactive/Sierra/Simon & Schuster"; break;
-                case "0x010B": StringCompany = "Kemco"; break;
-                case "0x010C": StringCompany = "Rage Software"; break;
-                case "0x010D": StringCompany = "Encore"; break;
-                case "0x010F": StringCompany = "Zoo"; break;
-                case "0x0110": StringCompany = "Kiddinx"; break;
-                case "0x0111": StringCompany = "Simon & Schuster Interactive"; break;
-                case "0x0112": StringCompany = "Asmik Ace Entertainment Inc./AIA"; break;
-                case "0x0113": StringCompany = "Empire Interactive"; break;
-                case "0x0116": StringCompany = "Jester Interactive"; break;
-                case "0x0118": StringCompany = "Rockstar Games"; break;
-                case "0x0119": StringCompany = "Scholastic"; break;
-                case "0x011A": StringCompany = "Ignition Entertainment"; break;
-                case "0x011B": StringCompany = "Summitsoft"; break;
-                case "0x011C": StringCompany = "Stadlbauer"; break;
-                case "0x0120": StringCompany = "Misawa"; break;
-                case "0x0121": StringCompany = "Teichiku"; break;
-                case "0x0122": StringCompany = "Namco Ltd."; break;
-                case "0x0123": StringCompany = "LOZC"; break;
-                case "0x0124": StringCompany = "KOEI"; break;
-                case "0x0126": StringCompany = "Tokuma Shoten Intermedia"; break;
-                case "0x0127": StringCompany = "Tsukuda Original"; break;
-                case "0x0128": StringCompany = "DATAM-Polystar"; break;
-                case "0x012B": StringCompany = "Bullet-Proof Software"; break;
-                case "0x012C": StringCompany = "Vic Tokai Inc."; break;
-                case "0x012E": StringCompany = "Character Soft"; break;
-                case "0x012F": StringCompany = "I'Max"; break;
-                case "0x0130": StringCompany = "Saurus"; break;
-                case "0x0133": StringCompany = "General Entertainment"; break;
-                case "0x0136": StringCompany = "I'Max"; break;
-                case "0x0137": StringCompany = "Success"; break;
-                case "0x0139": StringCompany = "SEGA Japan"; break;
-                case "0x0144": StringCompany = "Takara"; break;
-                case "0x0145": StringCompany = "Chun Soft"; break;
-                case "0x0146": StringCompany = "Video System Co., Ltd./McO'River"; break;
-                case "0x0147": StringCompany = "BEC"; break;
-                case "0x0149": StringCompany = "Varie"; break;
-                case "0x014A": StringCompany = "Yonezawa/S'pal"; break;
-                case "0x014B": StringCompany = "Kaneko"; break;
-                case "0x014D": StringCompany = "Victor Interactive Software/Pack-in-Video"; break;
-                case "0x014E": StringCompany = "Nichibutsu/Nihon Bussan"; break;
-                case "0x014F": StringCompany = "Tecmo"; break;
-                case "0x0150": StringCompany = "Imagineer"; break;
-                case "0x0153": StringCompany = "Nova"; break;
-                case "0x0154": StringCompany = "Den'Z"; break;
-                case "0x0155": StringCompany = "Bottom Up"; break;
-                case "0x0157": StringCompany = "TGL (Technical Group Laboratory)"; break;
-                case "0x0159": StringCompany = "Hasbro Japan"; break;
-                case "0x015B": StringCompany = "Marvelous Entertainment"; break;
-                case "0x015D": StringCompany = "Keynet Inc."; break;
-                case "0x015E": StringCompany = "Hands-On Entertainment"; break;
-                case "0x0168": StringCompany = "Telenet"; break;
-                case "0x0169": StringCompany = "Hori"; break;
-                case "0x016C": StringCompany = "Konami"; break;
-                case "0x016D": StringCompany = "K.Amusement Leasing Co."; break;
-                case "0x016E": StringCompany = "Kawada"; break;
-                case "0x016F": StringCompany = "Takara"; break;
-                case "0x0171": StringCompany = "Technos Japan Corp."; break;
-                case "0x0172": StringCompany = "JVC (Europe/Japan)/Victor Musical Industries"; break;
-                case "0x0174": StringCompany = "Toei Animation"; break;
-                case "0x0175": StringCompany = "Toho"; break;
-                case "0x0177": StringCompany = "Namco"; break;
-                case "0x0178": StringCompany = "Media Rings Corp."; break;
-                case "0x0179": StringCompany = "J-Wing"; break;
-                case "0x017B": StringCompany = "Pioneer LDC"; break;
-                case "0x017C": StringCompany = "KID"; break;
-                case "0x017D": StringCompany = "Mediafactory"; break;
-                case "0x0181": StringCompany = "Infogrames Hudson"; break;
-                case "0x018C": StringCompany = "Acclaim Japan"; break;
-                case "0x018D": StringCompany = "ASCII Co./Nexoft"; break;
-                case "0x018E": StringCompany = "Bandai"; break;
-                case "0x0190": StringCompany = "Enix"; break;
-                case "0x0192": StringCompany = "HAL Laboratory/Halken"; break;
-                case "0x0193": StringCompany = "SNK"; break;
-                case "0x0195": StringCompany = "Pony Canyon Hanbai"; break;
-                case "0x0196": StringCompany = "Culture Brain"; break;
-                case "0x0197": StringCompany = "Sunsoft"; break;
-                case "0x0198": StringCompany = "Toshiba EMI"; break;
-                case "0x0199": StringCompany = "Sony Imagesoft"; break;
-                case "0x019B": StringCompany = "Sammy"; break;
-                case "0x019C": StringCompany = "Magical"; break;
-                case "0x019D": StringCompany = "Visco"; break;
-                case "0x019F": StringCompany = "Compile"; break;
-                case "0x01A1": StringCompany = "MTO Inc."; break;
-                case "0x01A3": StringCompany = "Sunrise Interactive"; break;
-                case "0x01A5": StringCompany = "Global A Entertainment"; break;
-                case "0x01A6": StringCompany = "Fuuki"; break;
-                case "0x01B0": StringCompany = "Taito"; break;
-                case "0x01B2": StringCompany = "Kemco"; break;
-                case "0x01B3": StringCompany = "Square"; break;
-                case "0x01B4": StringCompany = "Tokuma Shoten"; break;
-                case "0x01B5": StringCompany = "Data East"; break;
-                case "0x01B6": StringCompany = "Tonkin House"; break;
-                case "0x01B8": StringCompany = "KOEI"; break;
-                case "0x01BA": StringCompany = "Konami/Ultra/Palcom"; break;
-                case "0x01BB": StringCompany = "NTVIC/VAP"; break;
-                case "0x01BC": StringCompany = "Use Co., Ltd."; break;
-                case "0x01BD": StringCompany = "Meldac"; break;
-                case "0x01BE": StringCompany = "Pony Canyon (Japan)/FCI (US)"; break;
-                case "0x01BF": StringCompany = "Angel/Sotsu Agency/Sunrise"; break;
-                case "0x01C0": StringCompany = "Yumedia/Aroma Co., Ltd."; break;
-                case "0x01C3": StringCompany = "Boss"; break;
-                case "0x01C4": StringCompany = "Axela/Crea-Tech"; break;
-                case "0x01C5": StringCompany = "Sekaibunka-Sha/Sumire kobo/Marigul Management Inc."; break;
-                case "0x01C6": StringCompany = "Konami Computer Entertainment Osaka"; break;
-                case "0x01C9": StringCompany = "Enterbrain"; break;
-                case "0x01D4": StringCompany = "Taito/Disco"; break;
-                case "0x01D5": StringCompany = "Sofel"; break;
-                case "0x01D6": StringCompany = "Quest Corp."; break;
-                case "0x01D7": StringCompany = "Sigma"; break;
-                case "0x01D8": StringCompany = "Ask Kodansha"; break;
-                case "0x01DA": StringCompany = "Naxat"; break;
-                case "0x01DB": StringCompany = "Copya System"; break;
-                case "0x01DC": StringCompany = "Capcom Co., Ltd."; break;
-                case "0x01DD": StringCompany = "Banpresto"; break;
-                case "0x01DE": StringCompany = "TOMY"; break;
-                case "0x01DF": StringCompany = "Acclaim/LJN Japan"; break;
-                case "0x01E1": StringCompany = "NCS"; break;
-                case "0x01E2": StringCompany = "Human Entertainment"; break;
-                case "0x01E3": StringCompany = "Altron"; break;
-                case "0x01E4": StringCompany = "Jaleco"; break;
-                case "0x01E5": StringCompany = "Gaps Inc."; break;
-                case "0x01EB": StringCompany = "Elf"; break;
-                case "0x01F8": StringCompany = "Jaleco"; break;
-                case "0x01FA": StringCompany = "Yutaka"; break;
-                case "0x01FB": StringCompany = "Varie"; break;
-                case "0x01FC": StringCompany = "T&ESoft"; break;
-                case "0x01FD": StringCompany = "Epoch Co., Ltd."; break;
-                case "0x01FF": StringCompany = "Athena"; break;
-                case "0x0200": StringCompany = "Asmik"; break;
-                case "0x0201": StringCompany = "Natsume"; break;
-                case "0x0202": StringCompany = "King Records"; break;
-                case "0x0203": StringCompany = "Atlus"; break;
-                case "0x0204": StringCompany = "Epic/Sony Records (Japan)"; break;
-                case "0x0206": StringCompany = "IGS (Information Global Service)"; break;
-                case "0x0208": StringCompany = "Chatnoir"; break;
-                case "0x0209": StringCompany = "Right Stuff"; break;
-                case "0x020B": StringCompany = "NTT COMWARE"; break;
-                case "0x020D": StringCompany = "Spike"; break;
-                case "0x020E": StringCompany = "Konami Computer Entertainment Tokyo"; break;
-                case "0x020F": StringCompany = "Alphadream Corp."; break;
-                case "0x0211": StringCompany = "Sting"; break;
-                case "0x021C": StringCompany = "A Wave"; break;
-                case "0x021D": StringCompany = "Motown Software"; break;
-                case "0x021E": StringCompany = "Left Field Entertainment"; break;
-                case "0x021F": StringCompany = "Extreme Entertainment Group"; break;
-                case "0x0220": StringCompany = "TecMagik"; break;
-                case "0x0225": StringCompany = "Cybersoft"; break;
-                case "0x0227": StringCompany = "Psygnosis"; break;
-                case "0x022A": StringCompany = "Davidson/Western Tech."; break;
-                case "0x022B": StringCompany = "Unlicensed"; break;
-                case "0x0230": StringCompany = "The Game Factory Europe"; break;
-                case "0x0231": StringCompany = "Hip Games"; break;
-                case "0x0232": StringCompany = "Aspyr"; break;
-                case "0x0235": StringCompany = "Mastiff"; break;
-                case "0x0236": StringCompany = "iQue"; break;
-                case "0x0237": StringCompany = "Digital Tainment Pool"; break;
-                case "0x0238": StringCompany = "XS Games"; break;
-                case "0x0239": StringCompany = "Daiwon"; break;
-                case "0x0241": StringCompany = "PCCW Japan"; break;
-                case "0x0244": StringCompany = "KiKi Co. Ltd."; break;
-                case "0x0245": StringCompany = "Open Sesame Inc."; break;
-                case "0x0246": StringCompany = "Sims"; break;
-                case "0x0247": StringCompany = "Broccoli"; break;
-                case "0x0248": StringCompany = "Avex"; break;
-                case "0x0249": StringCompany = "D3 Publisher"; break;
-                case "0x024B": StringCompany = "Konami Computer Entertainment Japan"; break;
-                case "0x024D": StringCompany = "Square-Enix"; break;
-                case "0x024E": StringCompany = "KSG"; break;
-                case "0x024F": StringCompany = "Micott & Basara Inc."; break;
-                case "0x0251": StringCompany = "Orbital Media"; break;
-                case "0x0262": StringCompany = "The Game Factory USA"; break;
-                case "0x0265": StringCompany = "Treasure"; break;
-                case "0x0266": StringCompany = "Aruze"; break;
-                case "0x0267": StringCompany = "Ertain"; break;
-                case "0x0268": StringCompany = "SNK Playmore"; break;
-                case "0x0299": StringCompany = "Yojigen"; break;
-                default: StringCompany = "Unknown"; break;
+                StringCompany = SNESROMList.Company["0x" + IntCompany.ToString("X4")];
             }
+
+            catch
+            {
+                StringCompany = "Unknown";
+            }
+            
         }
 
         private void GetChecksum()

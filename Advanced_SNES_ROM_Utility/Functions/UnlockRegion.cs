@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using Advanced_SNES_ROM_Utility.Helper;
 
-namespace Advanced_SNES_ROM_Utility
+namespace Advanced_SNES_ROM_Utility.Functions
 {
-    public partial class SNESROM
+    public static partial class SNESROMFunction
     {
-        public bool UnlockRegion(bool unlock)
+        public static bool UnlockRegion(this SNESROM sourceROM, bool unlock)
         {
             IDictionary<string, string> lockingCodeDictionary = new Dictionary<string, string>();
 
-            if (StringRegion.Equals("PAL"))
+            if (sourceROM.StringRegion.Equals("PAL"))
             {
                 lockingCodeDictionary.Add(@"(AD3F21291000)(D0)", "$1 80");
                 lockingCodeDictionary.Add(@"(AD3F21)(891000D0)", "A9 10 00 $2");
@@ -60,7 +61,7 @@ namespace Advanced_SNES_ROM_Utility
                 lockingCodeDictionary.Add(@"(A1C0CA10F838)(EFEFFFC1)", "$1 EA A9 00 00");
             }
 
-            return FindAndReplaceByRegEx(lockingCodeDictionary, unlock);
+            return SNESROMHelper.FindAndReplaceByRegEx(sourceROM, lockingCodeDictionary, unlock);
         }
     }
 }
