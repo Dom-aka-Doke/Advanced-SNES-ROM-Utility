@@ -41,7 +41,7 @@
             this.buttonManualClose.TabIndex = 8;
             this.buttonManualClose.Text = "Close";
             this.buttonManualClose.UseVisualStyleBackColor = true;
-            this.buttonManualClose.Click += new System.EventHandler(this.buttonManualClose_Click);
+            this.buttonManualClose.Click += new System.EventHandler(this.ButtonManualClose_Click);
             // 
             // webBrowserHelp
             // 

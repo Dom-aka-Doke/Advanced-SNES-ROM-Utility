@@ -10,12 +10,12 @@ namespace Advanced_SNES_ROM_Utility
             InitializeComponent();
         }
 
-        private void buttonAboutClose_Click(object sender, EventArgs e)
+        private void ButtonAboutClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
-        private void linkLabelAboutCommunityLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void LinkLabelAboutCommunityLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace Advanced_SNES_ROM_Utility
             }
         }
 
-        private void linkLabelAboutLogo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void LinkLabelAboutLogo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
             {

@@ -89,6 +89,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetOptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.manualToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkBoxExpandMirroring = new System.Windows.Forms.CheckBox();
@@ -96,6 +97,7 @@
             this.checkBoxScan = new System.Windows.Forms.CheckBox();
             this.buttonScan = new System.Windows.Forms.Button();
             this.buttonConvertMapMode = new System.Windows.Forms.Button();
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxInfo.SuspendLayout();
             this.groupBoxChecksums.SuspendLayout();
             this.groupBoxROMInfo.SuspendLayout();
@@ -708,6 +710,7 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -716,32 +719,40 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(93, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.resetOptionsToolStripMenuItem,
             this.manualToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
+            // resetOptionsToolStripMenuItem
+            // 
+            this.resetOptionsToolStripMenuItem.Name = "resetOptionsToolStripMenuItem";
+            this.resetOptionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.resetOptionsToolStripMenuItem.Text = "Reset Options";
+            this.resetOptionsToolStripMenuItem.Click += new System.EventHandler(this.ResetOptionsToolStripMenuItem_Click);
+            // 
             // manualToolStripMenuItem
             // 
             this.manualToolStripMenuItem.Name = "manualToolStripMenuItem";
-            this.manualToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.manualToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.manualToolStripMenuItem.Text = "Manual";
-            this.manualToolStripMenuItem.Click += new System.EventHandler(this.manualToolStripMenuItem_Click);
+            this.manualToolStripMenuItem.Click += new System.EventHandler(this.ManualToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             // 
             // checkBoxExpandMirroring
             // 
@@ -753,7 +764,7 @@
             this.checkBoxExpandMirroring.TabIndex = 69;
             this.checkBoxExpandMirroring.Text = "Mirror ROM on expanding";
             this.checkBoxExpandMirroring.UseVisualStyleBackColor = true;
-            this.checkBoxExpandMirroring.CheckedChanged += new System.EventHandler(this.checkBoxExpandMirroring_CheckedChanged);
+            this.checkBoxExpandMirroring.CheckedChanged += new System.EventHandler(this.CheckBoxExpandMirroring_CheckedChanged);
             // 
             // groupBoxOptions
             // 
@@ -776,7 +787,7 @@
             this.checkBoxScan.TabIndex = 70;
             this.checkBoxScan.Text = "Scan protections on loading";
             this.checkBoxScan.UseVisualStyleBackColor = true;
-            this.checkBoxScan.CheckedChanged += new System.EventHandler(this.checkBoxScan_CheckedChanged);
+            this.checkBoxScan.CheckedChanged += new System.EventHandler(this.CheckBoxScan_CheckedChanged);
             // 
             // buttonScan
             // 
@@ -787,7 +798,7 @@
             this.buttonScan.TabIndex = 72;
             this.buttonScan.Text = "Scan";
             this.buttonScan.UseVisualStyleBackColor = true;
-            this.buttonScan.Click += new System.EventHandler(this.buttonScan_Click);
+            this.buttonScan.Click += new System.EventHandler(this.ButtonScan_Click);
             // 
             // buttonConvertMapMode
             // 
@@ -798,7 +809,14 @@
             this.buttonConvertMapMode.TabIndex = 73;
             this.buttonConvertMapMode.Text = "LoROM <-> HiROM";
             this.buttonConvertMapMode.UseVisualStyleBackColor = true;
-            this.buttonConvertMapMode.Click += new System.EventHandler(this.buttonConvertMapMode_Click);
+            this.buttonConvertMapMode.Click += new System.EventHandler(this.ButtonConvertMapMode_Click);
+            // 
+            // openToolStripMenuItem
+            // 
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -921,6 +939,8 @@
         private System.Windows.Forms.CheckBox checkBoxScan;
         private System.Windows.Forms.Button buttonScan;
         private System.Windows.Forms.Button buttonConvertMapMode;
+        private System.Windows.Forms.ToolStripMenuItem resetOptionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
     }
 }
 

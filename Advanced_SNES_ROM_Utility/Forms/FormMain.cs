@@ -179,26 +179,24 @@ namespace Advanced_SNES_ROM_Utility
 
         private void ButtonSlowROMFix_Click(object sender, EventArgs e)
         {
-            DialogResult dialogResult = MessageBox.Show("Removing SlowROM checks from a FastROM will force this ROM into SlowROM mode.\n\n" +
-                                                        "This might cause some slow downs while playing.\n\n" +
-                                                        "It isn't really recommended or necessary to do this anymore.\n\n" +
-                                                        "This only makes sense, if you want to play this ROM on a device slower than 120ns.\n\n\n" +
-                                                        "Do you want to proceed anyway?", "Attention!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-            if (dialogResult == DialogResult.Yes)
+            if (!Properties.Settings.Default.SlowROMFixMessage)
             {
-                Cursor = Cursors.WaitCursor;
-                _sourceROM.RemoveSlowROMChecks(true);
-                RefreshLabelsAndButtons();
-                // Set button manually, because RefreshLabelsAndButtons doesn't do that for performace reasons
-                buttonFixSlowROMChecks.Enabled = false;
-                Cursor = Cursors.Arrow;
+                DialogResult dialogResult = new DialogResult();
+                FormSlowROMFix slowromfixForm = new FormSlowROMFix();
+                dialogResult = slowromfixForm.ShowDialog();
+
+                if (dialogResult == DialogResult.No)
+                {
+                    return;
+                }
             }
 
-            else
-            {
-                return;
-            }
+            Cursor = Cursors.WaitCursor;
+            _sourceROM.RemoveSlowROMChecks(true);
+            RefreshLabelsAndButtons();
+            // Set button manually, because RefreshLabelsAndButtons doesn't do that for performace reasons
+            buttonFixSlowROMChecks.Enabled = false;
+            Cursor = Cursors.Arrow;
         }
 
         private void ButtonFixSRAMChecks_Click(object sender, EventArgs e)
@@ -269,24 +267,22 @@ namespace Advanced_SNES_ROM_Utility
             }
         }
 
-        private void buttonConvertMapMode_Click(object sender, EventArgs e)
+        private void ButtonConvertMapMode_Click(object sender, EventArgs e)
         {
-            DialogResult dialogResult = MessageBox.Show("Converting map mode from LoROM <-> HiROM might not work in every case.\n\n" +
-                                            "This will only rearrange ROM banks to fit the right memory format.\n\n" +
-                                            "If your ROM uses (S)RAM or enhancement chips, you have to do some manual corrections.\n\n" +
-                                            "You should always test your ROM in detail after doing this operation.\n\n\n" +
-                                            "Do you want to proceed anyway?", "Attention!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-            if (dialogResult == DialogResult.Yes)
+            if (!Properties.Settings.Default.ConvertMapModeMessage)
             {
-                _sourceROM.ConvertMapMode();
-                RefreshLabelsAndButtons();
+                DialogResult dialogResult = new DialogResult();
+                FormConvertMapMode convertmapmodeForm = new FormConvertMapMode();
+                dialogResult = convertmapmodeForm.ShowDialog();
+
+                if (dialogResult == DialogResult.No)
+                {
+                    return;
+                }
             }
 
-            else
-            {
-                return;
-            }
+            _sourceROM.ConvertMapMode();
+            RefreshLabelsAndButtons();
         }
 
         private void ButtonSave_Click(object sender, EventArgs e)
@@ -497,7 +493,7 @@ namespace Advanced_SNES_ROM_Utility
             return tempFileHash;
         }
 
-        private void buttonScan_Click(object sender, EventArgs e)
+        private void ButtonScan_Click(object sender, EventArgs e)
         {
             ScanCopyProtections();
         }
@@ -558,7 +554,7 @@ namespace Advanced_SNES_ROM_Utility
             }
         }
 
-        private void checkBoxExpandMirroring_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxExpandMirroring_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBoxExpandMirroring.Checked)
             {
@@ -574,7 +570,7 @@ namespace Advanced_SNES_ROM_Utility
             RefreshComboBoxExpandROMList();
         }
 
-        private void checkBoxScan_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxScan_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBoxScan.Checked)
             {
@@ -671,18 +667,45 @@ namespace Advanced_SNES_ROM_Utility
             }
         }
 
-        private void manualToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ResetOptionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult dialogResult = MessageBox.Show("This will reset all your saved settings and\n" +
+                                                        "restore all your suppressed dialog messages.\n\n" +
+                                                        "Do you want to proceed?", "Attention!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                checkBoxExpandMirroring.Checked = false;
+                checkBoxScan.Checked = false;
+                Properties.Settings.Default.SlowROMFixMessage = false;
+                Properties.Settings.Default.ConvertMapModeMessage = false;
+                Properties.Settings.Default.Save();
+            }
+
+            else
+            {
+                return;
+            }
+        }
+
+        private void ManualToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FormHelp helpForm = new FormHelp();
             helpForm.Show();
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FormAbout aboutForm = new FormAbout();
             aboutForm.Show();
         }
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+
+        private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            buttonSelectROM.PerformClick();
+        }
+
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
         }

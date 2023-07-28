@@ -16,7 +16,7 @@ namespace Advanced_SNES_ROM_Utility
             webBrowserHelp.DocumentText = reader.ReadToEnd();
         }
 
-        private void buttonManualClose_Click(object sender, EventArgs e)
+        private void ButtonManualClose_Click(object sender, EventArgs e)
         {
             Close();
         }

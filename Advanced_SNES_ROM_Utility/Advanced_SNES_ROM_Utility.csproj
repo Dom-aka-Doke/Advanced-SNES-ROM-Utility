@@ -119,6 +119,18 @@
   <ItemGroup>
     <Compile Include="Converter\Expand.cs" />
     <Compile Include="Converter\Split.cs" />
+    <Compile Include="Forms\FormConvertMapMode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormConvertMapMode.Designer.cs">
+      <DependentUpon>FormConvertMapMode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormSlowROMFix.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormSlowROMFix.Designer.cs">
+      <DependentUpon>FormSlowROMFix.cs</DependentUpon>
+    </Compile>
     <Compile Include="Lists\DictionaryCompany.cs" />
     <Compile Include="Lists\ListCountryRegion.cs" />
     <Compile Include="Enums\EnumHeaderValue.cs" />
@@ -158,12 +170,6 @@
     <Compile Include="Forms\FormChooseCopier.Designer.cs">
       <DependentUpon>FormChooseCopier.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormCompanySelect.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormCompanySelect.Designer.cs">
-      <DependentUpon>FormCompanySelect.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\FormAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -182,20 +188,23 @@
     <Compile Include="Models\SNESROM.cs" />
     <Compile Include="Patcher\UPS.cs" />
     <Compile Include="Patcher\XDELTA.cs" />
+    <EmbeddedResource Include="Forms\FormConvertMapMode.resx">
+      <DependentUpon>FormConvertMapMode.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormChooseCopier.resx">
       <DependentUpon>FormChooseCopier.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormCompanySelect.resx">
-      <DependentUpon>FormCompanySelect.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormAbout.resx">
       <DependentUpon>FormAbout.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormHelp.resx">
       <DependentUpon>FormHelp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormSlowROMFix.resx">
+      <DependentUpon>FormSlowROMFix.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

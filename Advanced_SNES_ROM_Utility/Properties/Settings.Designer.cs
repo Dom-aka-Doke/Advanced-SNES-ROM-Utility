@@ -46,5 +46,29 @@ namespace Advanced_SNES_ROM_Utility.Properties {
                 this["ScanROMSetting"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SlowROMFixMessage {
+            get {
+                return ((bool)(this["SlowROMFixMessage"]));
+            }
+            set {
+                this["SlowROMFixMessage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ConvertMapModeMessage {
+            get {
+                return ((bool)(this["ConvertMapModeMessage"]));
+            }
+            set {
+                this["ConvertMapModeMessage"] = value;
+            }
+        }
     }
 }

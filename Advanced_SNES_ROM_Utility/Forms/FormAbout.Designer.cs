@@ -49,7 +49,7 @@
             this.buttonAboutClose.TabIndex = 0;
             this.buttonAboutClose.Text = "Close";
             this.buttonAboutClose.UseVisualStyleBackColor = true;
-            this.buttonAboutClose.Click += new System.EventHandler(this.buttonAboutClose_Click);
+            this.buttonAboutClose.Click += new System.EventHandler(this.ButtonAboutClose_Click);
             // 
             // labelAboutLicense
             // 
@@ -79,7 +79,7 @@
             this.linkLabelAboutLogo.TabIndex = 3;
             this.linkLabelAboutLogo.TabStop = true;
             this.linkLabelAboutLogo.Text = "http://www.iconarchive.com/artist/chrisbanks2.html";
-            this.linkLabelAboutLogo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelAboutLogo_LinkClicked);
+            this.linkLabelAboutLogo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabelAboutLogo_LinkClicked);
             // 
             // labelAboutSpeicalThanks
             // 
@@ -101,7 +101,7 @@
             this.linkLabelAboutCommunityLink.TabIndex = 5;
             this.linkLabelAboutCommunityLink.TabStop = true;
             this.linkLabelAboutCommunityLink.Text = "snes-projects.de";
-            this.linkLabelAboutCommunityLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelAboutCommunityLink_LinkClicked);
+            this.linkLabelAboutCommunityLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabelAboutCommunityLink_LinkClicked);
             // 
             // groupBox1
             // 
