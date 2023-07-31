@@ -118,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converter\Expand.cs" />
+    <Compile Include="Converter\Interleave.cs" />
     <Compile Include="Converter\Split.cs" />
     <Compile Include="Forms\FormConvertMapMode.cs">
       <SubType>Form</SubType>

@@ -87,6 +87,7 @@
             this.buttonFixSRAMChecks = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetOptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -97,7 +98,7 @@
             this.checkBoxScan = new System.Windows.Forms.CheckBox();
             this.buttonScan = new System.Windows.Forms.Button();
             this.buttonConvertMapMode = new System.Windows.Forms.Button();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buttonInterleave = new System.Windows.Forms.Button();
             this.groupBoxInfo.SuspendLayout();
             this.groupBoxChecksums.SuspendLayout();
             this.groupBoxROMInfo.SuspendLayout();
@@ -502,7 +503,7 @@
             this.buttonDeinterleave.Enabled = false;
             this.buttonDeinterleave.Location = new System.Drawing.Point(363, 360);
             this.buttonDeinterleave.Name = "buttonDeinterleave";
-            this.buttonDeinterleave.Size = new System.Drawing.Size(169, 23);
+            this.buttonDeinterleave.Size = new System.Drawing.Size(80, 23);
             this.buttonDeinterleave.TabIndex = 49;
             this.buttonDeinterleave.Text = "Deinterleave";
             this.buttonDeinterleave.UseVisualStyleBackColor = true;
@@ -716,10 +717,17 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
+            // openToolStripMenuItem
+            // 
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
+            // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -736,21 +744,21 @@
             // resetOptionsToolStripMenuItem
             // 
             this.resetOptionsToolStripMenuItem.Name = "resetOptionsToolStripMenuItem";
-            this.resetOptionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.resetOptionsToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.resetOptionsToolStripMenuItem.Text = "Reset Options";
             this.resetOptionsToolStripMenuItem.Click += new System.EventHandler(this.ResetOptionsToolStripMenuItem_Click);
             // 
             // manualToolStripMenuItem
             // 
             this.manualToolStripMenuItem.Name = "manualToolStripMenuItem";
-            this.manualToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.manualToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.manualToolStripMenuItem.Text = "Manual";
             this.manualToolStripMenuItem.Click += new System.EventHandler(this.ManualToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             // 
@@ -811,18 +819,23 @@
             this.buttonConvertMapMode.UseVisualStyleBackColor = true;
             this.buttonConvertMapMode.Click += new System.EventHandler(this.ButtonConvertMapMode_Click);
             // 
-            // openToolStripMenuItem
+            // buttonInterleave
             // 
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.openToolStripMenuItem.Text = "Open";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
+            this.buttonInterleave.Enabled = false;
+            this.buttonInterleave.Location = new System.Drawing.Point(451, 360);
+            this.buttonInterleave.Name = "buttonInterleave";
+            this.buttonInterleave.Size = new System.Drawing.Size(80, 23);
+            this.buttonInterleave.TabIndex = 74;
+            this.buttonInterleave.Text = "Interleave";
+            this.buttonInterleave.UseVisualStyleBackColor = true;
+            this.buttonInterleave.Click += new System.EventHandler(this.ButtonInterleave_Click);
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(545, 508);
+            this.Controls.Add(this.buttonInterleave);
             this.Controls.Add(this.buttonConvertMapMode);
             this.Controls.Add(this.buttonScan);
             this.Controls.Add(this.groupBoxOptions);
@@ -941,6 +954,7 @@
         private System.Windows.Forms.Button buttonConvertMapMode;
         private System.Windows.Forms.ToolStripMenuItem resetOptionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.Button buttonInterleave;
     }
 }
 

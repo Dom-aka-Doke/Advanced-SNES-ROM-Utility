@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
@@ -7,7 +6,7 @@ namespace Advanced_SNES_ROM_Utility.Converter
 {
     public static partial class SNESROMConvert
     {
-        public static void Deinterlave(this SNESROM sourceROM)
+        public static void Deinterleave(this SNESROM sourceROM)
         {
             byte[] ufoTitle = new byte[8];
             byte[] gdTitle = new byte[14];

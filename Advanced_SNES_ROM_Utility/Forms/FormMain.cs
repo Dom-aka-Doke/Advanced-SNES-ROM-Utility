@@ -157,7 +157,13 @@ namespace Advanced_SNES_ROM_Utility
 
         private void ButtonDeinterleave_Click(object sender, EventArgs e)
         {
-            _sourceROM.Deinterlave();
+            _sourceROM.Deinterleave();
+            RefreshLabelsAndButtons();
+        }
+
+        private void ButtonInterleave_Click(object sender, EventArgs e)
+        {
+            _sourceROM.Interleave();
             RefreshLabelsAndButtons();
         }
 
@@ -474,7 +480,8 @@ namespace Advanced_SNES_ROM_Utility
             if (_sourceROM.SourceROM.Length % 1048576 == 0) { buttonSwapBinROM.Enabled = true; } else { buttonSwapBinROM.Enabled = false; }
             if (!_sourceROM.IsInterleaved && (_sourceROM.ByteMapMode == (byte)MapMode.lorom_1 || _sourceROM.ByteMapMode == (byte)MapMode.lorom_2 || _sourceROM.ByteMapMode == (byte)MapMode.hirom_1 || _sourceROM.ByteMapMode == (byte)MapMode.hirom_2)) { buttonConvertMapMode.Enabled = true; } else { buttonConvertMapMode.Enabled = false; }
             if (_sourceROM.IntROMSize < _sourceROM.IntCalcFileSize || _sourceROM.IntCalcFileSize <= (_sourceROM.IntROMSize / 2)) { buttonFixROMSize.Enabled = true; } else { buttonFixROMSize.Enabled = false; }
-            if (_sourceROM.IsInterleaved) { buttonDeinterleave.Enabled = true; buttonFixChksm.Enabled = false; return; } else { buttonDeinterleave.Enabled = false; }
+            if (!_sourceROM.IsInterleaved) { buttonInterleave.Enabled = true; buttonDeinterleave.Enabled = false; }
+            if (_sourceROM.IsInterleaved) { buttonDeinterleave.Enabled = true; buttonInterleave.Enabled = false; buttonFixChksm.Enabled = false; return; }
             if (!_sourceROM.ByteArrayChecksum.SequenceEqual(_sourceROM.ByteArrayCalcChecksum)) { buttonFixChksm.Enabled = true; } else { buttonFixChksm.Enabled = false; }
         }
 
