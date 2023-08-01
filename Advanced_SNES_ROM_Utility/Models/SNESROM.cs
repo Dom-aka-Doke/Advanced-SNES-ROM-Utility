@@ -234,23 +234,25 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             ByteMapMode = mapMode[0];
+
+            // ROM that contains oversized title which overwrites the map mode byte, but actually is LoROM (if not expanded or converted to ExLoROM, HiROM or ExHiROM)
+            if (StringTitle.Equals("YUYU NO QUIZ DE GO!GO"))
+            {
+                switch (UIntROMHeaderOffset)
+                {
+                    case (uint)HeaderOffset.lorom: ByteMapMode = (byte)MapMode.lorom_1; break;
+                    case (uint)HeaderOffset.exlorom: ByteMapMode = (byte)MapMode.exlorom; break;
+                    case (uint)HeaderOffset.hirom: ByteMapMode = (byte)MapMode.hirom_1; break;
+                    case (uint)HeaderOffset.exhirom: ByteMapMode = (byte)MapMode.exhirom_1; break;
+                }
+            }
+
             StringMapMode = string.IsNullOrEmpty(SNESROMHelper.GetEnumDescription((MapMode)ByteMapMode)) ? "Unknown" : SNESROMHelper.GetEnumDescription((MapMode)ByteMapMode);
 
+            // Check if the ROM is interleaved
             if (StringMapMode.Contains(SNESROMHelper.GetEnumDescription((MapMode)0x21)) && (UIntROMHeaderOffset == (uint)HeaderOffset.lorom || UIntROMHeaderOffset == (uint)HeaderOffset.exlorom))
             {
                 IsInterleaved = true;
-            }
-
-            // ROM that contains oversized title which overwrites the map mode byte, but actually is LoROM
-            if (StringTitle.Equals("YUYU NO QUIZ DE GO!GO"))
-            {
-                StringMapMode = SNESROMHelper.GetEnumDescription((MapMode)0x20);
-
-                // If this ROM is not interleaved set it as not interleaved
-                if (UIntROMHeaderOffset == (uint)HeaderOffset.lorom)
-                {
-                    IsInterleaved = false;
-                }
             }
         }
 

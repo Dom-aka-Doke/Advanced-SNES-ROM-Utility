@@ -117,17 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label1.Text" xml:space="preserve">
-    <value>ROM file has no or an unknown copier header, but seems to be interleaved.
-
-Deinterleaving it anyway might result in a messed up ROM file.
-
-You now can go on by selecting a supported copier format or use standard deinterleaving.
-
-Do this at your own risk! Don't proceed if you don't know exactly what you're doing!
-
-Always verify your ROM by loading it in an emulator!</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

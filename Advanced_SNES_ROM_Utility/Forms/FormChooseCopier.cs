@@ -4,9 +4,11 @@ namespace Advanced_SNES_ROM_Utility
 {
     public partial class FormChooseCopier : Form
     {
-        public FormChooseCopier()
+        public FormChooseCopier(string chooseCopierText)
         {
             InitializeComponent();
+
+            labelCopierText.Text = chooseCopierText;
         }
     }
 }
