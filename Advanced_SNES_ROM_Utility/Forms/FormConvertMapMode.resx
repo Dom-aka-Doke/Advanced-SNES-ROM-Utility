@@ -124,7 +124,10 @@ every case.
 This will only rearrange ROM banks to fit the right memory format.
 
 If your ROM uses (S)RAM or enhancement chips, you have to do some
-manual corrections.
+manual work after converting.
+
+Converting HiROM to LoROM only works, if the ROM was designed to
+be convertible.
 
 You should always test your ROM in detail after doing this operation.
 

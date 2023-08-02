@@ -42,7 +42,7 @@
             this.labelConvertMapModeMessage.AutoSize = true;
             this.labelConvertMapModeMessage.Location = new System.Drawing.Point(68, 9);
             this.labelConvertMapModeMessage.Name = "labelConvertMapModeMessage";
-            this.labelConvertMapModeMessage.Size = new System.Drawing.Size(342, 143);
+            this.labelConvertMapModeMessage.Size = new System.Drawing.Size(342, 182);
             this.labelConvertMapModeMessage.TabIndex = 0;
             this.labelConvertMapModeMessage.Text = resources.GetString("labelConvertMapModeMessage.Text");
             // 
@@ -57,7 +57,7 @@
             // buttonYes
             // 
             this.buttonYes.DialogResult = System.Windows.Forms.DialogResult.Yes;
-            this.buttonYes.Location = new System.Drawing.Point(258, 164);
+            this.buttonYes.Location = new System.Drawing.Point(258, 208);
             this.buttonYes.Name = "buttonYes";
             this.buttonYes.Size = new System.Drawing.Size(75, 23);
             this.buttonYes.TabIndex = 2;
@@ -67,7 +67,7 @@
             // buttonNo
             // 
             this.buttonNo.DialogResult = System.Windows.Forms.DialogResult.No;
-            this.buttonNo.Location = new System.Drawing.Point(339, 164);
+            this.buttonNo.Location = new System.Drawing.Point(339, 208);
             this.buttonNo.Name = "buttonNo";
             this.buttonNo.Size = new System.Drawing.Size(75, 23);
             this.buttonNo.TabIndex = 3;
@@ -77,7 +77,7 @@
             // checkBoxDontShowAgain
             // 
             this.checkBoxDontShowAgain.AutoSize = true;
-            this.checkBoxDontShowAgain.Location = new System.Drawing.Point(71, 168);
+            this.checkBoxDontShowAgain.Location = new System.Drawing.Point(71, 212);
             this.checkBoxDontShowAgain.Name = "checkBoxDontShowAgain";
             this.checkBoxDontShowAgain.Size = new System.Drawing.Size(172, 17);
             this.checkBoxDontShowAgain.TabIndex = 4;
@@ -89,7 +89,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(426, 199);
+            this.ClientSize = new System.Drawing.Size(426, 240);
             this.Controls.Add(this.checkBoxDontShowAgain);
             this.Controls.Add(this.buttonNo);
             this.Controls.Add(this.buttonYes);
