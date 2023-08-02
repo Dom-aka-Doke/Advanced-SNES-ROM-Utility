@@ -48,7 +48,7 @@ namespace Advanced_SNES_ROM_Utility.Converter
             // HiROM -> LoROM
             // https://github.com/pimaster/LoHiROM/blob/Allow-High-to-Low-conversion
 
-            else if (!sourceROM.IsInterleaved && (sourceROM.ByteMapMode == (byte)MapMode.hirom_1 || sourceROM.ByteMapMode == (byte)MapMode.hirom_2))
+            else if (!sourceROM.IsInterleaved && (sourceROM.ByteMapMode == (byte)MapMode.hirom_1 || sourceROM.ByteMapMode == (byte)MapMode.hirom_2 || sourceROM.ByteMapMode == (byte)MapMode.hirom_spc7110))
             {
                 try
                 {
