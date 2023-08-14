@@ -84,7 +84,7 @@ namespace Advanced_SNES_ROM_Utility
             Cursor = Cursors.WaitCursor;
 
             // Check if ROM contains region locks
-            if (_sourceROM.UnlockRegion(false))
+            if (_sourceROM.RemoveRegionChecks(false))
             {
                 buttonFixRegion.Enabled = true;
             }
@@ -176,7 +176,7 @@ namespace Advanced_SNES_ROM_Utility
         private void ButtonFixRegion_Click(object sender, EventArgs e)
         {
             Cursor = Cursors.WaitCursor;
-            _sourceROM.UnlockRegion(true);
+            _sourceROM.RemoveRegionChecks();
             RefreshLabelsAndButtons();
             // Set button manually, because RefreshLabelsAndButtons doesn't do that for performace reasons
             buttonFixRegion.Enabled = false;
@@ -678,7 +678,7 @@ namespace Advanced_SNES_ROM_Utility
         {
             DialogResult dialogResult = MessageBox.Show("This will reset all your saved settings and\n" +
                                                         "restore all your suppressed dialog messages.\n\n" +
-                                                        "Do you want to proceed?", "Attention!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                                                        "Do you want to proceed?", "Attention!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (dialogResult == DialogResult.Yes)
             {
@@ -687,6 +687,8 @@ namespace Advanced_SNES_ROM_Utility
                 Properties.Settings.Default.SlowROMFixMessage = false;
                 Properties.Settings.Default.ConvertMapModeMessage = false;
                 Properties.Settings.Default.Save();
+
+                MessageBox.Show("All settings have been reset successfully!", "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
             else

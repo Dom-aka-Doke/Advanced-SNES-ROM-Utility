@@ -149,7 +149,7 @@
     <Compile Include="Functions\RemoveHeader.cs" />
     <Compile Include="Functions\RemoveSlowROMChecks.cs" />
     <Compile Include="Functions\RemoveSRAMChecks.cs" />
-    <Compile Include="Functions\UnlockRegion.cs" />
+    <Compile Include="Functions\RemoveRegionChecks.cs" />
     <Compile Include="Helper\ReadEnumDescription.cs" />
     <Compile Include="Helper\RegExReplace.cs" />
     <Compile Include="Patcher\BDF.cs" />
