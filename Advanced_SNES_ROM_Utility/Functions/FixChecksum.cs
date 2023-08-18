@@ -6,7 +6,7 @@ namespace Advanced_SNES_ROM_Utility.Functions
     {
         public static void FixChecksum(this SNESROM sourceROM)
         {
-            uint offset = sourceROM.UIntROMHeaderOffset + 0x2C;
+            uint offset = sourceROM.UIntROMHeaderOffset + (uint)HeaderValue.inverse_checksum;
             byte[] newChksm = new byte[2];
             byte[] newInvChksm = new byte[2];
             byte[] newChksmSequence = new byte[4];

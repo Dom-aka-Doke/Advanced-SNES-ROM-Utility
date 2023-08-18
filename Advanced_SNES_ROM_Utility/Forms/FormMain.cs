@@ -198,7 +198,7 @@ namespace Advanced_SNES_ROM_Utility
             }
 
             Cursor = Cursors.WaitCursor;
-            _sourceROM.RemoveSlowROMChecks(true);
+            _sourceROM.RemoveSlowROMChecks();
             RefreshLabelsAndButtons();
             // Set button manually, because RefreshLabelsAndButtons doesn't do that for performace reasons
             buttonFixSlowROMChecks.Enabled = false;
@@ -208,7 +208,7 @@ namespace Advanced_SNES_ROM_Utility
         private void ButtonFixSRAMChecks_Click(object sender, EventArgs e)
         {
             Cursor = Cursors.WaitCursor;
-            _sourceROM.RemoveSRAMChecks(true);
+            _sourceROM.RemoveSRAMChecks();
             RefreshLabelsAndButtons();
             // Set button manually, because RefreshLabelsAndButtons doesn't do that for performace reasons
             buttonFixSRAMChecks.Enabled = false;

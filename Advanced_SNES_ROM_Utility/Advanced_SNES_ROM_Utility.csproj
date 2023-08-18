@@ -132,7 +132,7 @@
     <Compile Include="Forms\FormSlowROMFix.Designer.cs">
       <DependentUpon>FormSlowROMFix.cs</DependentUpon>
     </Compile>
-    <Compile Include="Lists\DictionaryCompany.cs" />
+    <Compile Include="Lists\ListCompany.cs" />
     <Compile Include="Lists\ListCountryRegion.cs" />
     <Compile Include="Enums\EnumHeaderValue.cs" />
     <Compile Include="Enums\EnumMapMode.cs" />
@@ -152,6 +152,7 @@
     <Compile Include="Functions\RemoveRegionChecks.cs" />
     <Compile Include="Helper\ReadEnumDescription.cs" />
     <Compile Include="Helper\RegExReplace.cs" />
+    <Compile Include="Lists\ListDeInterleave.cs" />
     <Compile Include="Patcher\BDF.cs" />
     <Compile Include="Patcher\BPS.cs" />
     <Compile Include="Converter\MapMode.cs" />

@@ -5,7 +5,7 @@ namespace Advanced_SNES_ROM_Utility.Functions
 {
     public static partial class SNESROMFunction
     {
-        public static bool RemoveSlowROMChecks(this SNESROM sourceROM, bool unlock)
+        public static bool RemoveSlowROMChecks(this SNESROM sourceROM, bool unlock = true)
         {
             IDictionary<string, string> lockingCodeDictionary = new Dictionary<string, string>();
 
