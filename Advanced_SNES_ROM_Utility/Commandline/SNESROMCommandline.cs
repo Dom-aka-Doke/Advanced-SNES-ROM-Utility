@@ -19,6 +19,7 @@ namespace Advanced_SNES_ROM_Utility.Commandline
         private static List<string> _cliParameters = new List<string>()
                 {
                     "-path",
+                    "-overwrite",
                     "-header",
                     "-fixchecksum",
                     "-fixromsize",
@@ -76,8 +77,7 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                             Console.WriteLine("\nCould not find any operation to execute");
                             break;
                         case 1:
-                            byte[] mergedSourceROM = CLIMergeROM(sourceROM);
-                            File.WriteAllBytes(Path.Combine(Path.GetDirectoryName(args[1]), Path.GetFileNameWithoutExtension(args[1]) + "-outfile" + Path.GetExtension(args[1])), mergedSourceROM);
+                            CLISave(sourceROM, args[1], inputParameters.Contains("-overwrite") ? true : false);
                             break;
                         case -1:
                             Console.WriteLine("\nExecution stopped!\nPlease check your arguments and parameters and try again.");
@@ -105,8 +105,7 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                             case 0: Console.WriteLine("\nCould not find any operation to execute");
                                 break;
                             case 1:
-                                byte[] mergedSourceROM = CLIMergeROM(sourceROM);
-                                File.WriteAllBytes(Path.Combine(Path.GetDirectoryName(args[1]), Path.GetFileNameWithoutExtension(args[1]) + "-outfile" + Path.GetExtension(args[1])), mergedSourceROM);
+                                CLISave(sourceROM, args[1], inputParameters.Contains("-overwrite") ? true : false);
                                 break;
                             case -1: Console.WriteLine("\nExecution stopped!\nPlease check your arguments and parameters and try again.");
                                 break;
@@ -229,6 +228,13 @@ namespace Advanced_SNES_ROM_Utility.Commandline
             }
         }
 
+        private static void CLISave(SNESROM sourceROM, string path, bool overwrite)
+        {
+            string nameExtension = overwrite ? string.Empty : "-outfile";
+            byte[] mergedSourceROM = CLIMergeROM(sourceROM);
+            File.WriteAllBytes(Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path) + nameExtension + Path.GetExtension(path)), mergedSourceROM);
+        }
+
         private static byte[] CLIMergeROM(SNESROM sourceROM)
         {
             byte[] mergedSourceROM = new byte[sourceROM.SourceROM.Length + sourceROM.UIntSMCHeader];
@@ -257,6 +263,7 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                               "\n" +
                                   "\tOptions:\n" +
                                      "\t\t-path <FILEPATH, FOLDER>\tThe path or folder to ROM file(s)\n" +
+                                     "\t\t-overwrite\t\t\tDetermines whether overwriting files or save with an extension\n" +
                                      "\t\t-header <add, remove>\t\tDetermines whether a header should be added or removed\n" +
                                      "\t\t-fixchecksum\t\t\tDetermines whether a broken checksum should be fixed\n" +
                                      "\t\t-fixromsize\t\t\tDetermines whether a wrong internal ROM size information should be fixed\n" +
