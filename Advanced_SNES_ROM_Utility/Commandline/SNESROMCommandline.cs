@@ -42,13 +42,6 @@ namespace Advanced_SNES_ROM_Utility.Commandline
             
             // Collect arguments
             List<string> inputParameters = args.Where(arg => arg.StartsWith("-")).ToList();
-
-            // Return codes
-            /*  0 = noting happened
-             *  1 = successful
-             * -1 = error -> execution stopped
-             * -2 = failed to execute operation on file (skip)
-             */
             int returnCode = 0;
 
             // Print help if invalid argument was found or user wants to display help
@@ -69,26 +62,7 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                 if (args.Length > 1 && File.Exists(args[1]) && _cliFileExtensions.Contains(Path.GetExtension(args[1])))
                 {
                     SNESROM sourceROM = new SNESROM(args[1]);
-                    returnCode = CLIProcessFile(sourceROM, args);
-
-                    switch (returnCode)
-                    {
-                        case 0:
-                            Console.WriteLine("\nCould not find any operation to execute");
-                            break;
-                        case 1:
-                            CLISave(sourceROM, args[1], inputParameters.Contains("-overwrite") ? true : false);
-                            break;
-                        case -1:
-                            Console.WriteLine("\nExecution stopped!\nPlease check your arguments and parameters and try again.");
-                            break;
-                        case 2:
-                            Console.WriteLine("\nFailed to execute operation -> skip");
-                            break;
-                        default:
-                            Console.WriteLine("\nHuh! Something unexpected happened!");
-                            break;
-                    }
+                    CLIHandleReturnCode(CLIProcessFile(sourceROM, args), sourceROM, args[1], inputParameters);
                 }
 
                 else if (args.Length > 1 && Directory.Exists(args[1]))
@@ -98,21 +72,11 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                     foreach (string file in files)
                     {
                         SNESROM sourceROM = new SNESROM(file);
-                        returnCode = CLIProcessFile(sourceROM, args);
+                        CLIHandleReturnCode(CLIProcessFile(sourceROM, args), sourceROM, file, inputParameters);
 
-                        switch (returnCode)
+                        if (returnCode == -1)
                         {
-                            case 0: Console.WriteLine("\nCould not find any operation to execute");
-                                break;
-                            case 1:
-                                CLISave(sourceROM, args[1], inputParameters.Contains("-overwrite") ? true : false);
-                                break;
-                            case -1: Console.WriteLine("\nExecution stopped!\nPlease check your arguments and parameters and try again.");
-                                break;
-                            case 2: Console.WriteLine("\nFailed to execute operation -> skip");
-                                break;
-                            default: Console.WriteLine("\nHuh! Something unexpected happened!");
-                                break;
+                            break;
                         }
                     }
                 }
@@ -126,6 +90,8 @@ namespace Advanced_SNES_ROM_Utility.Commandline
 
         private static int CLIProcessFile(this SNESROM sourceROM, string[] args)
         {
+            int returnCode = 0;
+
             if (args.Length > 2)
             {
                 for (int argPos = 2; argPos < args.Length; argPos++)
@@ -148,33 +114,73 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                                 return -1;
                             }
 
+                            if (returnCode == 0)
+                            {
+                                returnCode = 1;
+                            }
+
                             argPos++;
                             break;
 
                         case "-fixchecksum":
                             sourceROM.FixChecksum();
+                            
+                            if (returnCode == 0)
+                            {
+                                returnCode = 1;
+                            }
+
                             break;
 
                         case "-fixromsize":
                             sourceROM.FixInternalROMSize();
+
+                            if (returnCode == 0)
+                            {
+                                returnCode = 1;
+                            }
+
                             break;
 
                         case "-removeregion":
                             sourceROM.RemoveRegionChecks();
+
+                            if (returnCode == 0)
+                            {
+                                returnCode = 1;
+                            }
+
                             break;
 
                         case "-removesram":
                             sourceROM.RemoveSRAMChecks();
+
+                            if (returnCode == 0)
+                            {
+                                returnCode = 1;
+                            }
+
                             break;
 
                         case "-removeslowrom":
                             sourceROM.RemoveSlowROMChecks();
+
+                            if (returnCode == 0)
+                            {
+                                returnCode = 1;
+                            }
+
                             break;
 
                         case "-deinterleave":
                             if (sourceROM.IsInterleaved)
                             {
                                 sourceROM.Deinterleave();
+
+                                if (returnCode == 0)
+                                {
+                                    returnCode = 1;
+                                }
                             }
                             break;
 
@@ -182,6 +188,12 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                             if (!sourceROM.IsInterleaved && (sourceROM.UIntROMHeaderOffset == (uint)HeaderOffset.hirom || sourceROM.UIntROMHeaderOffset == (uint)HeaderOffset.exhirom))
                             {
                                 sourceROM.Interleave();
+
+                                if (returnCode == 0)
+                                {
+                                    returnCode = 1;
+                                }
+
                             }
                             break;
 
@@ -206,11 +218,16 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                                     sourceROM.UIntSMCHeader = 0;
                                     sourceROM.SourceROMSMCHeader = null;
                                     sourceROM.Initialize();
+
+                                    if (returnCode == 0)
+                                    {
+                                        returnCode = 1;
+                                    }
                                 }
 
                                 else
                                 {
-                                    return -2;
+                                    returnCode = -2;
                                 }
                             }
 
@@ -218,13 +235,39 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                             break;
                     }
                 }
-
-                return 1;
             }
 
-            else
+            return returnCode;
+        }
+
+        private static void CLIHandleReturnCode(int returnCode, SNESROM sourceROM, string savePath, List<string> inputParameters)
+        {
+            /* Return codes
+             *  1 = successful
+             *  0 = noting happened
+             * -1 = error -> execution stopped
+             * -2 = failed to execute operation -> skip function for this file
+             */
+
+            switch (returnCode)
             {
-                return 0;
+                case 1:
+                    CLISave(sourceROM, savePath, inputParameters.Contains("-overwrite") ? true : false);
+
+                    break;
+                case 0:
+                    Console.WriteLine("\nNo executable operation was found.");
+                    break;
+                case -1:
+                    Console.WriteLine("\nExecution stopped!\nPlease check your arguments and parameters and try again.");
+                    break;
+                case -2:
+                    CLISave(sourceROM, savePath, inputParameters.Contains("-overwrite") ? true : false);
+                    Console.WriteLine("Info: Failed to execute an operation for this file.\n");
+                    break;
+                default:
+                    Console.WriteLine("\nHuh! Something unexpected happened!");
+                    break;
             }
         }
 
@@ -232,7 +275,10 @@ namespace Advanced_SNES_ROM_Utility.Commandline
         {
             string nameExtension = overwrite ? string.Empty : "-outfile";
             byte[] mergedSourceROM = CLIMergeROM(sourceROM);
-            File.WriteAllBytes(Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path) + nameExtension + Path.GetExtension(path)), mergedSourceROM);
+            string savePath = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path) + nameExtension + Path.GetExtension(path));
+            File.WriteAllBytes(savePath, mergedSourceROM);
+            Console.WriteLine($"\nProcessing file {sourceROM.ROMFullPath} was successful!" +
+                              $"\nSaved to: {savePath}");
         }
 
         private static byte[] CLIMergeROM(SNESROM sourceROM)
