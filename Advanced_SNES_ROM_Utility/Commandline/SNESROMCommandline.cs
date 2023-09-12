@@ -19,6 +19,7 @@ namespace Advanced_SNES_ROM_Utility.Commandline
         private static List<string> _cliParameters = new List<string>()
                 {
                     "-path",
+                    "-recursive",
                     "-overwrite",
                     "-header",
                     "-fixchecksum",
@@ -67,7 +68,9 @@ namespace Advanced_SNES_ROM_Utility.Commandline
 
                 else if (args.Length > 1 && Directory.Exists(args[1]))
                 {
-                    List<string> files = Directory.GetFiles(args[1]).Where(file => _cliFileExtensions.Any(file.ToLower().EndsWith)).ToList();
+                    List<string> files = inputParameters.Contains("-recursive") ?
+                        Directory.GetFiles(args[1], "*.*", SearchOption.AllDirectories).Where(file => _cliFileExtensions.Contains(Path.GetExtension(file))).ToList() : 
+                        Directory.GetFiles(args[1]).Where(file => _cliFileExtensions.Any(file.ToLower().EndsWith)).ToList();
 
                     foreach (string file in files)
                     {
@@ -233,6 +236,9 @@ namespace Advanced_SNES_ROM_Utility.Commandline
 
                             argPos++;
                             break;
+
+                        default:
+                            break;
                     }
                 }
             }
@@ -253,7 +259,6 @@ namespace Advanced_SNES_ROM_Utility.Commandline
             {
                 case 1:
                     CLISave(sourceROM, savePath, inputParameters.Contains("-overwrite") ? true : false);
-
                     break;
                 case 0:
                     Console.WriteLine("\nNo executable operation was found.");
@@ -309,7 +314,8 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                               "\n" +
                                   "\tOptions:\n" +
                                      "\t\t-path <FILEPATH, FOLDER>\tThe path or folder to ROM file(s)\n" +
-                                     "\t\t-overwrite\t\t\tDetermines whether overwriting files or save with an extension\n" +
+                                     "\t\t-recursive\t\t\tDetermines whether subdirectories should be included\n" +
+                                     "\t\t-overwrite\t\t\tDetermines whether overwriting files or saving with an extension\n" +
                                      "\t\t-header <add, remove>\t\tDetermines whether a header should be added or removed\n" +
                                      "\t\t-fixchecksum\t\t\tDetermines whether a broken checksum should be fixed\n" +
                                      "\t\t-fixromsize\t\t\tDetermines whether a wrong internal ROM size information should be fixed\n" +

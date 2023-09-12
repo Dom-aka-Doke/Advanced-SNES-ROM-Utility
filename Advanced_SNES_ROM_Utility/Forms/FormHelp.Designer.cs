@@ -37,7 +37,7 @@
             // 
             this.buttonManualClose.Location = new System.Drawing.Point(0, 563);
             this.buttonManualClose.Name = "buttonManualClose";
-            this.buttonManualClose.Size = new System.Drawing.Size(583, 23);
+            this.buttonManualClose.Size = new System.Drawing.Size(704, 23);
             this.buttonManualClose.TabIndex = 8;
             this.buttonManualClose.Text = "Close";
             this.buttonManualClose.UseVisualStyleBackColor = true;
@@ -48,14 +48,14 @@
             this.webBrowserHelp.Location = new System.Drawing.Point(0, 0);
             this.webBrowserHelp.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowserHelp.Name = "webBrowserHelp";
-            this.webBrowserHelp.Size = new System.Drawing.Size(583, 557);
+            this.webBrowserHelp.Size = new System.Drawing.Size(704, 557);
             this.webBrowserHelp.TabIndex = 8;
             // 
             // FormHelp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 587);
+            this.ClientSize = new System.Drawing.Size(706, 587);
             this.Controls.Add(this.webBrowserHelp);
             this.Controls.Add(this.buttonManualClose);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;

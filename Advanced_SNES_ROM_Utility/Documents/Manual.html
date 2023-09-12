@@ -19,6 +19,7 @@
     <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#convert-hi-lo">Convert HiROM &harr; LoROM</a></span></span></li>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#patch">Apply Patch</a></span></span></li>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#options">Options</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#commandline">Commandline (CLI)</a></span></span></li>
 </ol>
 
 <p>&nbsp;</p>
@@ -96,7 +97,7 @@
 
 <h1><a name="interleave" /><span style="font-family:Arial,Helvetica,sans-serif">Interleave</span></h1>
 
-<p><span style="font-family:Arial,Helvetica,sans-serif">Some patches or copy stations require interleaved ROMs. This function will interleave your ROM. If you have interleaved a ROM for patching and want to play it in an emulator or flashcard, don't forget to deinterleave and fix checksum after patching!</span></p>
+<p><span style="font-family:Arial,Helvetica,sans-serif">Some patches or copy stations require interleaved ROMs. This function will interleave your ROM. If you have interleaved a ROM, patched it and want to play it in an emulator or flashcard, don't forget to deinterleave and fix checksum again!</span></p>
 <a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
 
 <h1><a name="regionlock" /><span style="font-family:Arial,Helvetica,sans-serif">Remove Region Locks</span></h1>
@@ -165,4 +166,101 @@
     <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Checked:</strong> ROM will be scanned instantly for copy protections on loading. This might take a few seconds.</span></li>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Unchecked:</strong> You have to manually click the Scan button to check for copy protections.</span></li>
 </ul>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="commandline" /><span style="font-family:Arial,Helvetica,sans-serif">Commandline (CLI)</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Use Windows Commandline (CMD) for executing batch operations (or just for processing a single file, if you prefer using the commandline).</span></p>
+<p><span style="font-family:Arial,Helvetica,sans-serif">Build your own chain of commands to execute operations in the order you specified!</span></p>
+<p><span style="font-family:Arial,Helvetica,sans-serif"><u>Example:</u></span></p>
+<p><span style="font-family:Consolas">Advanced_SNES_ROM_Utility -path "C:\ROMs" -recursive -header add -patch "C:\Patches\patch.ips" -header remove -fixromsize -fixchecksum</span></p>
+<p><span style="font-family:Arial,Helvetica,sans-serif">This command will add an header to all ROMs in C:\ROMs incl. subfolder, apply an IPS patch, remove header afterwards, fix internal ROM size and checksum and save the modfied file with an extension.</span></p>
+<table border="0" style="font-family: Consolas">
+    <tbody>
+        <tr style="vertical-align:top">
+            <td width="5%">Usage:</td>
+            <td width="40%">&nbsp;</td>
+            <td width="55%">&nbsp;</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td colspan="3">Advanced_SNES_ROM_Utility [options]</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td colspan="3">&nbsp;</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td colspan="3"><span style="margin-left: 20px;">Options:</span></td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-path &lt;FILEPATH, FOLDER&gt;</td>
+            <td width="55%">The path or folder to ROM file(s)</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-recursive</td>
+            <td width="55%">Determines whether subdirectories should be included</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-overwrite</td>
+            <td width="55%">Determines whether overwriting files or saving with an extension</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-header &lt;add, remove&gt;</td>
+            <td width="55%">Determines whether a header should be added or removed</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-fixchecksum</td>
+            <td width="55%">Determines whether a broken checksum should be fixed</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-fixromsize</td>
+            <td width="55%">Determines whether a wrong internal ROM size information should be fixed</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-removeregion</td>
+            <td width="55%">Determines whether existing region checks should be removed</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-removesram</td>
+            <td width="55%">Determines whether existing sram checks should be removed</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-removeslowrom</td>
+            <td width="55%">Determines whether existing slow ROM checks should be removed</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-deinterleave</td>
+            <td width="55%">Determines whether an interleaved ROM should be deinterleaved</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-interleave</td>
+            <td width="55%">Determines whether a deinterleaved ROM should be interleaved</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-patch &lt;FILEPATH&gt;</td>
+            <td width="55%">Determines whether ROM(s) should be patched with a specific patch</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-version</td>
+            <td width="55%">Show version information</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-help</td>
+            <td width="55%">Show help and usage information</td>
+        </tr>
+    </tbody>
+</table>
 <a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
