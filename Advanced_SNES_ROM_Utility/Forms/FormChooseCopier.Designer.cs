@@ -53,7 +53,7 @@
             this.buttonStandard.Name = "buttonStandard";
             this.buttonStandard.Size = new System.Drawing.Size(429, 23);
             this.buttonStandard.TabIndex = 2;
-            this.buttonStandard.Text = "Standard Deinterleaving";
+            this.buttonStandard.Text = "Standard";
             this.buttonStandard.UseVisualStyleBackColor = true;
             // 
             // labelCopierText
