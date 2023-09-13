@@ -7,7 +7,6 @@ using System.IO;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Linq;
-using System.Text;
 
 namespace Advanced_SNES_ROM_Utility.Commandline
 {
