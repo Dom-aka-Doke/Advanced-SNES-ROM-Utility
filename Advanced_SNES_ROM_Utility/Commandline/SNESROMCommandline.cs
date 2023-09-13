@@ -7,6 +7,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Linq;
+using System.Text;
 
 namespace Advanced_SNES_ROM_Utility.Commandline
 {
@@ -15,6 +16,9 @@ namespace Advanced_SNES_ROM_Utility.Commandline
         [DllImport("kernel32.dll")]
         static extern bool AttachConsole(int dwProcessId);
         private const int ATTACH_PARENT_PROCESS = -1;
+
+        private static bool _cliLog = false;
+        private static string _cliLogFilePath = string.Empty;
 
         private static List<string> _cliParameters = new List<string>()
                 {
@@ -30,6 +34,7 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                     "-deinterleave",
                     "-interleave",
                     "-patch",
+                    "-log",
                     "-version",
                     "-help"
                 };
@@ -44,6 +49,10 @@ namespace Advanced_SNES_ROM_Utility.Commandline
             // Collect arguments
             List<string> inputParameters = args.Where(arg => arg.StartsWith("-")).ToList();
             int returnCode = 0;
+
+            // Set logging options
+            _cliLog = inputParameters.Contains("-log") ? true : false;
+            _cliLogFilePath = _cliLog ? Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"{DateTime.Now.ToString("yyyyMMddHHmmss")}_CLI.log") : string.Empty;
 
             // Print help if invalid argument was found or user wants to display help
             if (inputParameters.Except(_cliParameters).Any() || args[0].ToLower().Equals("-help"))
@@ -86,7 +95,9 @@ namespace Advanced_SNES_ROM_Utility.Commandline
 
                 else
                 {
-                    Console.WriteLine("\nFile or folder not found");
+                    string fileNotFound = "\nFile or folder not found";
+                    Console.WriteLine(fileNotFound);
+                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, fileNotFound); }
                 }
             }
         }
@@ -252,7 +263,7 @@ namespace Advanced_SNES_ROM_Utility.Commandline
              *  1 = successful
              *  0 = noting happened
              * -1 = error -> execution stopped
-             * -2 = failed to execute operation -> skip function for this file
+             * -2 = failed to patch file -> skipped
              */
 
             switch (returnCode)
@@ -261,17 +272,25 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                     CLISave(sourceROM, savePath, inputParameters.Contains("-overwrite") ? true : false);
                     break;
                 case 0:
-                    Console.WriteLine("\nNo executable operation was found.");
+                    string noOperation = "\nNo executable operation was found.";
+                    Console.WriteLine(noOperation);
+                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, noOperation); }
                     break;
                 case -1:
-                    Console.WriteLine("\nExecution stopped!\nPlease check your arguments and parameters and try again.");
+                    string stopped = "\nExecution stopped!\nPlease check your arguments and parameters and try again.";
+                    Console.WriteLine(stopped);
+                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, stopped); }
                     break;
                 case -2:
                     CLISave(sourceROM, savePath, inputParameters.Contains("-overwrite") ? true : false);
-                    Console.WriteLine("Info: Failed to execute an operation for this file.\n");
+                    string patchFailed = "Info: Failed to patch this file. Operation has been skipped.\n";
+                    Console.WriteLine(patchFailed);
+                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, patchFailed); }
                     break;
                 default:
-                    Console.WriteLine("\nHuh! Something unexpected happened!");
+                    string unexpected = "\nHuh! Something unexpected happened!";
+                    Console.WriteLine(unexpected);
+                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, unexpected); }
                     break;
             }
         }
@@ -282,8 +301,10 @@ namespace Advanced_SNES_ROM_Utility.Commandline
             byte[] mergedSourceROM = CLIMergeROM(sourceROM);
             string savePath = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path) + nameExtension + Path.GetExtension(path));
             File.WriteAllBytes(savePath, mergedSourceROM);
-            Console.WriteLine($"\nProcessing file {sourceROM.ROMFullPath} was successful!" +
-                              $"\nSaved to: {savePath}");
+            string success = $"\nProcessing file {sourceROM.ROMFullPath} was successful!" +
+                             $"\nSaved to: {savePath}";
+            Console.WriteLine(success);
+            if (_cliLog) { CLIWriteLog(_cliLogFilePath, success); }
         }
 
         private static byte[] CLIMergeROM(SNESROM sourceROM)
@@ -325,6 +346,7 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                                      "\t\t-deinterleave\t\t\tDetermines whether an interleaved ROM should be deinterleaved\n" +
                                      "\t\t-interleave\t\t\tDetermines whether a deinterleaved ROM should be interleaved\n" +
                                      "\t\t-patch <FILEPATH>\t\tDetermines whether ROM(s) should be patched with a specific patch\n" +
+                                     "\t\t-log\t\t\t\tDetermines whether output should be written to a logfile\n" +
                                      "\t\t-version\t\t\tShow version information\n" +
                                      "\t\t-help\t\t\t\tShow help and usage information\n"
                               );
@@ -333,6 +355,22 @@ namespace Advanced_SNES_ROM_Utility.Commandline
         private static void CLIPrintVersion()
         {
             Console.WriteLine("\n" + Assembly.GetExecutingAssembly().GetName().Version.ToString());
+        }
+
+        private static void CLIWriteLog(string cliLogFilePath, string cliLogMessage)
+        {
+            try
+            {
+                FileStream cliLogFileStream = new FileStream(cliLogFilePath, FileMode.Append, FileAccess.Write);
+                StreamWriter cliLogStreamWriter = new StreamWriter(cliLogFileStream);
+                cliLogStreamWriter.WriteLine($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.ff")} {cliLogMessage}");
+                cliLogStreamWriter.Close();
+                cliLogFileStream.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
     }
 }
