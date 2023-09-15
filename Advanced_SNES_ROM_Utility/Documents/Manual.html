@@ -98,16 +98,12 @@
 <h1><a name="interleave" /><span style="font-family:Arial,Helvetica,sans-serif">Interleave</span></h1>
 
 <p><span style="font-family:Arial,Helvetica,sans-serif">Some patches or copy stations require interleaved ROMs. This function will interleave your ROM. If you have interleaved a ROM, patched it and want to play it in an emulator or flashcard, don't forget to deinterleave and fix checksum again!</span></p>
+<p><span style="font-family:Arial,Helvetica,sans-serif">Note: Only LoROMs can be interleaved!</span></p>
 <a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
 
 <h1><a name="regionlock" /><span style="font-family:Arial,Helvetica,sans-serif">Remove Region Locks</span></h1>
 
-<p>
-    <span style="font-family:Arial,Helvetica,sans-serif">
-        Some games have a copy protection preventing the ROM from running on systems with another region (PAL/NTSC lock).<br />
-        Use this function to remove most known region locks.
-    </span>
-</p>
+<p><span style="font-family:Arial,Helvetica,sans-serif">Some games have a copy protection preventing the ROM from running on systems with another region (PAL/NTSC lock). Use this function to remove most known region locks.</span></p>
 <a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
 
 <h1><a name="sramcheck" /><span style="font-family:Arial,Helvetica,sans-serif">Remove SRAM Checks</span></h1>
@@ -157,7 +153,7 @@
 
 <ul>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Checked:</strong> ROMs&#39; content gets mirrored when it gets expanded.</span></li>
-    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Unchecked:</strong> normal expanding will be perfomed to get more space available.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Unchecked:</strong> Standard expanding will be perfomed to get more space available.</span></li>
 </ul>
 
 <p><span style="font-family:Arial,Helvetica,sans-serif"><strong>Scan protections on loading</strong></span></p>
@@ -220,7 +216,7 @@
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
             <td width="40%">-fixromsize</td>
-            <td width="55%">Determines whether a wrong internal ROM size information should be fixed</td>
+            <td width="55%">Determines whether a wrong internal ROM size should be fixed</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
@@ -251,6 +247,11 @@
             <td width="5%">&nbsp;</td>
             <td width="40%">-patch &lt;FILEPATH&gt;</td>
             <td width="55%">Determines whether ROM(s) should be patched with a specific patch</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-log</td>
+            <td width="55%">Determines whether output should be written to a logfile</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>

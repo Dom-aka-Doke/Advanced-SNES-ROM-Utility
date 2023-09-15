@@ -338,7 +338,7 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                                      "\t\t-overwrite\t\t\tDetermines whether overwriting files or saving with an extension\n" +
                                      "\t\t-header <add, remove>\t\tDetermines whether a header should be added or removed\n" +
                                      "\t\t-fixchecksum\t\t\tDetermines whether a broken checksum should be fixed\n" +
-                                     "\t\t-fixromsize\t\t\tDetermines whether a wrong internal ROM size information should be fixed\n" +
+                                     "\t\t-fixromsize\t\t\tDetermines whether a wrong internal ROM size should be fixed\n" +
                                      "\t\t-removeregion\t\t\tDetermines whether existing region checks should be removed\n" +
                                      "\t\t-removesram\t\t\tDetermines whether existing sram checks should be removed\n" +
                                      "\t\t-removeslowrom\t\t\tDetermines whether existing slow ROM checks should be removed\n" +
