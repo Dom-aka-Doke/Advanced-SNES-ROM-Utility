@@ -92,10 +92,10 @@ For more information type
 
 *Advanced_SNES_ROM_Utility -path*
 
-or take a look into the tools' manual
+or take a look into the tool's manual
 
 ## Download
-- RHDN: https://www.romhacking.net/utilities/1638/
+- [Get it on RHDN](https://www.romhacking.net/utilities/1638)
 
 ## Support
-Support my work and [become a Patreon](https://www.patreon.com/user?u=98965851) 
+Support my work and [become a Patreon](https://www.patreon.com/user?u=98965851)
