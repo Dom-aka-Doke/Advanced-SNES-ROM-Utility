@@ -38,7 +38,8 @@ Some copy stations like "Game Doctor SF" or "Super UFO" use interleaving when du
 
 ### Interleave
 Some patches or copy stations require interleaved ROMs. This function will interleave your ROM. If you have interleaved a ROM, patched it and want to play it in an emulator or flashcard, don't forget to deinterleave and fix checksum again!
- - Note: Only LoROMs can be interleaved!
+> **Note**<br>
+Only LoROMs can be interleaved!
 
 ### Remove Region Locks
 Some games have a copy protection preventing the ROM from running on systems with another region (PAL/NTSC lock). Use this function to remove most known region locks
@@ -51,7 +52,8 @@ Useful if you want to play your FastROMs on a copy station without FastROM suppo
 
 ### Convert HiROM <-> LoROM
 Can switch ROM layout between HiROM and LoROM. If the ROM uses (S)RAM or some enhancement chips, you have to do some manual work after conversion
- - Note: Converting from HiROM to LoROM only works, if the ROM was designed to be convertible
+> **Note**<br>
+Converting from HiROM to LoROM only works, if the ROM was designed to be convertible
 
 ### Apply Patch
 Patch your loaded ROM!
@@ -80,7 +82,8 @@ Patch your loaded ROM!
 ### Commandline (CLI)
 - Use Windows Commandline (CMD) for executing batch operations (or just for processing a single file, if you prefer using the commandline)
 - Build your own command chain to execute operations in the order you specified!
-  - Note: Deinterleaving and interleaving might require user action! This will bring up a windows form and can only work within a Windows environment!
+> **Note**<br>
+Deinterleaving and interleaving might require user action! This will bring up a windows form and can only work within a Windows environment!
 
 __Example:__
 
