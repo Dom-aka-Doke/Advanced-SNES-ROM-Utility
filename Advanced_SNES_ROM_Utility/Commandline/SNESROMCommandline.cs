@@ -47,11 +47,10 @@ namespace Advanced_SNES_ROM_Utility.Commandline
             
             // Collect arguments
             List<string> inputParameters = args.Where(arg => arg.StartsWith("-")).ToList();
-            int returnCode = 0;
 
             // Set logging options
             _cliLog = inputParameters.Contains("-log") ? true : false;
-            _cliLogFilePath = _cliLog ? Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"{DateTime.Now.ToString("yyyyMMddHHmmss")}_CLI.log") : string.Empty;
+            _cliLogFilePath = _cliLog ? Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}_CLI.log") : string.Empty;
 
             // Print help if invalid argument was found or user wants to display help
             if (inputParameters.Except(_cliParameters).Any() || args[0].ToLower().Equals("-help"))
@@ -83,20 +82,14 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                     foreach (string file in files)
                     {
                         SNESROM sourceROM = new SNESROM(file);
-                        CLIHandleReturnCode(CLIProcessFile(sourceROM, args), sourceROM, file, inputParameters);
-
-                        if (returnCode == -1)
-                        {
-                            break;
-                        }
+                        if (CLIHandleReturnCode(CLIProcessFile(sourceROM, args), sourceROM, file, inputParameters) == -1) { break; }
                     }
                 }
 
                 else
                 {
-                    string fileNotFound = "\nFile or folder not found";
-                    Console.WriteLine(fileNotFound);
-                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, fileNotFound); }
+                    Console.WriteLine("\nFile or folder not found");
+                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "File or folder not found"); }
                 }
             }
         }
@@ -107,6 +100,9 @@ namespace Advanced_SNES_ROM_Utility.Commandline
 
             if (args.Length > 2)
             {
+                Console.WriteLine($"\nProcessing file {sourceROM.ROMFullPath}");
+                if (_cliLog) { CLIWriteLog(_cliLogFilePath, $"Processing file {sourceROM.ROMFullPath}", true); }
+
                 for (int argPos = 2; argPos < args.Length; argPos++)
                 {
                     switch (args[argPos].ToLower())
@@ -114,12 +110,36 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                         case "-header":
                             if (args[argPos + 1].ToLower().Equals("add"))
                             {
-                                sourceROM.AddHeader();
+                                if (sourceROM.SourceROMSMCHeader == null)
+                                {
+                                    sourceROM.AddHeader();
+                                    Console.WriteLine("-header: added header");
+                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-header: added header"); }
+                                    returnCode = 1;
+                                }
+
+                                else
+                                {
+                                    Console.WriteLine("-header: header already existing");
+                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-header: header already existing"); }
+                                }
                             }
 
                             else if (args[argPos + 1].ToLower().Equals("remove"))
                             {
-                                sourceROM.RemoveHeader();
+                                if (sourceROM.SourceROMSMCHeader != null)
+                                {
+                                    sourceROM.RemoveHeader();
+                                    Console.WriteLine("-header: removed header");
+                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-header: removed header"); }
+                                    returnCode = 1;
+                                }
+
+                                else
+                                {
+                                    Console.WriteLine("-header: no header found to remove");
+                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-header: no header found to remove"); }
+                                }
                             }
 
                             else
@@ -127,60 +147,90 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                                 return -1;
                             }
 
-                            if (returnCode == 0)
-                            {
-                                returnCode = 1;
-                            }
-
                             argPos++;
                             break;
 
                         case "-fixchecksum":
-                            sourceROM.FixChecksum();
-                            
-                            if (returnCode == 0)
+                            if (!sourceROM.ByteArrayChecksum.SequenceEqual(sourceROM.ByteArrayCalcChecksum))
                             {
+                                sourceROM.FixChecksum();
+                                Console.WriteLine("-fixchecksum: fixed bad checksum");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-fixchecksum: fixed bad checksum"); }
                                 returnCode = 1;
                             }
-
+                            
+                            else
+                            {
+                                Console.WriteLine("-fixchecksum: checksum already OK");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-fixchecksum: checksum already OK"); }
+                            }
+                            
                             break;
 
                         case "-fixromsize":
-                            sourceROM.FixInternalROMSize();
-
-                            if (returnCode == 0)
+                            if (sourceROM.IntROMSize < sourceROM.IntCalcFileSize || sourceROM.IntCalcFileSize <= (sourceROM.IntROMSize / 2))
                             {
+                                sourceROM.FixInternalROMSize();
+                                Console.WriteLine("-fixromsize: fixed wrong internal ROM size");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-fixromsize: fixed wrong internal ROM size"); }
                                 returnCode = 1;
+                            }
+
+                            else
+                            {
+                                Console.WriteLine("-fixromsize: internal ROM size already OK");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-fixromsize: internal ROM size already OK"); }
                             }
 
                             break;
 
                         case "-removeregion":
-                            sourceROM.RemoveRegionChecks();
-
-                            if (returnCode == 0)
+                            if (sourceROM.RemoveRegionChecks(false))
                             {
+                                sourceROM.RemoveRegionChecks();
+                                Console.WriteLine("-removeregion: removed region checks");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removeregion: removed region checks"); }
                                 returnCode = 1;
+                            }
+                            
+                            else
+                            {
+                                Console.WriteLine("-removeregion: no region checks found");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removeregion: no region checks found"); }
                             }
 
                             break;
 
                         case "-removesram":
-                            sourceROM.RemoveSRAMChecks();
-
-                            if (returnCode == 0)
+                            if (sourceROM.RemoveSRAMChecks(false))
                             {
+                                sourceROM.RemoveSRAMChecks();
+                                Console.WriteLine("-removesram: removed SRAM checks");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removesram: removed SRAM checks"); }
                                 returnCode = 1;
+                            }
+
+                            else
+                            {
+                                Console.WriteLine("-removesram: no SRAM checks found");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removesram: no SRAM checks found"); }
                             }
 
                             break;
 
                         case "-removeslowrom":
-                            sourceROM.RemoveSlowROMChecks();
-
-                            if (returnCode == 0)
+                            if (sourceROM.ByteROMSpeed == (byte)Speed.fast && sourceROM.RemoveSlowROMChecks(false))
                             {
+                                sourceROM.RemoveSlowROMChecks();
+                                Console.WriteLine("-removeslowrom: removed SlowROM checks");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removeslowrom: removed SlowROM checks"); }
                                 returnCode = 1;
+                            }
+                            
+                            else
+                            {
+                                Console.WriteLine("-removeslowrom: no SlowROM checks found");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removeslowrom: no SlowROM checks found"); }
                             }
 
                             break;
@@ -189,25 +239,43 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                             if (sourceROM.IsInterleaved)
                             {
                                 sourceROM.Deinterleave();
-
-                                if (returnCode == 0)
-                                {
-                                    returnCode = 1;
-                                }
+                                Console.WriteLine("-deinterleave: deinterleaved successfully");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-deinterleave: deinterleaved successfully"); }
+                                returnCode = 1;
                             }
+
+                            else
+                            {
+                                Console.WriteLine("-deinterleave: ROM is already deinterleaved");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-deinterleave: ROM is already deinterleaved"); }
+                            }
+
                             break;
 
                         case "-interleave":
                             if (!sourceROM.IsInterleaved && (sourceROM.UIntROMHeaderOffset == (uint)HeaderOffset.hirom || sourceROM.UIntROMHeaderOffset == (uint)HeaderOffset.exhirom))
                             {
                                 sourceROM.Interleave();
+                                Console.WriteLine("-interleave: interleaved successfully");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-interleave: interleaved successfully"); }
+                                returnCode = 1;
+                            }
 
-                                if (returnCode == 0)
+                            else
+                            {
+                                if (sourceROM.UIntROMHeaderOffset == (uint)HeaderOffset.lorom || sourceROM.UIntROMHeaderOffset == (uint)HeaderOffset.exlorom)
                                 {
-                                    returnCode = 1;
+                                    Console.WriteLine("-interleave: interleaving LoROM is not possible");
+                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-interleave: interleaving LoROM is not possible"); }
                                 }
 
+                                else
+                                {
+                                    Console.WriteLine("-interleave: ROM is already interleaved");
+                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-interleave: ROM is already interleaved"); }
+                                }
                             }
+
                             break;
 
                         case "-patch":
@@ -232,16 +300,24 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                                     sourceROM.SourceROMSMCHeader = null;
                                     sourceROM.Initialize();
 
-                                    if (returnCode == 0)
-                                    {
-                                        returnCode = 1;
-                                    }
+                                    Console.WriteLine("-patch: ROM successfully patched");
+                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-patch: ROM successfully patched"); }
+                                    returnCode = 1;
                                 }
 
                                 else
                                 {
-                                    returnCode = -2;
+                                    Console.WriteLine("-patch: failed to patch ROM");
+                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-patch: failed to patch ROM"); }
                                 }
+                            }
+
+                            else
+                            {
+                                Console.WriteLine("-patch: patch file not found");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-patch: patch file not found"); }
+
+                                return -1;
                             }
 
                             argPos++;
@@ -256,41 +332,31 @@ namespace Advanced_SNES_ROM_Utility.Commandline
             return returnCode;
         }
 
-        private static void CLIHandleReturnCode(int returnCode, SNESROM sourceROM, string savePath, List<string> inputParameters)
+        private static int CLIHandleReturnCode(int returnCode, SNESROM sourceROM, string savePath, List<string> inputParameters)
         {
             /* Return codes
-             *  1 = successful
-             *  0 = noting happened
-             * -1 = error -> execution stopped
-             * -2 = failed to patch file -> skipped
+             *  1 = success
+             *  0 = nothing
+             * -1 = error
              */
 
             switch (returnCode)
             {
                 case 1:
                     CLISave(sourceROM, savePath, inputParameters.Contains("-overwrite") ? true : false);
-                    break;
+                    return 1;
                 case 0:
-                    string noOperation = "\nNo executable operation was found.";
-                    Console.WriteLine(noOperation);
-                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, noOperation); }
-                    break;
+                    Console.WriteLine("No executable operation was found -> skipped file");
+                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "No executable operation was found -> skipped file"); }
+                    return 0;
                 case -1:
-                    string stopped = "\nExecution stopped!\nPlease check your arguments and parameters and try again.";
-                    Console.WriteLine(stopped);
-                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, stopped); }
-                    break;
-                case -2:
-                    CLISave(sourceROM, savePath, inputParameters.Contains("-overwrite") ? true : false);
-                    string patchFailed = "Info: Failed to patch this file. Operation has been skipped.\n";
-                    Console.WriteLine(patchFailed);
-                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, patchFailed); }
-                    break;
+                    Console.WriteLine("Execution stopped! Please check your arguments and parameters and try again");
+                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "Execution stopped! Please check your arguments and parameters and try again"); }
+                    return -1;
                 default:
-                    string unexpected = "\nHuh! Something unexpected happened!";
-                    Console.WriteLine(unexpected);
-                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, unexpected); }
-                    break;
+                    Console.WriteLine("An unexpected error occurred!");
+                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "An unexpected error occurred!"); }
+                    return -1;
             }
         }
 
@@ -300,10 +366,8 @@ namespace Advanced_SNES_ROM_Utility.Commandline
             byte[] mergedSourceROM = CLIMergeROM(sourceROM);
             string savePath = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path) + nameExtension + Path.GetExtension(path));
             File.WriteAllBytes(savePath, mergedSourceROM);
-            string success = $"\nProcessing file {sourceROM.ROMFullPath} was successful!" +
-                             $"\nSaved to: {savePath}";
-            Console.WriteLine(success);
-            if (_cliLog) { CLIWriteLog(_cliLogFilePath, success); }
+            Console.WriteLine($"Saved file to {savePath}");
+            if (_cliLog) { CLIWriteLog(_cliLogFilePath, $"Saved file to {savePath}"); }
         }
 
         private static byte[] CLIMergeROM(SNESROM sourceROM)
@@ -356,13 +420,14 @@ namespace Advanced_SNES_ROM_Utility.Commandline
             Console.WriteLine("\n" + Assembly.GetExecutingAssembly().GetName().Version.ToString());
         }
 
-        private static void CLIWriteLog(string cliLogFilePath, string cliLogMessage)
+        private static void CLIWriteLog(string cliLogFilePath, string cliLogMessage, bool emptyLine = false)
         {
             try
             {
                 FileStream cliLogFileStream = new FileStream(cliLogFilePath, FileMode.Append, FileAccess.Write);
                 StreamWriter cliLogStreamWriter = new StreamWriter(cliLogFileStream);
-                cliLogStreamWriter.WriteLine($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.ff")} {cliLogMessage}");
+                if (emptyLine) { cliLogStreamWriter.WriteLine(); }
+                cliLogStreamWriter.WriteLine($"[{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.ff")}] {cliLogMessage}");
                 cliLogStreamWriter.Close();
                 cliLogFileStream.Close();
             }
