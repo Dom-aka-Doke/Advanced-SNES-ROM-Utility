@@ -37,9 +37,9 @@ Swaps binaries to get a "Close-to-SNES-Mask-ROM"-layout Use 27C801 EPROM(s) and 
 Some copy stations like "Game Doctor SF" or "Super UFO" use interleaving when dumping HiROM games. This function will reverse this process. Please use ROMs with copy station header, unless you know which copy station was used!
 
 ### Interleave
-Some patches or copy stations require interleaved ROMs. This function will interleave your ROM. If you have interleaved a ROM, patched it and want to play it in an emulator or flashcard, don't forget to deinterleave and fix checksum again!
+Some patches or copy stations require interleaved HiROMs. This function will interleave your HiROM. If you have interleaved a ROM, patched it and want to play it in an emulator, flashcard or make a physical copy, don't forget to deinterleave and fix checksum again!
 > **Note**<br>
-Only LoROMs can be interleaved!
+Only HiROMs can be interleaved!
 
 ### Remove Region Locks
 Some games have a copy protection preventing the ROM from running on systems with another region (PAL/NTSC lock). Use this function to remove most known region locks
