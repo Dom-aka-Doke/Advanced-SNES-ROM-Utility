@@ -87,13 +87,13 @@ Deinterleaving and interleaving might require user action! This will bring up a 
 
 __Example:__
 
-*Advanced_SNES_ROM_Utility -path "C:\ROMs" -recursive -header add -patch "C:\Patches\patch.ips" -header remove -fixromsize -fixchecksum*
+*Advanced_SNES_ROM_Utility.exe -path "C:\ROMs" -recursive -header add -patch "C:\Patches\patch.ips" -header remove -fixromsize -fixchecksum*
 
 This command will add a header to all ROMs in C:\ROMs (subfolders included), apply an IPS patch, remove header afterwards, fix internal ROM size and checksum and save the modfied file with an extension
 
 For more information type
 
-*Advanced_SNES_ROM_Utility -path*
+*Advanced_SNES_ROM_Utility.exe -help*
 
 or take a look into the tool's manual
 
