@@ -100,6 +100,11 @@ For more information type
 
 or take a look into the tool's manual.
 
+## Some notes about BS-X ROMs
+- checksum doesn’t include header information (it won't change if you edit values)
+- There's no region code (JP only)
+- ROM size is limited to a maximum of 32 Mbit
+
 ## Download
 - [Get it on RHDN](https://www.romhacking.net/utilities/1638)
 
