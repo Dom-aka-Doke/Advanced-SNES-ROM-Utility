@@ -46,7 +46,7 @@ namespace Advanced_SNES_ROM_Utility.Commandline
             AttachConsole(ATTACH_PARENT_PROCESS);
             
             // Collect arguments
-            List<string> inputParameters = args.Where(arg => arg.StartsWith("-")).ToList();
+            List<string> inputParameters = args.Where(arg => arg.StartsWith("-")).ToList().ConvertAll(arg => arg.ToLower());
 
             // Set logging options
             _cliLog = inputParameters.Contains("-log") ? true : false;
@@ -327,6 +327,8 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                             break;
                     }
                 }
+
+                return returnCode;
             }
 
             Console.WriteLine();
