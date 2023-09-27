@@ -4,8 +4,8 @@ An easy to use utility for performing some tasks on SNES / SFC ROMs!
 
 ## Functions
 
-### Edit ROM Information
-Change basic ROM information like title, country/region, version and game code.
+### Edit Header Information
+Change basic header information like title, country/region, version and game code.
 
 ### Add Header
 Adds an empty header.
@@ -25,7 +25,7 @@ Expands ROM to a specific size up to 64 Mbit (BS-X up to 32 Mbit). Mirror option
 ### Split ROM
 Splits ROM into equal sized multiple parts.
 
-### SwapBin ROM
+### SwapBin ROM (27C801)
 Swaps binaries to get a *"Close-to-SNES-Mask-ROM"*-layout. <br>
 Use 27C801 (E)EPROM and rewire pins as followed:
 
@@ -48,7 +48,7 @@ Some games have a copy protection preventing the ROM from running on systems wit
 ### Remove SRAM Checks
 Some games have a copy protection preventing the ROM from running, when cartridges have more SRAM than needed (copy stations/some cheap flashcards/deprecated emulators). Use this function to remove most known SRAM checks.
 
-### Remove Slow ROM Checks
+### Remove SlowROM Checks
 Useful if you want to play your FastROM on a copy station without FastROM support or make a physical copy using an (E)EPROM/FlashROM slower than 120ns.
 
 ### Convert HiROM <-> LoROM
@@ -70,6 +70,9 @@ Patch your loaded ROM!
 > **Note**<br>
 > If you have a __BDF__ patch file with __.bdiff__ extension, try to change this into __.bdf__ <br>
 > Also try renaming __XDELTA__ patches ending to __.vcdiff__ into __.xdelta__
+
+### Scan
+- Scan/Rescan ROM for copy protections.
 
 ### Options
 - Miror ROM on expanding
