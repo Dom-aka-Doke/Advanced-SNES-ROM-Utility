@@ -48,7 +48,7 @@ Some games have a copy protection preventing the ROM from running on systems wit
 Some games have a copy protection preventing the ROM from running, when cartridges have more SRAM than needed (copy stations/some cheap flashcards/deprecated emulators). Use this function to remove most known SRAM checks.
 
 ### Remove Slow ROM Checks
-Useful if you want to play your FastROMs on a copy station without FastROM support or burn them on (E)EPROMs slower than 120ns.
+Useful if you want to play your FastROM on a copy station without FastROM support or make a physical copy using an (E)EPROM/FlashROM slower than 120ns.
 
 ### Convert HiROM <-> LoROM
 Can switch ROM layout between HiROM and LoROM. If the ROM uses (S)RAM or some enhancement chips, you have to do some manual work after conversion.
