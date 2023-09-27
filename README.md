@@ -26,7 +26,8 @@ Expands ROM to a specific size up to 64 Mbit (BS-X up to 32 Mbit). Mirror option
 Splits ROM into equal sized multiple parts.
 
 ### SwapBin ROM
-Swaps binaries to get a "Close-to-SNES-Mask-ROM"-layout Use 27C801 EPROM(s) and rewire pins as followed:
+Swaps binaries to get a *"Close-to-SNES-Mask-ROM"*-layout. <br>
+Use 27C801 EPROM(s) and rewire pins as followed:
 
 |  27C801       | Nintendo Mask ROM |
 |:-------------:|:-----------------:|
