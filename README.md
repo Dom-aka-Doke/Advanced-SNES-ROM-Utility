@@ -5,25 +5,25 @@ An easy to use utility for performing some tasks on SNES / SFC ROMs!
 ## Functions
 
 ### Edit ROM Information
-Change basic ROM information like title, country/region, version and game code
+Change basic ROM information like title, country/region, version and game code.
 
 ### Add Header
-Adds an empty header
+Adds an empty header.
 
 ### Remove Header
-Removes an existing header
+Removes an existing header.
 
 ### Fix Checksum
 Fixes a broken checksum. You always should do this before saving, if possible. Please note that some beta or demo ROMs have an odd checksum anyway...
 
 ### Fix Internal ROM size
-Fixes wrong internal ROM size information. Do this after expanding a ROM. Also useful to fix some ROM hacks
+Fixes wrong internal ROM size information. Do this after expanding a ROM. Also useful to fix some ROM hacks.
 
 ### Expand ROM
 Expands ROM to a specific size up to 64 Mbit (BS-X up to 32 Mbit). Mirror option should only be used, when there are problems with standard expanding. Always check if your ROM still works after doing this!
 
 ### Split ROM
-Splits ROM into equal sized multiple parts
+Splits ROM into equal sized multiple parts.
 
 ### SwapBin ROM
 Swaps binaries to get a "Close-to-SNES-Mask-ROM"-layout Use 27C801 EPROM(s) and rewire pins as followed:
@@ -42,16 +42,16 @@ Some patches or copy stations require interleaved HiROMs. This function will int
 Only HiROMs can be interleaved!
 
 ### Remove Region Locks
-Some games have a copy protection preventing the ROM from running on systems with another region (PAL/NTSC lock). Use this function to remove most known region locks
+Some games have a copy protection preventing the ROM from running on systems with another region (PAL/NTSC lock). Use this function to remove most known region locks.
 
 ### Remove SRAM Checks
-Some games have a copy protection preventing the ROM from running, when cartridges have more SRAM than needed (copy stations/some cheap flashcards/deprecated emulators). Use this function to remove most known SRAM checks
+Some games have a copy protection preventing the ROM from running, when cartridges have more SRAM than needed (copy stations/some cheap flashcards/deprecated emulators). Use this function to remove most known SRAM checks.
 
 ### Remove Slow ROM Checks
-Useful if you want to play your FastROMs on a copy station without FastROM support or burn them on (E)EPROMs slower than 120ns
+Useful if you want to play your FastROMs on a copy station without FastROM support or burn them on (E)EPROMs slower than 120ns.
 
 ### Convert HiROM <-> LoROM
-Can switch ROM layout between HiROM and LoROM. If the ROM uses (S)RAM or some enhancement chips, you have to do some manual work after conversion
+Can switch ROM layout between HiROM and LoROM. If the ROM uses (S)RAM or some enhancement chips, you have to do some manual work after conversion.
 > **Note**<br>
 Converting from HiROM to LoROM only works, if the ROM was designed to be convertible
 
@@ -66,6 +66,9 @@ Patch your loaded ROM!
  - BPS
  - BDF
  - XDELTA
+> **Note**<br>
+> If you have a __BDF__ patch file with __.bdiff__ extension, try to change this into __.bdf__ <br>
+> Also try renaming __XDELTA__ patches ending to __.vcdiff__ into __.xdelta__
 
 ### Options
 - Miror ROM on expanding
@@ -89,13 +92,13 @@ __Example:__
 
 *Advanced_SNES_ROM_Utility.exe -path "C:\ROMs" -recursive -header add -patch "C:\Patches\patch.ips" -header remove -fixromsize -fixchecksum*
 
-This command will add a header to all ROMs in C:\ROMs (subfolders included), apply an IPS patch, remove header afterwards, fix internal ROM size and checksum and save the modfied file with an extension
+This command will add a header to all ROMs in C:\ROMs (subfolders included), apply an IPS patch, remove header afterwards, fix internal ROM size and checksum and save the modfied file with an extension.
 
 For more information type
 
 *Advanced_SNES_ROM_Utility.exe -help*
 
-or take a look into the tool's manual
+or take a look into the tool's manual.
 
 ## Download
 - [Get it on RHDN](https://www.romhacking.net/utilities/1638)
