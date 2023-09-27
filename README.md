@@ -27,7 +27,7 @@ Splits ROM into equal sized multiple parts.
 
 ### SwapBin ROM
 Swaps binaries to get a *"Close-to-SNES-Mask-ROM"*-layout. <br>
-Use 27C801 EPROM(s) and rewire pins as followed:
+Use 27C801 (E)EPROM and rewire pins as followed:
 
 |  27C801       | Nintendo Mask ROM |
 |:-------------:|:-----------------:|
