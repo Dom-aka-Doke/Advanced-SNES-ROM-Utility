@@ -28,10 +28,10 @@ Splits ROM into equal sized multiple parts.
 ### SwapBin ROM
 Swaps binaries to get a "Close-to-SNES-Mask-ROM"-layout Use 27C801 EPROM(s) and rewire pins as followed:
 
-      	   27C801 -> Nintendo Mask ROM
-      	   	24     ->     31
-      	   	31     ->     24
-
+|  27C801       | Nintendo Mask ROM |
+|:-------------:|:-----------------:|
+| 24            | 31                |
+| 31            | 24                |
 
 ### Deinterleave
 Some copy stations like "Game Doctor SF" or "Super UFO" use interleaving when dumping HiROM games. This function will reverse this process. Please use ROMs with copy station header, unless you know which copy station was used!
