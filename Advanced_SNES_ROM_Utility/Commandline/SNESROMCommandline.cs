@@ -67,271 +67,294 @@ namespace Advanced_SNES_ROM_Utility.Commandline
             // Process file(s)
             else if (args[0].ToLower().Equals("-path"))
             {
-                if (args.Length > 1 && File.Exists(args[1]) && _cliFileExtensions.Contains(Path.GetExtension(args[1])))
+                if (args.Length > 2)
                 {
-                    SNESROM sourceROM = new SNESROM(args[1]);
-                    CLIHandleReturnCode(CLIProcessFile(sourceROM, args), sourceROM, args[1], inputParameters);
-                }
-
-                else if (args.Length > 1 && Directory.Exists(args[1]))
-                {
-                    List<string> files = inputParameters.Contains("-recursive") ?
-                        Directory.GetFiles(args[1], "*.*", SearchOption.AllDirectories).Where(file => _cliFileExtensions.Contains(Path.GetExtension(file))).ToList() : 
-                        Directory.GetFiles(args[1]).Where(file => _cliFileExtensions.Any(file.ToLower().EndsWith)).ToList();
-
-                    foreach (string file in files)
+                    if (File.Exists(args[1]) && _cliFileExtensions.Contains(Path.GetExtension(args[1])))
                     {
-                        SNESROM sourceROM = new SNESROM(file);
-                        if (CLIHandleReturnCode(CLIProcessFile(sourceROM, args), sourceROM, file, inputParameters) == -1) { break; }
+                        SNESROM sourceROM = new SNESROM(args[1]);
+                        CLIHandleReturnCode(CLIProcessFile(sourceROM, args), sourceROM, args[1], inputParameters);
+                    }
+
+                    else if (Directory.Exists(args[1]))
+                    {
+                        List<string> files = inputParameters.Contains("-recursive") ?
+                            Directory.GetFiles(args[1], "*.*", SearchOption.AllDirectories).Where(file => _cliFileExtensions.Contains(Path.GetExtension(file))).ToList() :
+                            Directory.GetFiles(args[1]).Where(file => _cliFileExtensions.Any(file.ToLower().EndsWith)).ToList();
+
+                        foreach (string file in files)
+                        {
+                            SNESROM sourceROM = new SNESROM(file);
+                            if (CLIHandleReturnCode(CLIProcessFile(sourceROM, args), sourceROM, file, inputParameters) == -1) { break; }
+                        }
+                    }
+
+                    else
+                    {
+                        Console.WriteLine("\nFile or folder not found");
+                        if (_cliLog) { CLIWriteLog(_cliLogFilePath, "File or folder not found"); }
                     }
                 }
 
                 else
                 {
-                    Console.WriteLine("\nFile or folder not found");
-                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "File or folder not found"); }
+                    Console.WriteLine("\nMore arguments needed to proceed execution");
+                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "More arguments needed to proceed execution"); }
                 }
+            }
+
+            else
+            {
+                CLIPrintHelp();
             }
         }
 
         private static short CLIProcessFile(this SNESROM sourceROM, string[] args)
         {
             short returnCode = 0x0000;
+            byte commandCtr = 0;
 
-            if (args.Length > 2)
+            Console.WriteLine($"\nProcessing file {sourceROM.ROMFullPath}");
+            if (_cliLog) { CLIWriteLog(_cliLogFilePath, $"Processing file {sourceROM.ROMFullPath}", true); }
+
+            for (int argPos = 2; argPos < args.Length; argPos++)
             {
-                Console.WriteLine($"\nProcessing file {sourceROM.ROMFullPath}");
-                if (_cliLog) { CLIWriteLog(_cliLogFilePath, $"Processing file {sourceROM.ROMFullPath}", true); }
-
-                for (int argPos = 2; argPos < args.Length; argPos++)
+                switch (args[argPos].ToLower())
                 {
-                    switch (args[argPos].ToLower())
-                    {
-                        case "-header":
-                            if (args[argPos + 1].ToLower().Equals("add"))
+                    case "-header":                           
+                        if (args[argPos + 1].ToLower().Equals("add"))
+                        {
+                            if (sourceROM.SourceROMSMCHeader == null)
                             {
-                                if (sourceROM.SourceROMSMCHeader == null)
-                                {
-                                    sourceROM.AddHeader();
-                                    Console.WriteLine("-header: added header");
-                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-header: added header"); }
-                                    returnCode |= 0x0001;
-                                }
-
-                                else
-                                {
-                                    Console.WriteLine("-header: header already existing");
-                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-header: header already existing"); }
-                                }
-                            }
-
-                            else if (args[argPos + 1].ToLower().Equals("remove"))
-                            {
-                                if (sourceROM.SourceROMSMCHeader != null)
-                                {
-                                    sourceROM.RemoveHeader();
-                                    Console.WriteLine("-header: removed header");
-                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-header: removed header"); }
-                                    returnCode |= 0x0002;
-                                }
-
-                                else
-                                {
-                                    Console.WriteLine("-header: no header found to remove");
-                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-header: no header found to remove"); }
-                                }
+                                sourceROM.AddHeader();
+                                Console.WriteLine("-header: added header");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-header: added header"); }
+                                returnCode |= 0x0001;
                             }
 
                             else
                             {
-                                return -1;
+                                Console.WriteLine("-header: header already existing");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-header: header already existing"); }
                             }
+                        }
 
-                            argPos++;
-                            break;
-
-                        case "-fixchecksum":
-                            if (!sourceROM.ByteArrayChecksum.SequenceEqual(sourceROM.ByteArrayCalcChecksum))
+                        else if (args[argPos + 1].ToLower().Equals("remove"))
+                        {
+                            if (sourceROM.SourceROMSMCHeader != null)
                             {
-                                sourceROM.FixChecksum();
-                                Console.WriteLine("-fixchecksum: fixed bad checksum");
-                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-fixchecksum: fixed bad checksum"); }
-                                returnCode |= 0x0004;
+                                sourceROM.RemoveHeader();
+                                Console.WriteLine("-header: removed header");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-header: removed header"); }
+                                returnCode |= 0x0002;
                             }
+
+                            else
+                            {
+                                Console.WriteLine("-header: no header found to remove");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-header: no header found to remove"); }
+                            }
+                        }
+
+                        else
+                        {
+                            return -1;
+                        }
+
+                        commandCtr++;
+                        argPos++;
+                        break;
+
+                    case "-fixchecksum":
+                        if (!sourceROM.ByteArrayChecksum.SequenceEqual(sourceROM.ByteArrayCalcChecksum))
+                        {
+                            sourceROM.FixChecksum();
+                            Console.WriteLine("-fixchecksum: fixed bad checksum");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-fixchecksum: fixed bad checksum"); }
+                            returnCode |= 0x0004;
+                        }
                             
-                            else
-                            {
-                                Console.WriteLine("-fixchecksum: checksum already OK");
-                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-fixchecksum: checksum already OK"); }
-                            }
+                        else
+                        {
+                            Console.WriteLine("-fixchecksum: checksum already OK");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-fixchecksum: checksum already OK"); }
+                        }
+
+                        commandCtr++;
+                        break;
+
+                    case "-fixromsize":
+                        if (sourceROM.IntROMSize < sourceROM.IntCalcFileSize || sourceROM.IntCalcFileSize <= (sourceROM.IntROMSize / 2))
+                        {
+                            sourceROM.FixInternalROMSize();
+                            Console.WriteLine("-fixromsize: fixed wrong internal ROM size");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-fixromsize: fixed wrong internal ROM size"); }
+                            returnCode |= 0x0008;
+                        }
+
+                        else
+                        {
+                            Console.WriteLine("-fixromsize: internal ROM size already OK");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-fixromsize: internal ROM size already OK"); }
+                        }
+
+                        commandCtr++;
+                        break;
+
+                    case "-removeregion":
+                        if (sourceROM.RemoveRegionChecks(false))
+                        {
+                            sourceROM.RemoveRegionChecks();
+                            Console.WriteLine("-removeregion: removed region checks");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removeregion: removed region checks"); }
+                            returnCode |= 0x0010;
+                        }
                             
-                            break;
+                        else
+                        {
+                            Console.WriteLine("-removeregion: no region checks found");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removeregion: no region checks found"); }
+                        }
 
-                        case "-fixromsize":
-                            if (sourceROM.IntROMSize < sourceROM.IntCalcFileSize || sourceROM.IntCalcFileSize <= (sourceROM.IntROMSize / 2))
-                            {
-                                sourceROM.FixInternalROMSize();
-                                Console.WriteLine("-fixromsize: fixed wrong internal ROM size");
-                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-fixromsize: fixed wrong internal ROM size"); }
-                                returnCode |= 0x0008;
-                            }
+                        commandCtr++;
+                        break;
 
-                            else
-                            {
-                                Console.WriteLine("-fixromsize: internal ROM size already OK");
-                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-fixromsize: internal ROM size already OK"); }
-                            }
+                    case "-removesram":
+                        if (sourceROM.RemoveSRAMChecks(false))
+                        {
+                            sourceROM.RemoveSRAMChecks();
+                            Console.WriteLine("-removesram: removed SRAM checks");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removesram: removed SRAM checks"); }
+                            returnCode |= 0x0020;
+                        }
 
-                            break;
+                        else
+                        {
+                            Console.WriteLine("-removesram: no SRAM checks found");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removesram: no SRAM checks found"); }
+                        }
 
-                        case "-removeregion":
-                            if (sourceROM.RemoveRegionChecks(false))
-                            {
-                                sourceROM.RemoveRegionChecks();
-                                Console.WriteLine("-removeregion: removed region checks");
-                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removeregion: removed region checks"); }
-                                returnCode |= 0x0010;
-                            }
+                        commandCtr++;
+                        break;
+
+                    case "-removeslowrom":
+                        if (sourceROM.ByteROMSpeed == (byte)Speed.fast && sourceROM.RemoveSlowROMChecks(false))
+                        {
+                            sourceROM.RemoveSlowROMChecks();
+                            Console.WriteLine("-removeslowrom: removed SlowROM checks");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removeslowrom: removed SlowROM checks"); }
+                            returnCode |= 0x0040;
+                        }
                             
-                            else
+                        else
+                        {
+                            Console.WriteLine("-removeslowrom: no SlowROM checks found");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removeslowrom: no SlowROM checks found"); }
+                        }
+
+                        commandCtr++;
+                        break;
+
+                    case "-deinterleave":
+                        if (sourceROM.IsInterleaved)
+                        {
+                            sourceROM.Deinterleave();
+                            Console.WriteLine("-deinterleave: deinterleaved successfully");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-deinterleave: deinterleaved successfully"); }
+                            returnCode |= 0x0080;
+                        }
+
+                        else
+                        {
+                            Console.WriteLine("-deinterleave: ROM is already deinterleaved");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-deinterleave: ROM is already deinterleaved"); }
+                        }
+
+                        commandCtr++;
+                        break;
+
+                    case "-interleave":
+                        if (!sourceROM.IsInterleaved && (sourceROM.UIntROMHeaderOffset == (uint)HeaderOffset.hirom || sourceROM.UIntROMHeaderOffset == (uint)HeaderOffset.exhirom))
+                        {
+                            sourceROM.Interleave();
+                            Console.WriteLine("-interleave: interleaved successfully");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-interleave: interleaved successfully"); }
+                            returnCode |= 0x0100;
+                        }
+
+                        else
+                        {
+                            if (sourceROM.UIntROMHeaderOffset == (uint)HeaderOffset.lorom || sourceROM.UIntROMHeaderOffset == (uint)HeaderOffset.exlorom)
                             {
-                                Console.WriteLine("-removeregion: no region checks found");
-                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removeregion: no region checks found"); }
-                            }
-
-                            break;
-
-                        case "-removesram":
-                            if (sourceROM.RemoveSRAMChecks(false))
-                            {
-                                sourceROM.RemoveSRAMChecks();
-                                Console.WriteLine("-removesram: removed SRAM checks");
-                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removesram: removed SRAM checks"); }
-                                returnCode |= 0x0020;
-                            }
-
-                            else
-                            {
-                                Console.WriteLine("-removesram: no SRAM checks found");
-                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removesram: no SRAM checks found"); }
-                            }
-
-                            break;
-
-                        case "-removeslowrom":
-                            if (sourceROM.ByteROMSpeed == (byte)Speed.fast && sourceROM.RemoveSlowROMChecks(false))
-                            {
-                                sourceROM.RemoveSlowROMChecks();
-                                Console.WriteLine("-removeslowrom: removed SlowROM checks");
-                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removeslowrom: removed SlowROM checks"); }
-                                returnCode |= 0x0040;
-                            }
-                            
-                            else
-                            {
-                                Console.WriteLine("-removeslowrom: no SlowROM checks found");
-                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removeslowrom: no SlowROM checks found"); }
-                            }
-
-                            break;
-
-                        case "-deinterleave":
-                            if (sourceROM.IsInterleaved)
-                            {
-                                sourceROM.Deinterleave();
-                                Console.WriteLine("-deinterleave: deinterleaved successfully");
-                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-deinterleave: deinterleaved successfully"); }
-                                returnCode |= 0x0080;
+                                Console.WriteLine("-interleave: interleaving LoROM is not possible");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-interleave: interleaving LoROM is not possible"); }
                             }
 
                             else
                             {
-                                Console.WriteLine("-deinterleave: ROM is already deinterleaved");
-                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-deinterleave: ROM is already deinterleaved"); }
+                                Console.WriteLine("-interleave: ROM is already interleaved");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-interleave: ROM is already interleaved"); }
+                            }
+                        }
+
+                        commandCtr++;
+                        break;
+
+                    case "-patch":
+                        if (File.Exists(args[argPos + 1]))
+                        {
+                            byte[] patchedSourceROM = null;
+                            byte[] mergedSourceROM = CLIMergeROM(sourceROM);
+
+                            switch (Path.GetExtension(args[argPos + 1]))
+                            {
+                                case ".ips": patchedSourceROM = IPSPatch.Apply(mergedSourceROM, args[argPos + 1]); break;
+                                case ".ups": patchedSourceROM = UPSPatch.Apply(mergedSourceROM, sourceROM.CRC32Hash, args[argPos + 1]); break;
+                                case ".bps": patchedSourceROM = BPSPatch.Apply(mergedSourceROM, sourceROM.CRC32Hash, args[argPos + 1]); break;
+                                case ".bdf": patchedSourceROM = BDFPatch.Apply(mergedSourceROM, args[argPos + 1]); break;
+                                case ".xdelta": patchedSourceROM = XDELTAPatch.Apply(mergedSourceROM, args[argPos + 1]); break;
                             }
 
-                            break;
-
-                        case "-interleave":
-                            if (!sourceROM.IsInterleaved && (sourceROM.UIntROMHeaderOffset == (uint)HeaderOffset.hirom || sourceROM.UIntROMHeaderOffset == (uint)HeaderOffset.exhirom))
+                            if (patchedSourceROM != null)
                             {
-                                sourceROM.Interleave();
-                                Console.WriteLine("-interleave: interleaved successfully");
-                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-interleave: interleaved successfully"); }
-                                returnCode |= 0x0100;
+                                sourceROM.SourceROM = patchedSourceROM;
+                                sourceROM.UIntSMCHeader = 0;
+                                sourceROM.SourceROMSMCHeader = null;
+                                sourceROM.Initialize();
+
+                                Console.WriteLine("-patch: ROM successfully patched");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-patch: ROM successfully patched"); }
+                                returnCode |= 0x0200;
                             }
 
                             else
                             {
-                                if (sourceROM.UIntROMHeaderOffset == (uint)HeaderOffset.lorom || sourceROM.UIntROMHeaderOffset == (uint)HeaderOffset.exlorom)
-                                {
-                                    Console.WriteLine("-interleave: interleaving LoROM is not possible");
-                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-interleave: interleaving LoROM is not possible"); }
-                                }
-
-                                else
-                                {
-                                    Console.WriteLine("-interleave: ROM is already interleaved");
-                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-interleave: ROM is already interleaved"); }
-                                }
+                                Console.WriteLine("-patch: failed to patch ROM");
+                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-patch: failed to patch ROM"); }
                             }
+                        }
 
-                            break;
+                        else
+                        {
+                            Console.WriteLine("-patch: patch file not found");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-patch: patch file not found"); }
 
-                        case "-patch":
-                            if (File.Exists(args[argPos + 1]))
-                            {
-                                byte[] patchedSourceROM = null;
-                                byte[] mergedSourceROM = CLIMergeROM(sourceROM);
+                            return -1;
+                        }
 
-                                switch (Path.GetExtension(args[argPos + 1]))
-                                {
-                                    case ".ips": patchedSourceROM = IPSPatch.Apply(mergedSourceROM, args[argPos + 1]); break;
-                                    case ".ups": patchedSourceROM = UPSPatch.Apply(mergedSourceROM, sourceROM.CRC32Hash, args[argPos + 1]); break;
-                                    case ".bps": patchedSourceROM = BPSPatch.Apply(mergedSourceROM, sourceROM.CRC32Hash, args[argPos + 1]); break;
-                                    case ".bdf": patchedSourceROM = BDFPatch.Apply(mergedSourceROM, args[argPos + 1]); break;
-                                    case ".xdelta": patchedSourceROM = XDELTAPatch.Apply(mergedSourceROM, args[argPos + 1]); break;
-                                }
+                        commandCtr++;
+                        argPos++;
+                        break;
 
-                                if (patchedSourceROM != null)
-                                {
-                                    sourceROM.SourceROM = patchedSourceROM;
-                                    sourceROM.UIntSMCHeader = 0;
-                                    sourceROM.SourceROMSMCHeader = null;
-                                    sourceROM.Initialize();
-
-                                    Console.WriteLine("-patch: ROM successfully patched");
-                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-patch: ROM successfully patched"); }
-                                    returnCode |= 0x0200;
-                                }
-
-                                else
-                                {
-                                    Console.WriteLine("-patch: failed to patch ROM");
-                                    if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-patch: failed to patch ROM"); }
-                                }
-                            }
-
-                            else
-                            {
-                                Console.WriteLine("-patch: patch file not found");
-                                if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-patch: patch file not found"); }
-
-                                return -1;
-                            }
-
-                            argPos++;
-                            break;
-
-                        default:
-                            break;
-                    }
+                    default:
+                        break;
                 }
-
-                return returnCode;
             }
 
-            Console.WriteLine();
+            if (commandCtr == 0)
+            {
+                return -1;
+            }
+
             return returnCode;
         }
 
@@ -413,32 +436,36 @@ namespace Advanced_SNES_ROM_Utility.Commandline
 
         private static void CLIPrintHelp()
         {
-            Console.WriteLine("\n" +
-                              "Usage:\n" +
+            string helpText = "Usage:\n" +
                                   "\tAdvanced_SNES_ROM_Utility [options]\n" +
                               "\n" +
                                   "\tOptions:\n" +
-                                     "\t\t-path <FILEPATH, FOLDER>\tThe path or folder to ROM file(s)\n" +
-                                     "\t\t-recursive\t\t\tDetermines whether subdirectories should be included\n" +
-                                     "\t\t-overwrite\t\t\tDetermines whether overwriting files or saving with an extension\n" +
-                                     "\t\t-header <add, remove>\t\tDetermines whether a header should be added or removed\n" +
-                                     "\t\t-fixchecksum\t\t\tDetermines whether a broken checksum should be fixed\n" +
-                                     "\t\t-fixromsize\t\t\tDetermines whether a wrong internal ROM size should be fixed\n" +
-                                     "\t\t-removeregion\t\t\tDetermines whether existing region checks should be removed\n" +
-                                     "\t\t-removesram\t\t\tDetermines whether existing sram checks should be removed\n" +
-                                     "\t\t-removeslowrom\t\t\tDetermines whether existing slow ROM checks should be removed\n" +
-                                     "\t\t-deinterleave\t\t\tDetermines whether an interleaved ROM should be deinterleaved\n" +
-                                     "\t\t-interleave\t\t\tDetermines whether a deinterleaved ROM should be interleaved\n" +
-                                     "\t\t-patch <FILEPATH>\t\tDetermines whether ROM(s) should be patched with a specific patch\n" +
-                                     "\t\t-log\t\t\t\tDetermines whether output should be written to a logfile\n" +
+                                     "\t\t-path <FILEPATH, FOLDER>\tPath or folder of the ROM file(s)\n" +
+                                     "\t\t-recursive\t\t\tInclude files from subdirectories\n" +
+                                     "\t\t-overwrite\t\t\tOverwrite files on saving (else an extension will be used)\n" +
+                                     "\t\t-header <add, remove>\t\tAdds or removes a header\n" +
+                                     "\t\t-fixchecksum\t\t\tFixes a broken checksum\n" +
+                                     "\t\t-fixromsize\t\t\tFixes a wrong internal ROM size\n" +
+                                     "\t\t-removeregion\t\t\tRemoves existing region checks\n" +
+                                     "\t\t-removesram\t\t\tRemoves existing SRAM checks\n" +
+                                     "\t\t-removeslowrom\t\t\tRemoves existing SlowROM checks\n" +
+                                     "\t\t-deinterleave\t\t\tDeinterleave, if ROM is in interleaved format\n" +
+                                     "\t\t-interleave\t\t\tInterleave, if ROM is in deinterleaved format\n" +
+                                     "\t\t-patch <FILEPATH>\t\tPatch ROM with a specific patch\n" +
+                                     "\t\t-log\t\t\t\tWrite output to a logfile\n" +
                                      "\t\t-version\t\t\tShow version information\n" +
-                                     "\t\t-help\t\t\t\tShow help and usage information\n"
-                              );
+                                     "\t\t-help\t\t\t\tShow help and usage information\n";
+
+            Console.WriteLine("\n" + helpText);
+            if (_cliLog) { CLIWriteLog(_cliLogFilePath, helpText); }
         }
 
         private static void CLIPrintVersion()
         {
-            Console.WriteLine("\n" + Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            string versionText = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            Console.WriteLine("\n" + versionText);
+            if (_cliLog) { CLIWriteLog(_cliLogFilePath, versionText); }
         }
 
         private static void CLIWriteLog(string cliLogFilePath, string cliLogMessage, bool emptyLine = false)

@@ -169,7 +169,9 @@
 
 <p><span style="font-family:Arial,Helvetica,sans-serif">Use Windows Commandline (CMD) for executing batch operations (or just for processing a single file, if you prefer using the commandline).</span></p>
 <p><span style="font-family:Arial,Helvetica,sans-serif">Build your own command chain to execute operations in the order you specified!</span></p>
-<p><span style="font-family:Arial,Helvetica,sans-serif">Note: Deinterleaving and interleaving might require user action! This will bring up a windows form and can only work within a Windows environment!</span></p>
+<p><span style="font-family:Arial,Helvetica,sans-serif">Notes:</span></p>
+<li><p><span style="font-family:Arial,Helvetica,sans-serif">Deinterleaving and interleaving might require user action! This will bring up a windows form and can only work within a Windows environment</span></p></li>
+<li><p><span style="font-family:Arial,Helvetica,sans-serif">All paths must be in absolute format</span></p></li>
 <p><span style="font-family:Arial,Helvetica,sans-serif"><u>Example:</u></span></p>
 <p><span style="font-family:Consolas">Advanced_SNES_ROM_Utility -path "C:\ROMs" -recursive -header add -patch "C:\Patches\patch.ips" -header remove -fixromsize -fixchecksum</span></p>
 <p><span style="font-family:Arial,Helvetica,sans-serif">This command will add a header to all ROMs in C:\ROMs (subfolders included), apply an IPS patch, remove header afterwards, fix internal ROM size and checksum and save the modfied file with an extension.</span></p>
@@ -192,67 +194,67 @@
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
             <td width="40%">-path &lt;FILEPATH, FOLDER&gt;</td>
-            <td width="55%">The path or folder to ROM file(s)</td>
+            <td width="55%">Path or folder of the ROM file(s)</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
             <td width="40%">-recursive</td>
-            <td width="55%">Determines whether subdirectories should be included</td>
+            <td width="55%">Include files from subdirectories</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
             <td width="40%">-overwrite</td>
-            <td width="55%">Determines whether overwriting files or saving with an extension</td>
+            <td width="55%">Overwrite files on saving (else an extension will be used)</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
             <td width="40%">-header &lt;add, remove&gt;</td>
-            <td width="55%">Determines whether a header should be added or removed</td>
+            <td width="55%">Adds or removes a header</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
             <td width="40%">-fixchecksum</td>
-            <td width="55%">Determines whether a broken checksum should be fixed</td>
+            <td width="55%">Fixes a broken checksum</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
             <td width="40%">-fixromsize</td>
-            <td width="55%">Determines whether a wrong internal ROM size should be fixed</td>
+            <td width="55%">Fixes a wrong internal ROM size</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
             <td width="40%">-removeregion</td>
-            <td width="55%">Determines whether existing region checks should be removed</td>
+            <td width="55%">Removes existing region checks</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
             <td width="40%">-removesram</td>
-            <td width="55%">Determines whether existing sram checks should be removed</td>
+            <td width="55%">Removes existing SRAM checks</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
             <td width="40%">-removeslowrom</td>
-            <td width="55%">Determines whether existing slow ROM checks should be removed</td>
+            <td width="55%">Removes existing SlowROM checks</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
             <td width="40%">-deinterleave</td>
-            <td width="55%">Determines whether an interleaved ROM should be deinterleaved</td>
+            <td width="55%">Deinterleave, if ROM is in interleaved format</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
             <td width="40%">-interleave</td>
-            <td width="55%">Determines whether a deinterleaved ROM should be interleaved</td>
+            <td width="55%">Interleave, if ROM is in deinterleaved format</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
             <td width="40%">-patch &lt;FILEPATH&gt;</td>
-            <td width="55%">Determines whether ROM(s) should be patched with a specific patch</td>
+            <td width="55%">Patch ROM with a specific patch</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
             <td width="40%">-log</td>
-            <td width="55%">Determines whether output should be written to a logfile</td>
+            <td width="55%">Write output to a logfile</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
