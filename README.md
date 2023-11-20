@@ -111,6 +111,3 @@ or take a look into the tool's manual.
 
 ## Download
 - [Get it on RHDN](https://www.romhacking.net/utilities/1638)
-
-## Support
-Support my work and [become a Patreon](https://www.patreon.com/user?u=98965851)
