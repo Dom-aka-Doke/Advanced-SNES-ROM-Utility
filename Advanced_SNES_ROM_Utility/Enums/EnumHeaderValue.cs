@@ -2,6 +2,7 @@
 {
     gamecode = 0x02,
     exram = 0x0D,
+    subtype = 0x0F,
     title = 0x10,
     mapmode = 0x25,
     type = 0x26,

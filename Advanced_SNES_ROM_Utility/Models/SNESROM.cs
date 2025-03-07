@@ -35,6 +35,7 @@ namespace Advanced_SNES_ROM_Utility
         public bool IsInterleaved { get; set; }
 
         public byte ByteROMType { get; set; }
+        public byte ByteROMSubtype { get; set; }
         public byte ByteMapMode { get; set; }
         public byte ByteROMSpeed { get; set; }
         public byte ByteSRAMSize { get; set; }
@@ -42,6 +43,7 @@ namespace Advanced_SNES_ROM_Utility
         public byte ByteVersion { get; set; }
         public byte ByteROMSize { get; set; }
         public byte[] ByteArrayTitle { get; set; }
+        public byte ByteTitleWhitespace { get; set; }
         public byte ByteCountry { get; set; }
         public int IntCompany { get; set; }
         public byte[] ByteArrayGameCode { get; set; }
@@ -217,6 +219,7 @@ namespace Advanced_SNES_ROM_Utility
 
             ByteArrayTitle = title;
             StringTitle = Encoding.GetEncoding(932).GetString(ByteArrayTitle);
+            ByteTitleWhitespace = (byte)(ByteArrayTitle[ByteArrayTitle.Length - 1] == 0x00 ? 0x00 : 0x20);
         }
 
         public void GetMapMode()
@@ -259,9 +262,21 @@ namespace Advanced_SNES_ROM_Utility
         private void GetROMType()
         {
             byte[] type = new byte[1];
-            if (IsBSROM) { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.bs_type, type, 0, 1); } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.type, type, 0, 1); }
+            byte[] subtype = new byte[1];
+            
+            if (IsBSROM)
+            {
+                Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.bs_type, type, 0, 1);
+            }
+
+            else
+            {
+                Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.type, type, 0, 1);
+                Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.subtype, subtype, 0, 1);
+            }
 
             ByteROMType = type[0];
+            ByteROMSubtype = subtype[0];
 
             string[] falseDSP1Games = { "Ballz                ",    // Games that are detected as DSP-4 but actually are DSP-1
                                         "Lock On              ",
@@ -284,7 +299,7 @@ namespace Advanced_SNES_ROM_Utility
                 case 0x05: if (ByteROMSpeed == (byte)Speed.slow) { StringROMType = "ROM+DSP2+RAM+Battery"; } else if (ByteROMSpeed == (byte)Speed.fast && IntCompany == 0x018E) { StringROMType = "ROM+DSP3+RAM+Battery"; } else { StringROMType = "ROM+DSP1+RAM+Battery"; }; break;
                 case 0x10: if (IsBSROM) { StringROMType = "BS-X+FLASH"; }; break;
                 case 0x13: StringROMType = "ROM+MarioChip1+RAM"; break;
-                case 0x14: StringROMType = "ROM+GSU1+RAM"; if (ByteROMSize > 0x0A) { StringROMType = "ROM+GSU2+RAM"; }; break;
+                case 0x14: StringROMType = "ROM+GSU1+RAM"; if (ByteROMSize > 0x0A) { StringROMType = "ROM+GSU2+RAM"; } if (ByteROMSubtype == 0x52) { StringROMType = "ROM+GSU3+RAM"; }; break;
                 case 0x15: StringROMType = "ROM+GSU2+RAM+Battery"; if (ByteROMSize <= 0x0A && !falseGSU2Games.Contains(StringTitle)) { StringROMType = "ROM+GSU1+RAM+Battery"; }; break;
                 case 0x1A: StringROMType = "ROM+GSU1+RAM+Battery"; break;
                 case 0x20: if (IsBSROM) { StringROMType = "BS-X+PSRAM+SoundLink"; }; break;
@@ -576,7 +591,7 @@ namespace Advanced_SNES_ROM_Utility
 
             for (int i = 0; i < maxLength; i++)
             {
-                byteArrayTitle[i] = 0x20;
+                byteArrayTitle[i] = ByteTitleWhitespace;
             }
 
             int newByteTitleTempLenght = newByteTitle.Length;

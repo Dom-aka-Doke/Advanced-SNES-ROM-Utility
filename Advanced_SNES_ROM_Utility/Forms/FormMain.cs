@@ -59,7 +59,7 @@ namespace Advanced_SNES_ROM_Utility
                 // Enable / disable text, combo boxes and buttons
                 if (!textBoxTitle.Enabled) { textBoxTitle.Enabled = true; }
                 if (_sourceROM.IsBSROM) { comboBoxCountryRegion.Enabled = false; } else { comboBoxCountryRegion.Enabled = true; }
-                textBoxTitle.MaxLength = _sourceROM.StringTitle.Length;
+                textBoxTitle.MaxLength = _sourceROM.ByteArrayTitle.Length;
                 if (!textBoxVersion.Enabled) { textBoxVersion.Enabled = true; }
                 if (!checkBoxExpandMirroring.Enabled) { checkBoxExpandMirroring.Enabled = true; }
                 if (!checkBoxScan.Enabled) { checkBoxScan.Enabled = true; }
@@ -443,7 +443,9 @@ namespace Advanced_SNES_ROM_Utility
 
             // Set text boxes
             textBoxROMName.Text = _sourceROM.ROMFullPath;
+            textBoxTitle.TextChanged -= TextBoxGetTitle_TextChanged;
             textBoxTitle.Text = _sourceROM.StringTitle.Trim();
+            textBoxTitle.TextChanged += TextBoxGetTitle_TextChanged;
             textBoxVersion.Text = _sourceROM.StringVersion;
             textBoxCode.Text = _sourceROM.StringGameCode.Trim();
             if (_sourceROM.StringGameCode.Trim() != "N/A") { textBoxCode.Enabled = true; } else { textBoxCode.Enabled = false; }

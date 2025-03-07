@@ -29,7 +29,7 @@
     <MapFileExtensions>false</MapFileExtensions>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.1.0.0</ApplicationVersion>
+    <ApplicationVersion>1.1.1.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -59,7 +59,7 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>0B54394BF1066AC23D59C92E87CE02BEED66253D</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>DA323E298AA6F07C97C6AB734A8919D8E4635F25</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>Advanced_SNES_ROM_Utility_TemporaryKey.pfx</ManifestKeyFile>
@@ -68,13 +68,19 @@
     <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>false</SignManifests>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Advanced_SNES_ROM_Utility_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="bz2portable, Version=0.86.0.518, Culture=neutral, PublicKeyToken=43072770b20d93eb, processorArchitecture=MSIL">
@@ -219,6 +225,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="Advanced_SNES_ROM_Utility_TemporaryKey.pfx" />
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
