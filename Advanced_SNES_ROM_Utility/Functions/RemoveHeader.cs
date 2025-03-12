@@ -7,7 +7,7 @@
             // Remove existing header
             sourceROM.SourceROMSMCHeader = null;
             
-            sourceROM.Initialize();
+            sourceROM.Initialize(new string[] { "smcheader", "filesize", "checksum" });
         }
     }
 }

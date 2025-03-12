@@ -33,7 +33,7 @@ namespace Advanced_SNES_ROM_Utility.Functions
                 Buffer.BlockCopy(newChksmSequence, 0, sourceROM.SourceROM, (int)offset - 0x400000, newChksmSequence.Length);
             }
 
-            sourceROM.Initialize();
+            sourceROM.Initialize(new string[] { "romheader", "checksum" });
         }
     }
 }

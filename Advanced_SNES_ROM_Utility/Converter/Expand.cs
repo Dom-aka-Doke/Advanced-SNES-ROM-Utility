@@ -104,7 +104,7 @@ namespace Advanced_SNES_ROM_Utility.Converter
             }
 
             sourceROM.SourceROM = expandedROM;
-            sourceROM.Initialize();
+            sourceROM.Initialize(new string[] { "romheader", "mapmode", "romsize", "checksum", "filesize" });
         }
     }
 }

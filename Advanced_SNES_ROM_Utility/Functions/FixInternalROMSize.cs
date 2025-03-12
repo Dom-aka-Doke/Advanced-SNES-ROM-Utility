@@ -46,7 +46,7 @@ namespace Advanced_SNES_ROM_Utility.Functions
                     Buffer.BlockCopy(byteArrayROMSizeValue, 0, sourceROM.SourceROM, (int)sourceROM.UIntROMHeaderOffset + 0x20, 4);
                 }
 
-                sourceROM.Initialize();
+                sourceROM.Initialize(new string[] { "romheader", "romsize", "filesize", "checksum" });
             }
         }
     }

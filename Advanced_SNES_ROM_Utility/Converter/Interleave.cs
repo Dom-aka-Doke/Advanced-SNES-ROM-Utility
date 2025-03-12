@@ -119,7 +119,7 @@ namespace Advanced_SNES_ROM_Utility.Converter
             }
 
             sourceROM.SourceROM = interleavedROM;
-            sourceROM.Initialize();
+            sourceROM.Initialize(new string[] { "smcheader", "romheader", "mapmode", "checksum" });
         }
     }
 }

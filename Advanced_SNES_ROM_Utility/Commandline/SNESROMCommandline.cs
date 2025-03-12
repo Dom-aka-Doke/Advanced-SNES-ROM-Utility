@@ -319,7 +319,7 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                                 sourceROM.SourceROM = patchedSourceROM;
                                 sourceROM.UIntSMCHeader = 0;
                                 sourceROM.SourceROMSMCHeader = null;
-                                sourceROM.Initialize();
+                                sourceROM.Initialize(new string[] { "all" });
 
                                 Console.WriteLine("-patch: ROM successfully patched");
                                 if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-patch: ROM successfully patched"); }

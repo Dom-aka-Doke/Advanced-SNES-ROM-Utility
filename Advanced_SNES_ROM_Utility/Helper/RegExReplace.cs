@@ -40,7 +40,7 @@ namespace Advanced_SNES_ROM_Utility.Helper
             if (matchCtr > 0)
             {
                 sourceROM.SourceROM = StringToByteArray(sourceROMString);
-                sourceROM.Initialize();
+                sourceROM.Initialize(new string[] { "checksum" });
                 return true;
             }
 

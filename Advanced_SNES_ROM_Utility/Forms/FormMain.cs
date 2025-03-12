@@ -261,7 +261,7 @@ namespace Advanced_SNES_ROM_Utility
                     _sourceROM.SourceROM = patchedSourceROM;
                     _sourceROM.UIntSMCHeader = 0;
                     _sourceROM.SourceROMSMCHeader = null;
-                    _sourceROM.Initialize();
+                    _sourceROM.Initialize(new string[] { "all" });
                     RefreshLabelsAndButtons();
                     MessageBox.Show("ROM has successfully been patched!");
                 }

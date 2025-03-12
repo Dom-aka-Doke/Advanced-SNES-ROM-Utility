@@ -77,7 +77,7 @@ namespace Advanced_SNES_ROM_Utility
                     if (romFileInfo.Length >= 131072 && romFileInfo.Length <= 16777728)                 // Min is 1 Mbit, max is 128 Mbit incl. 512 byte header
                     {
                         SourceROM = File.ReadAllBytes(ROMFullPath);
-                        Initialize();
+                        Initialize(new string[] { "all" });
                     }
 
                     else
@@ -93,29 +93,29 @@ namespace Advanced_SNES_ROM_Utility
             }
         }
 
-        public void Initialize()
+        public void Initialize(string[] refresh)
         {
             // Initialize ROM
-            GetSMCHeader();
-            GetROMHeader();
-            GetTitle();
-            GetMapMode();
-            GetROMSpeed();
-            GetCompany();
-            GetROMSize();
-            GetROMType();
-            CheckIsNewHeader();
-            GetSRAMSize();
-            GetExRAMSize();
-            GetCountry();
-            GetVersion();
-            GetGameCode();
-            GetChecksum();
-            GetInverseChecksum();
-            IntCalcFileSize = SNESROMFunction.CalculateFileSize(SourceROM);
-            ByteArrayCalcChecksum = SNESROMFunction.CalculateChecksum(SourceROM, UIntROMHeaderOffset, IsBSROM, IntROMSize, IntCalcFileSize, ByteROMType);
-            ByteArrayCalcInvChecksum = SNESROMFunction.CalculateInverseChecksum(ByteArrayCalcChecksum);
-            CRC32Hash = SNESROMFunction.CalculateCrc32Hash(SourceROM, SourceROMSMCHeader, UIntSMCHeader);
+            if (refresh.Contains("all") || refresh.Contains("smcheader")) { GetSMCHeader(); }
+            if (refresh.Contains("all") || refresh.Contains("romheader")) { GetROMHeader(); }
+            if (refresh.Contains("all") || refresh.Contains("title")) { GetTitle(); }
+            if (refresh.Contains("all") || refresh.Contains("mapmode")) { GetMapMode(); }
+            if (refresh.Contains("all") || refresh.Contains("speed")) { GetROMSpeed(); }
+            if (refresh.Contains("all") || refresh.Contains("company")) { GetCompany(); }
+            if (refresh.Contains("all") || refresh.Contains("romsize")) { GetROMSize(); }
+            if (refresh.Contains("all") || refresh.Contains("romtype")) { GetROMType(); }
+            if (refresh.Contains("all") || refresh.Contains("newheader")) { CheckIsNewHeader(); }
+            if (refresh.Contains("all") || refresh.Contains("sramsize")) { GetSRAMSize(); }
+            if (refresh.Contains("all") || refresh.Contains("exramsize")) { GetExRAMSize(); }
+            if (refresh.Contains("all") || refresh.Contains("country")) { GetCountry(); }
+            if (refresh.Contains("all") || refresh.Contains("version")) { GetVersion(); }
+            if (refresh.Contains("all") || refresh.Contains("gamecode")) { GetGameCode(); }
+            if (refresh.Contains("all") || refresh.Contains("checksum")) { GetChecksum(); }
+            if (refresh.Contains("all") || refresh.Contains("checksum")) { GetInverseChecksum(); }
+            if (refresh.Contains("all") || refresh.Contains("filesize")) { IntCalcFileSize = SNESROMFunction.CalculateFileSize(SourceROM); }
+            if (refresh.Contains("all") || refresh.Contains("checksum")) { ByteArrayCalcChecksum = SNESROMFunction.CalculateChecksum(SourceROM, UIntROMHeaderOffset, IsBSROM, IntROMSize, IntCalcFileSize, ByteROMType); }
+            if (refresh.Contains("all") || refresh.Contains("checksum")) { ByteArrayCalcInvChecksum = SNESROMFunction.CalculateInverseChecksum(ByteArrayCalcChecksum); }
+            if (refresh.Contains("all") || refresh.Contains("checksum")) { CRC32Hash = SNESROMFunction.CalculateCrc32Hash(SourceROM, SourceROMSMCHeader, UIntSMCHeader); }
         }
 
         private void GetSMCHeader()
@@ -607,7 +607,7 @@ namespace Advanced_SNES_ROM_Utility
                 Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.title - 0x400000, byteArrayTitle.Length);
             }
 
-            Initialize();
+            Initialize(new string[] { "romheader", "title", "checksum" });
         }
 
         public void SetVersion(byte newVersion)
@@ -620,7 +620,7 @@ namespace Advanced_SNES_ROM_Utility
                 Buffer.BlockCopy(byteArrayVersion, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.version - 0x400000, 1);
             }
 
-            Initialize();
+            Initialize(new string[] { "romheader", "version", "checksum" });
         }
 
         public void SetCountryRegion(byte newCountryRegion)
@@ -633,7 +633,7 @@ namespace Advanced_SNES_ROM_Utility
                 Buffer.BlockCopy(byteArrayCountryRegion, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.country - 0x400000, 1);
             }
 
-            Initialize();
+            Initialize(new string[] { "romheader", "country", "checksum" });
         }
 
         public void SetGameCode(string newGameCode)
@@ -652,7 +652,7 @@ namespace Advanced_SNES_ROM_Utility
                 Buffer.BlockCopy(byteArrayGameCode, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.gamecode - 0x400000, 4);
             }
 
-            Initialize();
+            Initialize(new string[] { "romheader", "gamecode", "checksum" });
         }
     }
 }

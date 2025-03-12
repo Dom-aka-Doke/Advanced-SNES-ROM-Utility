@@ -12,7 +12,7 @@
                 sourceROM.SourceROMSMCHeader[singleByte] = 0x00;
             }
 
-            sourceROM.Initialize();
+            sourceROM.Initialize(new string[] { "smcheader", "filesize", "checksum" });
         }
     }
 }
