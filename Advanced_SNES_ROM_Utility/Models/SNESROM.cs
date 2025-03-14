@@ -207,19 +207,44 @@ namespace Advanced_SNES_ROM_Utility
 
         private void GetTitle()
         {
-            byte[] title = new byte[21];
+            bool readTitle = true;
+            bool getWhitespace = false;
 
-            if (IsBSROM) { title = new byte[16]; Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.title, title, 0, 16); } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.title, title, 0, 21); if (title[20] == 0x00) { title = new byte[20]; Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.title, title, 0, 20); } }
-
-            // Return title as little endian byte[]
-            if (!BitConverter.IsLittleEndian)
+            if (ByteArrayTitle == null)
             {
-                Array.Reverse(title);
+                getWhitespace = true;
+
+                if (IsBSROM)
+                {
+                    ByteArrayTitle = new byte[16];
+                }
+
+                else
+                {
+                    ByteArrayTitle = new byte[21];
+                    Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.title, ByteArrayTitle, 0, ByteArrayTitle.Length);
+                    readTitle = false;
+
+                    if (ByteArrayTitle[20] == 0x00) 
+                    {
+                        ByteArrayTitle = new byte[20];
+                        readTitle = true;
+                    } 
+                }
             }
 
-            ByteArrayTitle = title;
+            if (readTitle)
+            {
+                Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.title, ByteArrayTitle, 0, ByteArrayTitle.Length);
+            }
+
+            // We have some special cases where 0x00 is used as space instead of 0x20 like Waiwai Check 11-22
+            if (getWhitespace)
+            {
+                ByteTitleWhitespace = (byte)(ByteArrayTitle[ByteArrayTitle.Length - 1] == 0x00 ? 0x00 : 0x20);
+            }
+            
             StringTitle = Encoding.GetEncoding(932).GetString(ByteArrayTitle);
-            ByteTitleWhitespace = (byte)(ByteArrayTitle[ByteArrayTitle.Length - 1] == 0x00 ? 0x00 : 0x20);
         }
 
         public void GetMapMode()
@@ -300,7 +325,7 @@ namespace Advanced_SNES_ROM_Utility
                 case 0x10: if (IsBSROM) { StringROMType = "BS-X+FLASH"; }; break;
                 case 0x13: StringROMType = "ROM+MarioChip1+RAM"; break;
                 case 0x14: StringROMType = "ROM+GSU1+RAM"; if (ByteROMSize > 0x0A) { StringROMType = "ROM+GSU2+RAM"; } if (ByteROMSubtype == 0x52) { StringROMType = "ROM+GSU3+RAM"; }; break;
-                case 0x15: StringROMType = "ROM+GSU2+RAM+Battery"; if (ByteROMSize <= 0x0A && !falseGSU2Games.Contains(StringTitle)) { StringROMType = "ROM+GSU1+RAM+Battery"; }; break;
+                case 0x15: StringROMType = "ROM+GSU2+RAM+Battery"; if (ByteROMSize <= 0x0A && !falseGSU2Games.Contains(StringTitle)) { StringROMType = "ROM+GSU1+RAM+Battery"; } if (ByteROMSubtype == 0x52) { StringROMType = "ROM+GSU3+RAM+Battery"; }; break;
                 case 0x1A: StringROMType = "ROM+GSU1+RAM+Battery"; break;
                 case 0x20: if (IsBSROM) { StringROMType = "BS-X+PSRAM+SoundLink"; }; break;
                 case 0x25: StringROMType = "ROM+OBC1+RAM+Battery"; break;
