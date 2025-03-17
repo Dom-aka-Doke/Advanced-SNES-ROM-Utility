@@ -22,7 +22,7 @@ namespace Advanced_SNES_ROM_Utility.Functions
 
                     Buffer.BlockCopy(byteArrayROMSizeValue, 0, sourceROM.SourceROM, (int)sourceROM.UIntROMHeaderOffset + 0x27, 1);
 
-                    if (sourceROM.UIntROMHeaderOffset == (int)HeaderOffset.exlorom || sourceROM.UIntROMHeaderOffset == (int)HeaderOffset.exhirom)
+                    if (sourceROM.IsExROMHeaderCopied)
                     {
                         Buffer.BlockCopy(byteArrayROMSizeValue, 0, sourceROM.SourceROM, (int)(sourceROM.UIntROMHeaderOffset + 0x27 - 0x400000), 1);
                     }

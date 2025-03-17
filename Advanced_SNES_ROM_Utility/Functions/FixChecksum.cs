@@ -28,7 +28,7 @@ namespace Advanced_SNES_ROM_Utility.Functions
 
             Buffer.BlockCopy(newChksmSequence, 0, sourceROM.SourceROM, (int)offset, newChksmSequence.Length);
 
-            if (sourceROM.UIntROMHeaderOffset == (int)HeaderOffset.exlorom || sourceROM.UIntROMHeaderOffset == (int)HeaderOffset.exhirom)
+            if (sourceROM.IsExROMHeaderCopied)
             {
                 Buffer.BlockCopy(newChksmSequence, 0, sourceROM.SourceROM, (int)offset - 0x400000, newChksmSequence.Length);
             }
