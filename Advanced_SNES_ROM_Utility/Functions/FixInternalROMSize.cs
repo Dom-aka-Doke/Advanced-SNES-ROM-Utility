@@ -20,11 +20,11 @@ namespace Advanced_SNES_ROM_Utility.Functions
                         byteArrayROMSizeValue[0]++;
                     }
 
-                    Buffer.BlockCopy(byteArrayROMSizeValue, 0, sourceROM.SourceROM, (int)sourceROM.UIntROMHeaderOffset + 0x27, 1);
+                    Buffer.BlockCopy(byteArrayROMSizeValue, 0, sourceROM.SourceROM, (int)sourceROM.UIntROMHeaderOffset + (int)HeaderValue.size, 1);
 
                     if (sourceROM.IsExROMHeaderCopied)
                     {
-                        Buffer.BlockCopy(byteArrayROMSizeValue, 0, sourceROM.SourceROM, (int)(sourceROM.UIntROMHeaderOffset + 0x27 - 0x400000), 1);
+                        Buffer.BlockCopy(byteArrayROMSizeValue, 0, sourceROM.SourceROM, (int)(sourceROM.UIntROMHeaderCopyOffset + (int)HeaderValue.size), 1);
                     }
                 }
 

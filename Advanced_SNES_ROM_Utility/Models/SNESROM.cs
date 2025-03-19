@@ -26,12 +26,13 @@ namespace Advanced_SNES_ROM_Utility
 
         public uint UIntROMHeaderOffset { get; set; }
         public uint UIntSMCHeader { get; set; }
-        public bool IsExROMHeaderCopied { get; set; }
+        public uint UIntROMHeaderCopyOffset { get; set; }
         public int IntROMSize { get; set; }
         public int IntCalcFileSize { get; set; }
         public string CRC32Hash { get; set; }
 
         public bool IsNewHeader { get; set; }
+        public bool IsExROMHeaderCopied { get; set; }
         public bool IsBSROM { get; set; }
         public bool IsInterleaved { get; set; }
 
@@ -162,7 +163,6 @@ namespace Advanced_SNES_ROM_Utility
         {
             // Initialize with most likely values
             UIntROMHeaderOffset = (int)HeaderOffset.lorom;
-            IsExROMHeaderCopied = false;
             IsBSROM = false;
 
             int mapModeScoreLoROM = SNESROMFunction.CalculateMapModeScore(SourceROM, (int)HeaderOffset.lorom, false);
@@ -205,16 +205,6 @@ namespace Advanced_SNES_ROM_Utility
             // Load header
             SourceROMHeader = new byte[80];
             Buffer.BlockCopy(SourceROM, (int)UIntROMHeaderOffset, SourceROMHeader, 0, 80);
-
-            // In case we have ExROM, we check if header is copied to lower address range - we just check for title, this should be good enough
-            if (UIntROMHeaderOffset == (uint)HeaderOffset.exlorom || UIntROMHeaderOffset == (uint)HeaderOffset.exhirom)
-            {
-                byte[] romHeaderTitle = new byte[21];
-                byte[] exROMHeaderTitle = new byte[21];
-                Buffer.BlockCopy(SourceROM, (int)(UIntROMHeaderOffset + (int)HeaderValue.title), romHeaderTitle, 0, romHeaderTitle.Length);
-                Buffer.BlockCopy(SourceROM, (int)(UIntROMHeaderOffset + (int)HeaderValue.title - 0x400000), exROMHeaderTitle, 0, exROMHeaderTitle.Length);
-                IsExROMHeaderCopied = romHeaderTitle.SequenceEqual(exROMHeaderTitle);
-            }
         }
 
         private void GetTitle()
@@ -263,6 +253,7 @@ namespace Advanced_SNES_ROM_Utility
         {
             byte[] mapMode = new byte[1];
             IsInterleaved = false;
+            IsExROMHeaderCopied = false;
 
             if (IsBSROM) { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.bs_mapmode, mapMode, 0, 1); } else { Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.mapmode, mapMode, 0, 1); }
             
@@ -293,6 +284,29 @@ namespace Advanced_SNES_ROM_Utility
             if (StringMapMode.Contains(SNESROMHelper.GetEnumDescription((MapMode)0x21)) && (UIntROMHeaderOffset == (uint)HeaderOffset.lorom || UIntROMHeaderOffset == (uint)HeaderOffset.exlorom))
             {
                 IsInterleaved = true;
+            }
+
+            // In case we have ExROM sized source ROM file, we check if header has been copied - we just check for title, this should be good enough
+            if (SourceROM.Length >= 0x40FFFF)
+            {
+                int headerCopyOffset = (int)UIntROMHeaderOffset;
+                byte[] exROMHeaderTitle = new byte[ByteArrayTitle.Length];
+
+                switch (UIntROMHeaderOffset)
+                {
+                    case (uint)HeaderOffset.lorom: headerCopyOffset += 0x400000; break;
+                    case (uint)HeaderOffset.exlorom: headerCopyOffset -= 0x400000; break;
+                    case (uint)HeaderOffset.hirom: headerCopyOffset += 0x400000; break;
+                    case (uint)HeaderOffset.exhirom: headerCopyOffset -= 0x400000; break;
+                }
+
+                Buffer.BlockCopy(SourceROM, headerCopyOffset + (int)HeaderValue.title, exROMHeaderTitle, 0, exROMHeaderTitle.Length);
+
+                if (ByteArrayTitle.SequenceEqual(exROMHeaderTitle))
+                {
+                    IsExROMHeaderCopied = true;
+                    UIntROMHeaderCopyOffset = (uint)headerCopyOffset;
+                }
             }
         }
 
@@ -641,7 +655,7 @@ namespace Advanced_SNES_ROM_Utility
 
             if (IsExROMHeaderCopied)
             {
-                Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.title - 0x400000, byteArrayTitle.Length);
+                Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)(UIntROMHeaderCopyOffset + (int)HeaderValue.title), byteArrayTitle.Length);
             }
 
             Initialize(new string[] { "romheader", "title", "checksum" });
@@ -654,7 +668,7 @@ namespace Advanced_SNES_ROM_Utility
 
             if (IsExROMHeaderCopied)
             {
-                Buffer.BlockCopy(byteArrayVersion, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.version - 0x400000, 1);
+                Buffer.BlockCopy(byteArrayVersion, 0, SourceROM, (int)(UIntROMHeaderCopyOffset + (int)HeaderValue.version), 1);
             }
 
             Initialize(new string[] { "romheader", "version", "checksum" });
@@ -667,7 +681,7 @@ namespace Advanced_SNES_ROM_Utility
 
             if (IsExROMHeaderCopied)
             {
-                Buffer.BlockCopy(byteArrayCountryRegion, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.country - 0x400000, 1);
+                Buffer.BlockCopy(byteArrayCountryRegion, 0, SourceROM, (int)(UIntROMHeaderCopyOffset + (int)HeaderValue.country), 1);
             }
 
             Initialize(new string[] { "romheader", "country", "checksum" });
@@ -686,7 +700,7 @@ namespace Advanced_SNES_ROM_Utility
 
             if (IsExROMHeaderCopied)
             {
-                Buffer.BlockCopy(byteArrayGameCode, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.gamecode - 0x400000, 4);
+                Buffer.BlockCopy(byteArrayGameCode, 0, SourceROM, (int)(UIntROMHeaderCopyOffset + (int)HeaderValue.gamecode), 4);
             }
 
             Initialize(new string[] { "romheader", "gamecode", "checksum" });
