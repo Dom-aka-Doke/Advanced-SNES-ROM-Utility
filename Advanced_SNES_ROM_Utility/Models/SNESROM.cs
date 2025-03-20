@@ -300,6 +300,11 @@ namespace Advanced_SNES_ROM_Utility
                     case (uint)HeaderOffset.exhirom: headerCopyOffset -= 0x400000; break;
                 }
 
+                if (IsInterleaved)
+                {
+                    headerCopyOffset -= 0x200000;
+                }
+
                 Buffer.BlockCopy(SourceROM, headerCopyOffset + (int)HeaderValue.title, exROMHeaderTitle, 0, exROMHeaderTitle.Length);
 
                 if (ByteArrayTitle.SequenceEqual(exROMHeaderTitle))
