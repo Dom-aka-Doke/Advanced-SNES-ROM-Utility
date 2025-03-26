@@ -292,17 +292,23 @@ namespace Advanced_SNES_ROM_Utility
                 int headerCopyOffset = (int)UIntROMHeaderOffset;
                 byte[] exROMHeaderTitle = new byte[ByteArrayTitle.Length];
 
-                switch (UIntROMHeaderOffset)
+                switch ((HeaderOffset)UIntROMHeaderOffset)
                 {
-                    case (uint)HeaderOffset.lorom: headerCopyOffset += 0x400000; break;
-                    case (uint)HeaderOffset.exlorom: headerCopyOffset -= 0x400000; break;
-                    case (uint)HeaderOffset.hirom: headerCopyOffset += 0x400000; break;
-                    case (uint)HeaderOffset.exhirom: headerCopyOffset -= 0x400000; break;
-                }
+                    case HeaderOffset.lorom:
+                        headerCopyOffset += IsInterleaved ? 0x200000 : 0x400000;
+                        break;
 
-                if (IsInterleaved)
-                {
-                    headerCopyOffset -= 0x200000;
+                    case HeaderOffset.hirom:
+                        headerCopyOffset += 0x400000;
+                        break;
+
+                    case HeaderOffset.exlorom:
+                        headerCopyOffset -= IsInterleaved ? 0x200000 : 0x400000;
+                        break;
+
+                    case HeaderOffset.exhirom:
+                        headerCopyOffset -= 0x400000;
+                        break;
                 }
 
                 Buffer.BlockCopy(SourceROM, headerCopyOffset + (int)HeaderValue.title, exROMHeaderTitle, 0, exROMHeaderTitle.Length);
@@ -361,6 +367,7 @@ namespace Advanced_SNES_ROM_Utility
                 case 0x20: if (IsBSROM) { StringROMType = "BS-X+PSRAM+SoundLink"; }; break;
                 case 0x25: StringROMType = "ROM+OBC1+RAM+Battery"; break;
                 case 0x30: if (IsBSROM) { StringROMType = "BS-X+PSRAM"; }; break;
+                case 0x32: StringROMType = "ROM+SA1+RAM+Battery"; break;
                 case 0x34: StringROMType = "ROM+SA1+RAM"; break;
                 case 0x35: StringROMType = "ROM+SA1+RAM+Battery"; break;
                 case 0x36: StringROMType = "ROM+SA1"; break;
@@ -630,6 +637,14 @@ namespace Advanced_SNES_ROM_Utility
                 Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.gamecode, gamecode, 0, 4);
                 ByteArrayGameCode = gamecode;
                 StringGameCode = Encoding.GetEncoding(932).GetString(ByteArrayGameCode);
+
+                switch (StringGameCode)
+                {
+                    case "042J": if (ByteROMType == 0x00) { StringROMType = "ROM+SGB2"; } break;
+                    case "XBND": if (ByteROMType == 0x02) { StringROMType += "+XBandModem"; } break;
+                    case "MENU": if (ByteROMType == 0x02) { StringROMType += "+Nintendo Power"; } break;
+                    default: break;
+                }
             }
 
             else
