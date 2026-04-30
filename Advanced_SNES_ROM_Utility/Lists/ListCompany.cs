@@ -335,7 +335,8 @@ namespace Advanced_SNES_ROM_Utility.Lists
             { "0x0266", "Aruze" },
             { "0x0267", "Ertain" },
             { "0x0268", "SNK Playmore" },
-            { "0x0299", "Yojigen" }
+            { "0x0299", "Yojigen" },
+            { "0x03E1", "Randal Linden" }
         };
     }
 }

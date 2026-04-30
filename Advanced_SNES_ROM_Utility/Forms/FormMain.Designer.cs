@@ -866,7 +866,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "FormMain";
-            this.Text = "Advanced SNES ROM Utility v1.1.2 (pre release)";
+            this.Text = "Advanced SNES ROM Utility v1.2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.groupBoxInfo.ResumeLayout(false);
             this.groupBoxInfo.PerformLayout();

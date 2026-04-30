@@ -362,7 +362,8 @@ namespace Advanced_SNES_ROM_Utility
                 case 0x10: if (IsBSROM) { StringROMType = "BS-X+FLASH"; }; break;
                 case 0x13: StringROMType = "ROM+MarioChip1+RAM"; break;
                 case 0x14: StringROMType = "ROM+GSU1+RAM"; if (ByteROMSize > 0x0A) { StringROMType = "ROM+GSU2+RAM"; } if (ByteROMSubtype == 0x52) { StringROMType = "ROM+GSU3+RAM"; }; break;
-                case 0x15: StringROMType = "ROM+GSU2+RAM+Battery"; if (ByteROMSize <= 0x0A && !falseGSU2Games.Contains(StringTitle)) { StringROMType = "ROM+GSU1+RAM+Battery"; } if (ByteROMSubtype == 0x52) { StringROMType = "ROM+GSU3+RAM+Battery"; }; break;
+                case 0x15: StringROMType = "ROM+GSU2+RAM+Battery"; if (ByteROMSize <= 0x0A && !falseGSU2Games.Contains(StringTitle)) { StringROMType = "ROM+GSU1+RAM+Battery"; }; break;
+                case 0x17: StringROMType = "ROM+GSU3+RAM+Battery"; break;
                 case 0x1A: StringROMType = "ROM+GSU1+RAM+Battery"; break;
                 case 0x20: if (IsBSROM) { StringROMType = "BS-X+PSRAM+SoundLink"; }; break;
                 case 0x25: StringROMType = "ROM+OBC1+RAM+Battery"; break;
@@ -382,6 +383,11 @@ namespace Advanced_SNES_ROM_Utility
                 case 0xF6: if (ByteROMSize == 0x0A) { StringROMType = "ROM+ST-010"; } else { StringROMType = "ROM+ST-011"; }; break;
                 case 0xF9: StringROMType = "ROM+SPC-7110+RTC+RAM+Battery"; break;
                 default: StringROMType = "Unknown"; break;
+            }
+
+            if (ByteROMSubtype == 0x52)
+            {
+                StringROMType += "+Rumble";
             }
         }
 
