@@ -75,13 +75,16 @@
             this.textBoxVersion = new System.Windows.Forms.TextBox();
             this.comboBoxCountryRegion = new System.Windows.Forms.ComboBox();
             this.buttonFixROMSize = new System.Windows.Forms.Button();
-            this.buttonPatch = new System.Windows.Forms.Button();
-            this.buttonSaveAs = new System.Windows.Forms.Button();
-            this.buttonSave = new System.Windows.Forms.Button();
             this.groupBoxInfo = new System.Windows.Forms.GroupBox();
             this.textBoxCode = new System.Windows.Forms.TextBox();
             this.labelCode = new System.Windows.Forms.Label();
             this.groupBoxChecksums = new System.Windows.Forms.GroupBox();
+            this.labelGetSHA1Chksm = new System.Windows.Forms.Label();
+            this.labelGetMD5Chksm = new System.Windows.Forms.Label();
+            this.labelGetSHA256Chksm = new System.Windows.Forms.Label();
+            this.labelSHA256Chksm = new System.Windows.Forms.Label();
+            this.labelSHA1Chksm = new System.Windows.Forms.Label();
+            this.labelMD5Chksm = new System.Windows.Forms.Label();
             this.groupBoxROMInfo = new System.Windows.Forms.GroupBox();
             this.buttonFixSlowROMChecks = new System.Windows.Forms.Button();
             this.buttonFixSRAMChecks = new System.Windows.Forms.Button();
@@ -99,6 +102,9 @@
             this.buttonScan = new System.Windows.Forms.Button();
             this.buttonConvertMapMode = new System.Windows.Forms.Button();
             this.buttonInterleave = new System.Windows.Forms.Button();
+            this.buttonPatch = new System.Windows.Forms.Button();
+            this.buttonSaveAs = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
             this.groupBoxInfo.SuspendLayout();
             this.groupBoxChecksums.SuspendLayout();
             this.groupBoxROMInfo.SuspendLayout();
@@ -552,49 +558,6 @@
             this.buttonFixROMSize.UseVisualStyleBackColor = true;
             this.buttonFixROMSize.Click += new System.EventHandler(this.ButtonFixROMSize_Click);
             // 
-            // buttonPatch
-            // 
-            this.buttonPatch.Enabled = false;
-            this.buttonPatch.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.ips_patch_icon;
-            this.buttonPatch.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonPatch.Location = new System.Drawing.Point(363, 293);
-            this.buttonPatch.Name = "buttonPatch";
-            this.buttonPatch.Size = new System.Drawing.Size(169, 32);
-            this.buttonPatch.TabIndex = 61;
-            this.buttonPatch.Text = "Apply Patch";
-            this.buttonPatch.UseVisualStyleBackColor = true;
-            this.buttonPatch.Click += new System.EventHandler(this.ButtonPatch_Click);
-            // 
-            // buttonSaveAs
-            // 
-            this.buttonSaveAs.Enabled = false;
-            this.buttonSaveAs.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.save_as_icon;
-            this.buttonSaveAs.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSaveAs.Location = new System.Drawing.Point(452, 54);
-            this.buttonSaveAs.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonSaveAs.Name = "buttonSaveAs";
-            this.buttonSaveAs.Size = new System.Drawing.Size(80, 23);
-            this.buttonSaveAs.TabIndex = 54;
-            this.buttonSaveAs.Text = "Save As";
-            this.buttonSaveAs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.buttonSaveAs.UseVisualStyleBackColor = true;
-            this.buttonSaveAs.Click += new System.EventHandler(this.ButtonSaveAs_Click);
-            // 
-            // buttonSave
-            // 
-            this.buttonSave.Enabled = false;
-            this.buttonSave.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.save_icon;
-            this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSave.Location = new System.Drawing.Point(452, 27);
-            this.buttonSave.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(80, 23);
-            this.buttonSave.TabIndex = 53;
-            this.buttonSave.Text = "Save";
-            this.buttonSave.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.buttonSave.UseVisualStyleBackColor = true;
-            this.buttonSave.Click += new System.EventHandler(this.ButtonSave_Click);
-            // 
             // groupBoxInfo
             // 
             this.groupBoxInfo.Controls.Add(this.textBoxCode);
@@ -635,6 +598,12 @@
             // 
             // groupBoxChecksums
             // 
+            this.groupBoxChecksums.Controls.Add(this.labelGetSHA1Chksm);
+            this.groupBoxChecksums.Controls.Add(this.labelGetMD5Chksm);
+            this.groupBoxChecksums.Controls.Add(this.labelGetSHA256Chksm);
+            this.groupBoxChecksums.Controls.Add(this.labelSHA256Chksm);
+            this.groupBoxChecksums.Controls.Add(this.labelSHA1Chksm);
+            this.groupBoxChecksums.Controls.Add(this.labelMD5Chksm);
             this.groupBoxChecksums.Controls.Add(this.labelIntChksm);
             this.groupBoxChecksums.Controls.Add(this.labelCalcChksm);
             this.groupBoxChecksums.Controls.Add(this.labelGetCalcChksm);
@@ -647,10 +616,67 @@
             this.groupBoxChecksums.Controls.Add(this.labelGetIntInvChksm);
             this.groupBoxChecksums.Location = new System.Drawing.Point(12, 404);
             this.groupBoxChecksums.Name = "groupBoxChecksums";
-            this.groupBoxChecksums.Size = new System.Drawing.Size(346, 95);
+            this.groupBoxChecksums.Size = new System.Drawing.Size(346, 153);
             this.groupBoxChecksums.TabIndex = 63;
             this.groupBoxChecksums.TabStop = false;
             this.groupBoxChecksums.Text = "CHECKSUMS";
+            // 
+            // labelGetSHA1Chksm
+            // 
+            this.labelGetSHA1Chksm.AutoSize = true;
+            this.labelGetSHA1Chksm.Location = new System.Drawing.Point(69, 113);
+            this.labelGetSHA1Chksm.Name = "labelGetSHA1Chksm";
+            this.labelGetSHA1Chksm.Size = new System.Drawing.Size(77, 13);
+            this.labelGetSHA1Chksm.TabIndex = 16;
+            this.labelGetSHA1Chksm.Text = "- Select ROM -";
+            this.labelGetSHA1Chksm.Click += new System.EventHandler(this.CopyToClipboard_Click);
+            // 
+            // labelGetMD5Chksm
+            // 
+            this.labelGetMD5Chksm.AutoSize = true;
+            this.labelGetMD5Chksm.Location = new System.Drawing.Point(69, 91);
+            this.labelGetMD5Chksm.Name = "labelGetMD5Chksm";
+            this.labelGetMD5Chksm.Size = new System.Drawing.Size(77, 13);
+            this.labelGetMD5Chksm.TabIndex = 17;
+            this.labelGetMD5Chksm.Text = "- Select ROM -";
+            this.labelGetMD5Chksm.Click += new System.EventHandler(this.CopyToClipboard_Click);
+            // 
+            // labelGetSHA256Chksm
+            // 
+            this.labelGetSHA256Chksm.AutoSize = true;
+            this.labelGetSHA256Chksm.Location = new System.Drawing.Point(69, 135);
+            this.labelGetSHA256Chksm.Name = "labelGetSHA256Chksm";
+            this.labelGetSHA256Chksm.Size = new System.Drawing.Size(77, 13);
+            this.labelGetSHA256Chksm.TabIndex = 18;
+            this.labelGetSHA256Chksm.Text = "- Select ROM -";
+            this.labelGetSHA256Chksm.Click += new System.EventHandler(this.CopyToClipboard_Click);
+            // 
+            // labelSHA256Chksm
+            // 
+            this.labelSHA256Chksm.AutoSize = true;
+            this.labelSHA256Chksm.Location = new System.Drawing.Point(3, 135);
+            this.labelSHA256Chksm.Name = "labelSHA256Chksm";
+            this.labelSHA256Chksm.Size = new System.Drawing.Size(53, 13);
+            this.labelSHA256Chksm.TabIndex = 15;
+            this.labelSHA256Chksm.Text = " SHA-256";
+            // 
+            // labelSHA1Chksm
+            // 
+            this.labelSHA1Chksm.AutoSize = true;
+            this.labelSHA1Chksm.Location = new System.Drawing.Point(3, 113);
+            this.labelSHA1Chksm.Name = "labelSHA1Chksm";
+            this.labelSHA1Chksm.Size = new System.Drawing.Size(41, 13);
+            this.labelSHA1Chksm.TabIndex = 14;
+            this.labelSHA1Chksm.Text = " SHA-1";
+            // 
+            // labelMD5Chksm
+            // 
+            this.labelMD5Chksm.AutoSize = true;
+            this.labelMD5Chksm.Location = new System.Drawing.Point(3, 91);
+            this.labelMD5Chksm.Name = "labelMD5Chksm";
+            this.labelMD5Chksm.Size = new System.Drawing.Size(33, 13);
+            this.labelMD5Chksm.TabIndex = 13;
+            this.labelMD5Chksm.Text = " MD5";
             // 
             // groupBoxROMInfo
             // 
@@ -704,7 +730,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(545, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(542, 24);
             this.menuStrip1.TabIndex = 68;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -791,9 +817,9 @@
             this.checkBoxScan.Enabled = false;
             this.checkBoxScan.Location = new System.Drawing.Point(6, 44);
             this.checkBoxScan.Name = "checkBoxScan";
-            this.checkBoxScan.Size = new System.Drawing.Size(158, 17);
+            this.checkBoxScan.Size = new System.Drawing.Size(131, 17);
             this.checkBoxScan.TabIndex = 70;
-            this.checkBoxScan.Text = "Scan protections on loading";
+            this.checkBoxScan.Text = "Scan ROM on loading";
             this.checkBoxScan.UseVisualStyleBackColor = true;
             this.checkBoxScan.CheckedChanged += new System.EventHandler(this.CheckBoxScan_CheckedChanged);
             // 
@@ -830,11 +856,54 @@
             this.buttonInterleave.UseVisualStyleBackColor = true;
             this.buttonInterleave.Click += new System.EventHandler(this.ButtonInterleave_Click);
             // 
+            // buttonPatch
+            // 
+            this.buttonPatch.Enabled = false;
+            this.buttonPatch.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.ips_patch_icon;
+            this.buttonPatch.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonPatch.Location = new System.Drawing.Point(363, 293);
+            this.buttonPatch.Name = "buttonPatch";
+            this.buttonPatch.Size = new System.Drawing.Size(169, 32);
+            this.buttonPatch.TabIndex = 61;
+            this.buttonPatch.Text = "Apply Patch";
+            this.buttonPatch.UseVisualStyleBackColor = true;
+            this.buttonPatch.Click += new System.EventHandler(this.ButtonPatch_Click);
+            // 
+            // buttonSaveAs
+            // 
+            this.buttonSaveAs.Enabled = false;
+            this.buttonSaveAs.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.save_as_icon;
+            this.buttonSaveAs.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonSaveAs.Location = new System.Drawing.Point(452, 54);
+            this.buttonSaveAs.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonSaveAs.Name = "buttonSaveAs";
+            this.buttonSaveAs.Size = new System.Drawing.Size(80, 23);
+            this.buttonSaveAs.TabIndex = 54;
+            this.buttonSaveAs.Text = "Save As";
+            this.buttonSaveAs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.buttonSaveAs.UseVisualStyleBackColor = true;
+            this.buttonSaveAs.Click += new System.EventHandler(this.ButtonSaveAs_Click);
+            // 
+            // buttonSave
+            // 
+            this.buttonSave.Enabled = false;
+            this.buttonSave.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.save_icon;
+            this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonSave.Location = new System.Drawing.Point(452, 27);
+            this.buttonSave.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(80, 23);
+            this.buttonSave.TabIndex = 53;
+            this.buttonSave.Text = "Save";
+            this.buttonSave.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.ButtonSave_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(545, 508);
+            this.ClientSize = new System.Drawing.Size(542, 566);
             this.Controls.Add(this.buttonInterleave);
             this.Controls.Add(this.buttonConvertMapMode);
             this.Controls.Add(this.buttonScan);
@@ -955,6 +1024,12 @@
         private System.Windows.Forms.ToolStripMenuItem resetOptionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.Button buttonInterleave;
+        private System.Windows.Forms.Label labelSHA256Chksm;
+        private System.Windows.Forms.Label labelSHA1Chksm;
+        private System.Windows.Forms.Label labelMD5Chksm;
+        private System.Windows.Forms.Label labelGetSHA1Chksm;
+        private System.Windows.Forms.Label labelGetMD5Chksm;
+        private System.Windows.Forms.Label labelGetSHA256Chksm;
     }
 }
 

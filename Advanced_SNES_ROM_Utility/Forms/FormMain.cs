@@ -465,6 +465,9 @@ namespace Advanced_SNES_ROM_Utility
             labelGetCalcChksm.Text = BitConverter.ToString(_sourceROM.ByteArrayCalcChecksum).Replace("-", "");
             labelGetCalcInvChksm.Text = BitConverter.ToString(_sourceROM.ByteArrayCalcInvChecksum).Replace("-", "");
             labelGetCRC32Chksm.Text = _sourceROM.CRC32Hash;
+            labelGetMD5Chksm.Text = _sourceROM.MD5Hash;
+            labelGetSHA1Chksm.Text = _sourceROM.SHA1Hash;
+            labelGetSHA256Chksm.Text = _sourceROM.SHA256Hash;
 
             // Set combo boxes
             if (_sourceROM.ByteCountry <= SNESROMList.CountryRegion.GetLength(0)) { comboBoxCountryRegion.SelectedIndex = _sourceROM.ByteCountry; } else { comboBoxCountryRegion.SelectedIndex = -1; }

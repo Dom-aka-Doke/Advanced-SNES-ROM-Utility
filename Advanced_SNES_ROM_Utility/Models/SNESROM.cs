@@ -30,6 +30,9 @@ namespace Advanced_SNES_ROM_Utility
         public int IntROMSize { get; set; }
         public int IntCalcFileSize { get; set; }
         public string CRC32Hash { get; set; }
+        public string MD5Hash { get; set; }
+        public string SHA1Hash { get; set; }
+        public string SHA256Hash { get; set; }
 
         public bool IsNewHeader { get; set; }
         public bool IsExROMHeaderCopied { get; set; }
@@ -118,6 +121,9 @@ namespace Advanced_SNES_ROM_Utility
             if (refresh.Contains("all") || refresh.Contains("checksum")) { ByteArrayCalcChecksum = SNESROMFunction.CalculateChecksum(SourceROM, UIntROMHeaderOffset, IsBSROM, IntROMSize, IntCalcFileSize, ByteROMType); }
             if (refresh.Contains("all") || refresh.Contains("checksum")) { ByteArrayCalcInvChecksum = SNESROMFunction.CalculateInverseChecksum(ByteArrayCalcChecksum); }
             if (refresh.Contains("all") || refresh.Contains("checksum")) { CRC32Hash = SNESROMFunction.CalculateCrc32Hash(SourceROM, SourceROMSMCHeader, UIntSMCHeader); }
+            if (refresh.Contains("all") || refresh.Contains("checksum")) { MD5Hash = SNESROMFunction.CalculateMD5Hash(SourceROM, SourceROMSMCHeader, UIntSMCHeader); }
+            if (refresh.Contains("all") || refresh.Contains("checksum")) { SHA1Hash = SNESROMFunction.CalculateSHA1Hash(SourceROM, SourceROMSMCHeader, UIntSMCHeader); }
+            if (refresh.Contains("all") || refresh.Contains("checksum")) { SHA256Hash = SNESROMFunction.CalculateSHA256Hash(SourceROM, SourceROMSMCHeader, UIntSMCHeader); }
         }
 
         private void GetSMCHeader()
@@ -361,9 +367,10 @@ namespace Advanced_SNES_ROM_Utility
                 case 0x05: if (ByteROMSpeed == (byte)Speed.slow) { StringROMType = "ROM+DSP2+RAM+Battery"; } else if (ByteROMSpeed == (byte)Speed.fast && IntCompany == 0x018E) { StringROMType = "ROM+DSP3+RAM+Battery"; } else { StringROMType = "ROM+DSP1+RAM+Battery"; }; break;
                 case 0x10: if (IsBSROM) { StringROMType = "BS-X+FLASH"; }; break;
                 case 0x13: StringROMType = "ROM+MarioChip1+RAM"; break;
-                case 0x14: StringROMType = "ROM+GSU1+RAM"; if (ByteROMSize > 0x0A) { StringROMType = "ROM+GSU2+RAM"; } if (ByteROMSubtype == 0x52) { StringROMType = "ROM+GSU3+RAM"; }; break;
+                case 0x14: StringROMType = "ROM+GSU1+RAM"; if (ByteROMSize > 0x0A) { StringROMType = "ROM+GSU2+RAM"; } break;
                 case 0x15: StringROMType = "ROM+GSU2+RAM+Battery"; if (ByteROMSize <= 0x0A && !falseGSU2Games.Contains(StringTitle)) { StringROMType = "ROM+GSU1+RAM+Battery"; }; break;
-                case 0x17: StringROMType = "ROM+GSU3+RAM+Battery"; break;
+                case 0x17: StringROMType = "ROM+GSU3+RAM"; break;
+                case 0x18: StringROMType = "ROM+GSU3+RAM+Battery"; break;
                 case 0x1A: StringROMType = "ROM+GSU1+RAM+Battery"; break;
                 case 0x20: if (IsBSROM) { StringROMType = "BS-X+PSRAM+SoundLink"; }; break;
                 case 0x25: StringROMType = "ROM+OBC1+RAM+Battery"; break;
