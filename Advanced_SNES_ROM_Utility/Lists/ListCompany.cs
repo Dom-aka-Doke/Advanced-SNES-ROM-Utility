@@ -281,6 +281,7 @@ namespace Advanced_SNES_ROM_Utility.Lists
             { "0x01E3", "Altron" },
             { "0x01E4", "Jaleco" },
             { "0x01E5", "Gaps Inc." },
+            { "0x01E9", "D4S | Goldlocke | Dieter von Laser" },
             { "0x01EB", "Elf" },
             { "0x01F8", "Jaleco" },
             { "0x01FA", "Yutaka" },
@@ -337,7 +338,10 @@ namespace Advanced_SNES_ROM_Utility.Lists
             { "0x0268", "SNK Playmore" },
             { "0x0299", "Yojigen" },
             { "0x03E1", "Randal Linden" },
-            { "0x03E8", "Rastersoft"}
+            { "0x03E8", "Rastersoft"},
+            { "0x0409", "D4S | Goldlocke | Dieter von Laser" },
+            { "0x1E10", "D4S | Goldlocke | Dieter von Laser" },
+            { "0x1F1F", "D4S | Goldlocke | Dieter von Laser" }
         };
     }
 }
