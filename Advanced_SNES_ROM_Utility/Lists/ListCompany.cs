@@ -243,6 +243,7 @@ namespace Advanced_SNES_ROM_Utility.Lists
             { "0x019D", "Visco" },
             { "0x019F", "Compile" },
             { "0x01A1", "MTO Inc." },
+            { "0x01A2", "Bitmap Bureau" },
             { "0x01A3", "Sunrise Interactive" },
             { "0x01A5", "Global A Entertainment" },
             { "0x01A6", "Fuuki" },

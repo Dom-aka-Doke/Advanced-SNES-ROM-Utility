@@ -382,6 +382,7 @@ namespace Advanced_SNES_ROM_Utility
                 case 0x43: StringROMType = "ROM+S-DD1"; break;
                 case 0x45: StringROMType = "ROM+S-DD1+RAM+Battery"; break;
                 case 0x55: StringROMType = "ROM+S-RTC+RAM+Battery"; break;
+                case 0x63: StringROMType = "ROM+RP2040+FLASH"; break;
                 case 0xA0: if (IsBSROM) { StringROMType = "BS-X+SoundNovel"; }; break;
                 case 0xE3: StringROMType = "ROM+SGB"; break;
                 case 0xE5: StringROMType = "ROM+BS-X"; break;
