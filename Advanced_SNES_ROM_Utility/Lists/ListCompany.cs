@@ -341,6 +341,7 @@ namespace Advanced_SNES_ROM_Utility.Lists
             { "0x03E1", "Randal Linden" },
             { "0x03E8", "Rastersoft"},
             { "0x0409", "D4S | Goldlocke | Dieter von Laser" },
+            { "0x04B0", "Bitmap Bureau" },
             { "0x1E10", "D4S | Goldlocke | Dieter von Laser" },
             { "0x1F1F", "D4S | Goldlocke | Dieter von Laser" }
         };
