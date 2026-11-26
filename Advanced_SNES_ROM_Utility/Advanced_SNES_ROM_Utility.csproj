@@ -127,6 +127,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commandline\SNESROMCommandline.cs" />
+    <Compile Include="Forms\CheckLight.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\FormHeatmap.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\FormatSize.cs" />
+    <Compile Include="Functions\ROMAnalysis.cs" />
+    <Compile Include="Helper\CompanyCode.cs" />
     <Compile Include="Converter\Expand.cs" />
     <Compile Include="Converter\Interleave.cs" />
     <Compile Include="Converter\Split.cs" />

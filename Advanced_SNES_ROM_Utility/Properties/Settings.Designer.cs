@@ -70,5 +70,41 @@ namespace Advanced_SNES_ROM_Utility.Properties {
                 this["ConvertMapModeMessage"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00")]
+        public string ExpandFill {
+            get {
+                return ((string)(this["ExpandFill"]));
+            }
+            set {
+                this["ExpandFill"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastROMFolder {
+            get {
+                return ((string)(this["LastROMFolder"]));
+            }
+            set {
+                this["LastROMFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ExpandFillMigrated {
+            get {
+                return ((bool)(this["ExpandFillMigrated"]));
+            }
+            set {
+                this["ExpandFillMigrated"] = value;
+            }
+        }
     }
 }

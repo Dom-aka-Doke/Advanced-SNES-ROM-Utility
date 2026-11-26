@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Dom-aka-Doke")]
 [assembly: AssemblyProduct("Advanced SNES ROM Utility")]
-[assembly: AssemblyCopyright("Copyright © 2021 - 2023")]
+[assembly: AssemblyCopyright("Copyright © 2021 - 2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

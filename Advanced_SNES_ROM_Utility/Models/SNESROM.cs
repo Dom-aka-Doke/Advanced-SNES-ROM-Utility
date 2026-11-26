@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -27,8 +28,10 @@ namespace Advanced_SNES_ROM_Utility
         public uint UIntROMHeaderOffset { get; set; }
         public uint UIntSMCHeader { get; set; }
         public uint UIntROMHeaderCopyOffset { get; set; }
-        public int IntROMSize { get; set; }
-        public int IntCalcFileSize { get; set; }
+        /// <summary>Internal ROM size in Mbit (0.25 = 256 Kbit for 32 kByte homebrew / test ROMs)</summary>
+        public double IntROMSize { get; set; }
+        /// <summary>File size in Mbit (whole Mbit from 1 Mbit on, exact below)</summary>
+        public double IntCalcFileSize { get; set; }
         public string CRC32Hash { get; set; }
         public string MD5Hash { get; set; }
         public string SHA1Hash { get; set; }
@@ -66,6 +69,9 @@ namespace Advanced_SNES_ROM_Utility
         public string StringSMCHeader { get; set; }
         public string StringGameCode { get; set; }
 
+        /// <summary>Smallest ROM: one LoROM bank (32 kByte), the smallest ROM that holds a header at $7FC0</summary>
+        public const int MinROMSize = 0x8000;
+
         public SNESROM(string @romPath)
         {
             // Read ROM
@@ -79,7 +85,7 @@ namespace Advanced_SNES_ROM_Utility
                     ROMFolder = Path.GetDirectoryName(ROMFullPath);
                     FileInfo romFileInfo = new FileInfo(ROMFullPath);
 
-                    if (romFileInfo.Length >= 131072 && romFileInfo.Length <= 16777728)                 // Min is 1 Mbit, max is 128 Mbit incl. 512 byte header
+                    if (romFileInfo.Length >= MinROMSize && romFileInfo.Length <= 16777728)             // Min is 256 Kbit (one LoROM bank), max is 128 Mbit incl. 512 byte header
                     {
                         SourceROM = File.ReadAllBytes(ROMFullPath);
                         Initialize(new string[] { "all" });
@@ -87,7 +93,7 @@ namespace Advanced_SNES_ROM_Utility
 
                     else
                     {
-                        MessageBox.Show("ROMs cannot be smaller than 128 kByte (1 Mbit) or larger than 16 MByte (128 Mbit).");
+                        MessageBox.Show("ROMs cannot be smaller than 32 kByte (256 Kbit) or larger than 16 MByte (128 Mbit).");
                     }
                 }
 
@@ -443,18 +449,11 @@ namespace Advanced_SNES_ROM_Utility
                 Buffer.BlockCopy(SourceROMHeader, (int)HeaderValue.size, size, 0, 1);
                 ByteROMSize = size[0];
 
-                if (ByteROMSize >= 0x07 && ByteROMSize <= 0x0E)
+                // 0x05 = 32 kByte (256 Kbit, homebrew / test ROMs) ... 0x0E = 16 MByte; size = 2^n kByte
+                if (ByteROMSize >= 0x05 && ByteROMSize <= 0x0E)
                 {
-                    IntROMSize = 1;
-
-                    int count = 7;
-                    while (count < ByteROMSize)
-                    {
-                        IntROMSize *= 2;
-                        count++;
-                    }
-
-                    StringROMSize = IntROMSize + " Mbit";
+                    IntROMSize = Math.Pow(2, ByteROMSize - 7);
+                    StringROMSize = SNESROMFunction.FormatMbit(IntROMSize);
                 }
 
                 else
@@ -667,11 +666,13 @@ namespace Advanced_SNES_ROM_Utility
             }
         }
 
+        /// <summary>
+        /// Sets the title. Only whole characters are written: a Shift-JIS double byte character that
+        /// would be cut in half is left out, the remaining byte(s) are filled with the title's whitespace.
+        /// </summary>
         public void SetTitle(string newTitle, int maxLength)
         {
-            Encoding newEncodedTitle = Encoding.GetEncoding(932);
-            byte[] newByteTitle = newEncodedTitle.GetBytes(newTitle.Trim());
-
+            byte[] newByteTitle = EncodeTitleLimited(newTitle.Trim(), maxLength);
             byte[] byteArrayTitle = new byte[maxLength];
 
             for (int i = 0; i < maxLength; i++)
@@ -679,20 +680,43 @@ namespace Advanced_SNES_ROM_Utility
                 byteArrayTitle[i] = ByteTitleWhitespace;
             }
 
-            int newByteTitleTempLenght = newByteTitle.Length;
+            Buffer.BlockCopy(newByteTitle, 0, byteArrayTitle, 0, newByteTitle.Length);
+            WriteHeaderBytes((int)HeaderValue.title, byteArrayTitle);
 
-            if (newByteTitle.Length > byteArrayTitle.Length) { newByteTitleTempLenght = byteArrayTitle.Length; }
+            Initialize(new string[] { "romheader", "title", "checksum" });
+        }
 
-            Buffer.BlockCopy(newByteTitle, 0, byteArrayTitle, 0, newByteTitleTempLenght);
+        /// <summary>Encodes a text in Shift-JIS, but only as many whole characters as fit into maxBytes</summary>
+        public static byte[] EncodeTitleLimited(string text, int maxBytes)
+        {
+            Encoding shiftJIS = Encoding.GetEncoding(932);
+            List<byte> output = new List<byte>();
 
-            Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.title, byteArrayTitle.Length);
+            foreach (char character in text)
+            {
+                byte[] bytes = shiftJIS.GetBytes(character.ToString());
+                if (output.Count + bytes.Length > maxBytes) { break; }
+                output.AddRange(bytes);
+            }
+
+            return output.ToArray();
+        }
+
+        /// <summary>Number of bytes a text needs in Shift-JIS</summary>
+        public static int TitleByteLength(string text)
+        {
+            return Encoding.GetEncoding(932).GetByteCount(text);
+        }
+
+        /// <summary>Writes bytes into the header (and into the copied ExROM header, if existing)</summary>
+        private void WriteHeaderBytes(int relativeOffset, byte[] bytes)
+        {
+            Buffer.BlockCopy(bytes, 0, SourceROM, (int)UIntROMHeaderOffset + relativeOffset, bytes.Length);
 
             if (IsExROMHeaderCopied)
             {
-                Buffer.BlockCopy(byteArrayTitle, 0, SourceROM, (int)(UIntROMHeaderCopyOffset + (int)HeaderValue.title), byteArrayTitle.Length);
+                Buffer.BlockCopy(bytes, 0, SourceROM, (int)UIntROMHeaderCopyOffset + relativeOffset, bytes.Length);
             }
-
-            Initialize(new string[] { "romheader", "title", "checksum" });
         }
 
         public void SetVersion(byte newVersion)
@@ -721,23 +745,181 @@ namespace Advanced_SNES_ROM_Utility
             Initialize(new string[] { "romheader", "country", "checksum" });
         }
 
-        public void SetGameCode(string newGameCode)
+        /// <summary>Game codes consist of the ASCII characters A-Z and 0-9 only</summary>
+        public static string SanitizeGameCode(string text)
         {
-            Encoding newEncodedGameCode = Encoding.GetEncoding(932);
-            byte[] newByteGameCode = newEncodedGameCode.GetBytes(newGameCode.Trim());
+            string clean = string.Empty;
 
-            byte[] byteArrayGameCode = new byte[4] { 0x20, 0x20, 0x20, 0x20 };
-
-            Buffer.BlockCopy(newByteGameCode, 0, byteArrayGameCode, 0, newByteGameCode.Length);
-
-            Buffer.BlockCopy(byteArrayGameCode, 0, SourceROM, (int)UIntROMHeaderOffset + (int)HeaderValue.gamecode, 4);
-
-            if (IsExROMHeaderCopied)
+            foreach (char character in (text ?? string.Empty).ToUpperInvariant())
             {
-                Buffer.BlockCopy(byteArrayGameCode, 0, SourceROM, (int)(UIntROMHeaderCopyOffset + (int)HeaderValue.gamecode), 4);
+                if ((character >= 'A' && character <= 'Z') || (character >= '0' && character <= '9')) { clean += character; }
+                if (clean.Length == 4) { break; }
             }
 
+            return clean;
+        }
+
+        public void SetGameCode(string newGameCode)
+        {
+            string clean = SanitizeGameCode(newGameCode);
+            byte[] byteArrayGameCode = new byte[4] { 0x20, 0x20, 0x20, 0x20 };
+
+            for (int i = 0; i < clean.Length; i++)
+            {
+                byteArrayGameCode[i] = (byte)clean[i];
+            }
+
+            WriteHeaderBytes((int)HeaderValue.gamecode, byteArrayGameCode);
             Initialize(new string[] { "romheader", "gamecode", "checksum" });
         }
+
+        /* ------------------------------------------------------------------ */
+        /* Company                                                              */
+        /* ------------------------------------------------------------------ */
+
+        /// <summary>True if the header uses the extended header with a 2 character maker code ($FFDA == 0x33)</summary>
+        public bool HasMakerCode
+        {
+            get { return SourceROMHeader[(int)HeaderValue.company] == CompanyCode.NewHeaderMarker; }
+        }
+
+        /// <summary>
+        /// Companies that can be stored in this ROM's header, sorted by name.
+        /// Old header: only codes representable as one byte (both base 36 digits 0-F, not 0x33).
+        /// Extended header: all codes (2 character maker code at $FFB0).
+        /// </summary>
+        public List<CompanyOption> GetCompanyOptions()
+        {
+            bool newHeader = HasMakerCode;
+            List<CompanyOption> options = new List<CompanyOption>();
+
+            foreach (KeyValuePair<string, string> company in SNESROMList.Company)
+            {
+                int code = Convert.ToInt32(company.Key, 16);
+                bool possible = newHeader ? CompanyCode.EncodeNew(code) != null : CompanyCode.EncodeOld(code) >= 0;
+
+                if (possible)
+                {
+                    options.Add(new CompanyOption { Code = code, Name = company.Value, Notation = CompanyCode.HeaderNotation(code, newHeader) });
+                }
+            }
+
+            // Keep the current (unknown) code selectable
+            if (!options.Exists(o => o.Code == IntCompany))
+            {
+                options.Add(new CompanyOption { Code = IntCompany, Name = StringCompany, Notation = CompanyCode.HeaderNotation(IntCompany, newHeader) });
+            }
+
+            options.Sort((a, b) =>
+            {
+                int byName = string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
+                return byName != 0 ? byName : a.Code.CompareTo(b.Code);
+            });
+
+            return options;
+        }
+
+        /// <summary>
+        /// Sets the company. The header type is not changed: an old header gets one byte at $FFDA,
+        /// an extended header gets the 2 character maker code at $FFB0.
+        /// Returns false if the code cannot be stored in this header type.
+        /// </summary>
+        public bool SetCompany(int code)
+        {
+            if (HasMakerCode)
+            {
+                byte[] bytes = CompanyCode.EncodeNew(code);
+                if (bytes == null) { return false; }
+                WriteHeaderBytes(0x00, bytes);
+            }
+
+            else
+            {
+                int value = CompanyCode.EncodeOld(code);
+                if (value < 0) { return false; }
+                WriteHeaderBytes((int)HeaderValue.company, new byte[] { (byte)value });
+            }
+
+            // ROM type depends on the company (f.e. DSP3), game code depends on ROM type
+            Initialize(new string[] { "romheader", "company", "romtype", "gamecode", "checksum" });
+            return true;
+        }
+
+        /* ------------------------------------------------------------------ */
+        /* (S)RAM size                                                          */
+        /* ------------------------------------------------------------------ */
+
+        /// <summary>True for Super FX (GSU / MarioChip) cartridges</summary>
+        public bool IsSuperFX
+        {
+            get { return !IsBSROM && (ByteROMType & 0xF0) == 0x10 && (ByteROMType & 0x0F) >= 0x03; }
+        }
+
+        /// <summary>
+        /// Describes whether and where the (S)RAM size can be changed.
+        /// - Normal ROMs: RAM size byte of the standard header ($FFD8)
+        /// - Super FX with extended header: expansion RAM size ($FFBD)
+        /// - Super FX without extended header (f.e. Star Fox / Star Wing) and BS-X: not possible,
+        ///   because their header has no field describing the cartridge RAM
+        /// </summary>
+        public SRAMSizeInfo GetSRAMSizeInfo()
+        {
+            if (IsBSROM)
+            {
+                return new SRAMSizeInfo { Editable = false, Value = 0, Reason = "BS-X ROMs have no SRAM size field in their header." };
+            }
+
+            if (IsSuperFX)
+            {
+                if (!IsNewHeader)
+                {
+                    return new SRAMSizeInfo { Editable = false, Value = ByteExRAMSize, Reason = "Super FX game without extended header (f.e. Star Fox / Star Wing): the cartridge RAM is not described in the header." };
+                }
+
+                return new SRAMSizeInfo { Editable = true, ExpansionRAM = true, Value = SourceROMHeader[(int)HeaderValue.exram], Reason = "Super FX: expansion RAM size ($FFBD)" };
+            }
+
+            return new SRAMSizeInfo { Editable = true, Value = ByteSRAMSize, Reason = "RAM size ($FFD8)" };
+        }
+
+        /// <summary>Sets the (S)RAM size: 0 = none, n = 2^n kByte (1 = 2 kByte ... 7 = 128 kByte)</summary>
+        public bool SetSRAMSize(int sizeValue)
+        {
+            SRAMSizeInfo info = GetSRAMSizeInfo();
+
+            if (!info.Editable || sizeValue < 0 || sizeValue > 0x0F) { return false; }
+
+            WriteHeaderBytes(info.ExpansionRAM ? (int)HeaderValue.exram : (int)HeaderValue.sram, new byte[] { (byte)sizeValue });
+            Initialize(new string[] { "romheader", "sramsize", "exramsize", "checksum" });
+            return true;
+        }
+
+        /// <summary>Byte array that is written when saving (incl. copier header, if one exists)</summary>
+        public byte[] GetSaveData()
+        {
+            if (SourceROMSMCHeader == null) { return SourceROM; }
+
+            byte[] merged = new byte[SourceROMSMCHeader.Length + SourceROM.Length];
+            Buffer.BlockCopy(SourceROMSMCHeader, 0, merged, 0, SourceROMSMCHeader.Length);
+            Buffer.BlockCopy(SourceROM, 0, merged, SourceROMSMCHeader.Length, SourceROM.Length);
+            return merged;
+        }
+    }
+
+    public class CompanyOption
+    {
+        public int Code { get; set; }
+        public string Name { get; set; }
+        public string Notation { get; set; }
+        public string DisplayName { get { return Name + " [" + Notation + "]"; } }
+    }
+
+    public class SRAMSizeInfo
+    {
+        public bool Editable;
+        /// <summary>True: Super FX expansion RAM ($FFBD), false: RAM size ($FFD8)</summary>
+        public bool ExpansionRAM;
+        public int Value;
+        public string Reason;
     }
 }

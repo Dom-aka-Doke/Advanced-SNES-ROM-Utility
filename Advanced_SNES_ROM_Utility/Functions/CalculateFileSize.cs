@@ -2,9 +2,14 @@
 {
     public static partial class SNESROMFunction
     {
-        public static int CalculateFileSize(byte[] sourceROM)
+        /// <summary>
+        /// File size in Mbit. From 1 Mbit on whole Mbit (as before), below 1 Mbit the exact
+        /// fraction (f.e. 0.25 for 32 kByte homebrew / test ROMs).
+        /// </summary>
+        public static double CalculateFileSize(byte[] sourceROM)
         {
-            return (sourceROM.Length * 8) / 1048576;
+            double mbit = (sourceROM.Length * 8.0) / 1048576;
+            return mbit >= 1 ? System.Math.Floor(mbit) : mbit;
         }
     }
 }

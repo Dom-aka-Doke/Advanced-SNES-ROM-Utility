@@ -48,7 +48,7 @@
             this.labelCompany = new System.Windows.Forms.Label();
             this.labelCountry = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
-            this.labelGetCompany = new System.Windows.Forms.Label();
+            this.comboBoxCompany = new System.Windows.Forms.ComboBox();
             this.labelGetSMCHeader = new System.Windows.Forms.Label();
             this.labelMapMode = new System.Windows.Forms.Label();
             this.labelGetMapMode = new System.Windows.Forms.Label();
@@ -69,7 +69,7 @@
             this.buttonFixChksm = new System.Windows.Forms.Button();
             this.buttonFixRegion = new System.Windows.Forms.Button();
             this.labelSRAM = new System.Windows.Forms.Label();
-            this.labelGetSRAM = new System.Windows.Forms.Label();
+            this.comboBoxSRAM = new System.Windows.Forms.ComboBox();
             this.buttonDeinterleave = new System.Windows.Forms.Button();
             this.textBoxTitle = new System.Windows.Forms.TextBox();
             this.textBoxVersion = new System.Windows.Forms.TextBox();
@@ -96,7 +96,12 @@
             this.resetOptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.manualToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.checkBoxExpandMirroring = new System.Windows.Forms.CheckBox();
+            this.comboBoxExpandFill = new System.Windows.Forms.ComboBox();
+            this.labelExpandFill = new System.Windows.Forms.Label();
+            this.buttonRemoveOverdump = new System.Windows.Forms.Button();
+            this.buttonHeatmap = new System.Windows.Forms.Button();
+            this.checkLightChecksum = new Advanced_SNES_ROM_Utility.CheckLight();
+            this.toolTipMain = new System.Windows.Forms.ToolTip();
             this.groupBoxOptions = new System.Windows.Forms.GroupBox();
             this.checkBoxScan = new System.Windows.Forms.CheckBox();
             this.buttonScan = new System.Windows.Forms.Button();
@@ -142,7 +147,7 @@
             // buttonSwapBinROM
             // 
             this.buttonSwapBinROM.Enabled = false;
-            this.buttonSwapBinROM.Location = new System.Drawing.Point(363, 331);
+            this.buttonSwapBinROM.Location = new System.Drawing.Point(363, 334);
             this.buttonSwapBinROM.Name = "buttonSwapBinROM";
             this.buttonSwapBinROM.Size = new System.Drawing.Size(169, 23);
             this.buttonSwapBinROM.TabIndex = 2;
@@ -290,14 +295,18 @@
             this.labelVersion.TabIndex = 18;
             this.labelVersion.Text = "Version";
             // 
-            // labelGetCompany
+            // comboBoxCompany
             // 
-            this.labelGetCompany.AutoSize = true;
-            this.labelGetCompany.Location = new System.Drawing.Point(69, 49);
-            this.labelGetCompany.Name = "labelGetCompany";
-            this.labelGetCompany.Size = new System.Drawing.Size(77, 13);
-            this.labelGetCompany.TabIndex = 20;
-            this.labelGetCompany.Text = "- Select ROM -";
+            this.comboBoxCompany.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxCompany.DropDownWidth = 260;
+            this.comboBoxCompany.Enabled = false;
+            this.comboBoxCompany.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.comboBoxCompany.FormattingEnabled = true;
+            this.comboBoxCompany.Location = new System.Drawing.Point(72, 46);
+            this.comboBoxCompany.Name = "comboBoxCompany";
+            this.comboBoxCompany.Size = new System.Drawing.Size(167, 21);
+            this.comboBoxCompany.TabIndex = 20;
+            this.comboBoxCompany.SelectedIndexChanged += new System.EventHandler(this.ComboBoxCompany_SelectedIndexChanged);
             // 
             // labelGetSMCHeader
             // 
@@ -423,7 +432,7 @@
             // buttonSplitROM
             // 
             this.buttonSplitROM.Enabled = false;
-            this.buttonSplitROM.Location = new System.Drawing.Point(268, 187);
+            this.buttonSplitROM.Location = new System.Drawing.Point(268, 216);
             this.buttonSplitROM.Name = "buttonSplitROM";
             this.buttonSplitROM.Size = new System.Drawing.Size(92, 23);
             this.buttonSplitROM.TabIndex = 41;
@@ -437,7 +446,7 @@
             this.comboBoxSplitROM.Enabled = false;
             this.comboBoxSplitROM.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.comboBoxSplitROM.FormattingEnabled = true;
-            this.comboBoxSplitROM.Location = new System.Drawing.Point(366, 187);
+            this.comboBoxSplitROM.Location = new System.Drawing.Point(366, 216);
             this.comboBoxSplitROM.Name = "comboBoxSplitROM";
             this.comboBoxSplitROM.Size = new System.Drawing.Size(168, 21);
             this.comboBoxSplitROM.TabIndex = 42;
@@ -478,7 +487,7 @@
             // buttonFixRegion
             // 
             this.buttonFixRegion.Enabled = false;
-            this.buttonFixRegion.Location = new System.Drawing.Point(363, 389);
+            this.buttonFixRegion.Location = new System.Drawing.Point(363, 392);
             this.buttonFixRegion.Name = "buttonFixRegion";
             this.buttonFixRegion.Size = new System.Drawing.Size(145, 23);
             this.buttonFixRegion.TabIndex = 46;
@@ -495,19 +504,22 @@
             this.labelSRAM.TabIndex = 47;
             this.labelSRAM.Text = "(S)RAM";
             // 
-            // labelGetSRAM
+            // comboBoxSRAM
             // 
-            this.labelGetSRAM.AutoSize = true;
-            this.labelGetSRAM.Location = new System.Drawing.Point(106, 159);
-            this.labelGetSRAM.Name = "labelGetSRAM";
-            this.labelGetSRAM.Size = new System.Drawing.Size(77, 13);
-            this.labelGetSRAM.TabIndex = 48;
-            this.labelGetSRAM.Text = "- Select ROM -";
+            this.comboBoxSRAM.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxSRAM.Enabled = false;
+            this.comboBoxSRAM.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.comboBoxSRAM.FormattingEnabled = true;
+            this.comboBoxSRAM.Location = new System.Drawing.Point(106, 155);
+            this.comboBoxSRAM.Name = "comboBoxSRAM";
+            this.comboBoxSRAM.Size = new System.Drawing.Size(150, 21);
+            this.comboBoxSRAM.TabIndex = 48;
+            this.comboBoxSRAM.SelectedIndexChanged += new System.EventHandler(this.ComboBoxSRAM_SelectedIndexChanged);
             // 
             // buttonDeinterleave
             // 
             this.buttonDeinterleave.Enabled = false;
-            this.buttonDeinterleave.Location = new System.Drawing.Point(363, 360);
+            this.buttonDeinterleave.Location = new System.Drawing.Point(363, 363);
             this.buttonDeinterleave.Name = "buttonDeinterleave";
             this.buttonDeinterleave.Size = new System.Drawing.Size(80, 23);
             this.buttonDeinterleave.TabIndex = 49;
@@ -567,7 +579,7 @@
             this.groupBoxInfo.Controls.Add(this.labelCountry);
             this.groupBoxInfo.Controls.Add(this.labelVersion);
             this.groupBoxInfo.Controls.Add(this.comboBoxCountryRegion);
-            this.groupBoxInfo.Controls.Add(this.labelGetCompany);
+            this.groupBoxInfo.Controls.Add(this.comboBoxCompany);
             this.groupBoxInfo.Controls.Add(this.textBoxVersion);
             this.groupBoxInfo.Controls.Add(this.textBoxTitle);
             this.groupBoxInfo.Location = new System.Drawing.Point(12, 83);
@@ -598,6 +610,7 @@
             // 
             // groupBoxChecksums
             // 
+            this.groupBoxChecksums.Controls.Add(this.checkLightChecksum);
             this.groupBoxChecksums.Controls.Add(this.labelGetSHA1Chksm);
             this.groupBoxChecksums.Controls.Add(this.labelGetMD5Chksm);
             this.groupBoxChecksums.Controls.Add(this.labelGetSHA256Chksm);
@@ -614,7 +627,7 @@
             this.groupBoxChecksums.Controls.Add(this.labelCalcInvChksm);
             this.groupBoxChecksums.Controls.Add(this.labelGetCalcInvChksm);
             this.groupBoxChecksums.Controls.Add(this.labelGetIntInvChksm);
-            this.groupBoxChecksums.Location = new System.Drawing.Point(12, 404);
+            this.groupBoxChecksums.Location = new System.Drawing.Point(12, 433);
             this.groupBoxChecksums.Name = "groupBoxChecksums";
             this.groupBoxChecksums.Size = new System.Drawing.Size(346, 153);
             this.groupBoxChecksums.TabIndex = 63;
@@ -689,12 +702,12 @@
             this.groupBoxROMInfo.Controls.Add(this.labelROMType);
             this.groupBoxROMInfo.Controls.Add(this.labelGetROMType);
             this.groupBoxROMInfo.Controls.Add(this.labelFileSize);
-            this.groupBoxROMInfo.Controls.Add(this.labelGetSRAM);
+            this.groupBoxROMInfo.Controls.Add(this.comboBoxSRAM);
             this.groupBoxROMInfo.Controls.Add(this.labelGetFileSize);
             this.groupBoxROMInfo.Controls.Add(this.labelSRAM);
             this.groupBoxROMInfo.Controls.Add(this.labelROMSpeed);
             this.groupBoxROMInfo.Controls.Add(this.labelGetROMSpeed);
-            this.groupBoxROMInfo.Location = new System.Drawing.Point(12, 216);
+            this.groupBoxROMInfo.Location = new System.Drawing.Point(12, 245);
             this.groupBoxROMInfo.Name = "groupBoxROMInfo";
             this.groupBoxROMInfo.Size = new System.Drawing.Size(346, 182);
             this.groupBoxROMInfo.TabIndex = 64;
@@ -704,7 +717,7 @@
             // buttonFixSlowROMChecks
             // 
             this.buttonFixSlowROMChecks.Enabled = false;
-            this.buttonFixSlowROMChecks.Location = new System.Drawing.Point(363, 447);
+            this.buttonFixSlowROMChecks.Location = new System.Drawing.Point(363, 450);
             this.buttonFixSlowROMChecks.Name = "buttonFixSlowROMChecks";
             this.buttonFixSlowROMChecks.Size = new System.Drawing.Size(145, 23);
             this.buttonFixSlowROMChecks.TabIndex = 66;
@@ -715,7 +728,7 @@
             // buttonFixSRAMChecks
             // 
             this.buttonFixSRAMChecks.Enabled = false;
-            this.buttonFixSRAMChecks.Location = new System.Drawing.Point(363, 418);
+            this.buttonFixSRAMChecks.Location = new System.Drawing.Point(363, 421);
             this.buttonFixSRAMChecks.Name = "buttonFixSRAMChecks";
             this.buttonFixSRAMChecks.Size = new System.Drawing.Size(145, 23);
             this.buttonFixSRAMChecks.TabIndex = 67;
@@ -788,25 +801,67 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             // 
-            // checkBoxExpandMirroring
+            // labelExpandFill
             // 
-            this.checkBoxExpandMirroring.AutoSize = true;
-            this.checkBoxExpandMirroring.Enabled = false;
-            this.checkBoxExpandMirroring.Location = new System.Drawing.Point(6, 21);
-            this.checkBoxExpandMirroring.Name = "checkBoxExpandMirroring";
-            this.checkBoxExpandMirroring.Size = new System.Drawing.Size(147, 17);
-            this.checkBoxExpandMirroring.TabIndex = 69;
-            this.checkBoxExpandMirroring.Text = "Mirror ROM on expanding";
-            this.checkBoxExpandMirroring.UseVisualStyleBackColor = true;
-            this.checkBoxExpandMirroring.CheckedChanged += new System.EventHandler(this.CheckBoxExpandMirroring_CheckedChanged);
+            this.labelExpandFill.AutoSize = true;
+            this.labelExpandFill.Location = new System.Drawing.Point(270, 190);
+            this.labelExpandFill.Name = "labelExpandFill";
+            this.labelExpandFill.Size = new System.Drawing.Size(57, 13);
+            this.labelExpandFill.TabIndex = 69;
+            this.labelExpandFill.Text = "Expand fill";
+            // 
+            // comboBoxExpandFill
+            // 
+            this.comboBoxExpandFill.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxExpandFill.Enabled = false;
+            this.comboBoxExpandFill.FormattingEnabled = true;
+            this.comboBoxExpandFill.Items.AddRange(new object[] {
+            "Empty (0x00)",
+            "Empty (0xFF)",
+            "Mirror data"});
+            this.comboBoxExpandFill.Location = new System.Drawing.Point(366, 187);
+            this.comboBoxExpandFill.Name = "comboBoxExpandFill";
+            this.comboBoxExpandFill.Size = new System.Drawing.Size(168, 21);
+            this.comboBoxExpandFill.TabIndex = 69;
+            this.toolTipMain.SetToolTip(this.comboBoxExpandFill, "How new space is filled when expanding: empty for ROM hacks, mirrored to write a game onto a bigger EPROM");
+            this.comboBoxExpandFill.SelectedIndexChanged += new System.EventHandler(this.ComboBoxExpandFill_SelectedIndexChanged);
+            // 
+            // buttonRemoveOverdump
+            // 
+            this.buttonRemoveOverdump.Enabled = false;
+            this.buttonRemoveOverdump.Location = new System.Drawing.Point(363, 508);
+            this.buttonRemoveOverdump.Name = "buttonRemoveOverdump";
+            this.buttonRemoveOverdump.Size = new System.Drawing.Size(169, 23);
+            this.buttonRemoveOverdump.TabIndex = 75;
+            this.buttonRemoveOverdump.Text = "Remove Overdump";
+            this.buttonRemoveOverdump.UseVisualStyleBackColor = true;
+            this.buttonRemoveOverdump.Click += new System.EventHandler(this.ButtonRemoveOverdump_Click);
+            // 
+            // buttonHeatmap
+            // 
+            this.buttonHeatmap.Enabled = false;
+            this.buttonHeatmap.Location = new System.Drawing.Point(363, 537);
+            this.buttonHeatmap.Name = "buttonHeatmap";
+            this.buttonHeatmap.Size = new System.Drawing.Size(169, 23);
+            this.buttonHeatmap.TabIndex = 76;
+            this.buttonHeatmap.Text = "ROM Heatmap";
+            this.buttonHeatmap.UseVisualStyleBackColor = true;
+            this.buttonHeatmap.Click += new System.EventHandler(this.ButtonHeatmap_Click);
+            // 
+            // checkLightChecksum
+            // 
+            this.checkLightChecksum.Location = new System.Drawing.Point(78, 1);
+            this.checkLightChecksum.Name = "checkLightChecksum";
+            this.checkLightChecksum.Size = new System.Drawing.Size(11, 11);
+            this.checkLightChecksum.TabIndex = 0;
+            this.checkLightChecksum.Visible = false;
             // 
             // groupBoxOptions
             // 
             this.groupBoxOptions.Controls.Add(this.checkBoxScan);
-            this.groupBoxOptions.Controls.Add(this.checkBoxExpandMirroring);
-            this.groupBoxOptions.Location = new System.Drawing.Point(367, 216);
+            this.groupBoxOptions.Location = new System.Drawing.Point(367, 245);
             this.groupBoxOptions.Name = "groupBoxOptions";
-            this.groupBoxOptions.Size = new System.Drawing.Size(165, 71);
+            this.groupBoxOptions.Size = new System.Drawing.Size(165, 45);
             this.groupBoxOptions.TabIndex = 70;
             this.groupBoxOptions.TabStop = false;
             this.groupBoxOptions.Text = "OPTIONS";
@@ -815,7 +870,7 @@
             // 
             this.checkBoxScan.AutoSize = true;
             this.checkBoxScan.Enabled = false;
-            this.checkBoxScan.Location = new System.Drawing.Point(6, 44);
+            this.checkBoxScan.Location = new System.Drawing.Point(6, 20);
             this.checkBoxScan.Name = "checkBoxScan";
             this.checkBoxScan.Size = new System.Drawing.Size(131, 17);
             this.checkBoxScan.TabIndex = 70;
@@ -826,7 +881,7 @@
             // buttonScan
             // 
             this.buttonScan.Enabled = false;
-            this.buttonScan.Location = new System.Drawing.Point(515, 389);
+            this.buttonScan.Location = new System.Drawing.Point(515, 392);
             this.buttonScan.Name = "buttonScan";
             this.buttonScan.Size = new System.Drawing.Size(17, 81);
             this.buttonScan.TabIndex = 72;
@@ -837,7 +892,7 @@
             // buttonConvertMapMode
             // 
             this.buttonConvertMapMode.Enabled = false;
-            this.buttonConvertMapMode.Location = new System.Drawing.Point(363, 476);
+            this.buttonConvertMapMode.Location = new System.Drawing.Point(363, 479);
             this.buttonConvertMapMode.Name = "buttonConvertMapMode";
             this.buttonConvertMapMode.Size = new System.Drawing.Size(169, 23);
             this.buttonConvertMapMode.TabIndex = 73;
@@ -848,7 +903,7 @@
             // buttonInterleave
             // 
             this.buttonInterleave.Enabled = false;
-            this.buttonInterleave.Location = new System.Drawing.Point(451, 360);
+            this.buttonInterleave.Location = new System.Drawing.Point(451, 363);
             this.buttonInterleave.Name = "buttonInterleave";
             this.buttonInterleave.Size = new System.Drawing.Size(80, 23);
             this.buttonInterleave.TabIndex = 74;
@@ -861,7 +916,7 @@
             this.buttonPatch.Enabled = false;
             this.buttonPatch.Image = global::Advanced_SNES_ROM_Utility.Properties.Resources.ips_patch_icon;
             this.buttonPatch.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonPatch.Location = new System.Drawing.Point(363, 293);
+            this.buttonPatch.Location = new System.Drawing.Point(363, 296);
             this.buttonPatch.Name = "buttonPatch";
             this.buttonPatch.Size = new System.Drawing.Size(169, 32);
             this.buttonPatch.TabIndex = 61;
@@ -903,7 +958,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(542, 566);
+            this.ClientSize = new System.Drawing.Size(542, 595);
+            this.Controls.Add(this.buttonHeatmap);
+            this.Controls.Add(this.buttonRemoveOverdump);
+            this.Controls.Add(this.comboBoxExpandFill);
+            this.Controls.Add(this.labelExpandFill);
             this.Controls.Add(this.buttonInterleave);
             this.Controls.Add(this.buttonConvertMapMode);
             this.Controls.Add(this.buttonScan);
@@ -936,7 +995,10 @@
             this.MaximizeBox = false;
             this.Name = "FormMain";
             this.Text = "Advanced SNES ROM Utility v1.2";
+            this.AllowDrop = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.FormMain_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.FormMain_DragEnter);
             this.groupBoxInfo.ResumeLayout(false);
             this.groupBoxInfo.PerformLayout();
             this.groupBoxChecksums.ResumeLayout(false);
@@ -973,7 +1035,7 @@
         private System.Windows.Forms.Label labelCompany;
         private System.Windows.Forms.Label labelCountry;
         private System.Windows.Forms.Label labelVersion;
-        private System.Windows.Forms.Label labelGetCompany;
+        private System.Windows.Forms.ComboBox comboBoxCompany;
         private System.Windows.Forms.Label labelGetSMCHeader;
         private System.Windows.Forms.Label labelMapMode;
         private System.Windows.Forms.Label labelGetMapMode;
@@ -994,7 +1056,7 @@
         private System.Windows.Forms.Button buttonFixChksm;
         private System.Windows.Forms.Button buttonFixRegion;
         private System.Windows.Forms.Label labelSRAM;
-        private System.Windows.Forms.Label labelGetSRAM;
+        private System.Windows.Forms.ComboBox comboBoxSRAM;
         private System.Windows.Forms.Button buttonDeinterleave;
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.Button buttonSaveAs;
@@ -1014,7 +1076,12 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem manualToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private System.Windows.Forms.CheckBox checkBoxExpandMirroring;
+        private System.Windows.Forms.ComboBox comboBoxExpandFill;
+        private System.Windows.Forms.Label labelExpandFill;
+        private System.Windows.Forms.Button buttonRemoveOverdump;
+        private System.Windows.Forms.Button buttonHeatmap;
+        private Advanced_SNES_ROM_Utility.CheckLight checkLightChecksum;
+        private System.Windows.Forms.ToolTip toolTipMain;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBoxOptions;

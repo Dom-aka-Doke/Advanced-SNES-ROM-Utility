@@ -111,7 +111,7 @@ namespace Advanced_SNES_ROM_Utility.Converter
 
                     if (chunkCtr % 2 == 0)
                     {
-                        destPos += ((sourceROM.IntCalcFileSize * 131072) / 2);
+                        destPos += (int)(sourceROM.IntCalcFileSize * 131072) / 2;
                     }
 
                     Buffer.BlockCopy(sourceROM.SourceROM, sourcePos, interleavedROM, destPos, chunkSize);

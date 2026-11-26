@@ -63,8 +63,8 @@ namespace Advanced_SNES_ROM_Utility.Patcher
             // Create destination file for patching
             byte[] patchedSourceROM = new byte[vwiDestinationFileLength];
 
-            // Skip metadata
-            if (vwiMetadataLength != 0x80) { offsetBPSPatch += vwiMetadataLength; }
+            // Skip metadata (always - a metadata block of exactly 128 bytes was not skipped before)
+            offsetBPSPatch += vwiMetadataLength;
 
             // Generate patched file using VWI information
             while (offsetBPSPatch < byteArrayBPSPatch.Length - 12)

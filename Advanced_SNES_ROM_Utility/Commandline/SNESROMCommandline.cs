@@ -33,6 +33,9 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                     "-deinterleave",
                     "-interleave",
                     "-patch",
+                    "-removeoverdump",
+                    "-company",
+                    "-sram",
                     "-log",
                     "-version",
                     "-help"
@@ -183,7 +186,7 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                         break;
 
                     case "-fixromsize":
-                        if (sourceROM.IntROMSize < sourceROM.IntCalcFileSize || sourceROM.IntCalcFileSize <= (sourceROM.IntROMSize / 2))
+                        if (sourceROM.NeedsInternalROMSizeFix())
                         {
                             sourceROM.FixInternalROMSize();
                             Console.WriteLine("-fixromsize: fixed wrong internal ROM size");
@@ -345,6 +348,99 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                         argPos++;
                         break;
 
+                    case "-removeoverdump":
+                        OverdumpInfo overdump = sourceROM.RemoveOverdump();
+
+                        if (overdump != null)
+                        {
+                            string text = $"-removeoverdump: removed {(overdump.Type == "mirror" ? "mirrored" : "padded")} data ({SNESROMFunction.FormatBytes(overdump.FileSize)} -> {SNESROMFunction.FormatBytes(overdump.RealSize)})";
+                            Console.WriteLine(text);
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, text); }
+                            returnCode |= 0x0400;
+                        }
+
+                        else
+                        {
+                            Console.WriteLine("-removeoverdump: no overdump found");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-removeoverdump: no overdump found"); }
+                        }
+
+                        commandCtr++;
+                        break;
+
+                    case "-company":
+                        if (argPos + 1 >= args.Length) { return -1; }
+
+                        int companyCode = CLIParseCompany(args[argPos + 1]);
+
+                        if (companyCode < 0)
+                        {
+                            Console.WriteLine("-company: invalid company code (use 2 characters, f.e. 01 or A4)");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-company: invalid company code"); }
+                            return -1;
+                        }
+
+                        if (sourceROM.IntCompany == companyCode)
+                        {
+                            Console.WriteLine("-company: company already set");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-company: company already set"); }
+                        }
+
+                        else if (sourceROM.SetCompany(companyCode))
+                        {
+                            Console.WriteLine($"-company: set company to {sourceROM.StringCompany}");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, $"-company: set company to {sourceROM.StringCompany}"); }
+                            returnCode |= 0x0800;
+                        }
+
+                        else
+                        {
+                            Console.WriteLine("-company: this company code cannot be stored in the header of this ROM");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-company: this company code cannot be stored in the header of this ROM"); }
+                        }
+
+                        commandCtr++;
+                        argPos++;
+                        break;
+
+                    case "-sram":
+                        if (argPos + 1 >= args.Length) { return -1; }
+
+                        int sramSize;
+
+                        if (!int.TryParse(args[argPos + 1], out sramSize) || sramSize < 0 || sramSize > 7)
+                        {
+                            Console.WriteLine("-sram: invalid size (0 = none, 1-7 = 2 kByte ... 128 kByte)");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-sram: invalid size"); }
+                            return -1;
+                        }
+
+                        SRAMSizeInfo sramInfo = sourceROM.GetSRAMSizeInfo();
+
+                        if (!sramInfo.Editable)
+                        {
+                            Console.WriteLine("-sram: " + sramInfo.Reason);
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-sram: " + sramInfo.Reason); }
+                        }
+
+                        else if (sramInfo.Value == sramSize)
+                        {
+                            Console.WriteLine("-sram: (S)RAM size already set");
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, "-sram: (S)RAM size already set"); }
+                        }
+
+                        else if (sourceROM.SetSRAMSize(sramSize))
+                        {
+                            string text = "-sram: set (S)RAM size to " + (sramSize == 0 ? "none" : Math.Pow(2, sramSize) + " kByte");
+                            Console.WriteLine(text);
+                            if (_cliLog) { CLIWriteLog(_cliLogFilePath, text); }
+                            returnCode |= 0x1000;
+                        }
+
+                        commandCtr++;
+                        argPos++;
+                        break;
+
                     default:
                         break;
                 }
@@ -356,6 +452,26 @@ namespace Advanced_SNES_ROM_Utility.Commandline
             }
 
             return returnCode;
+        }
+
+        /// <summary>Company code from its 2 character notation (f.e. "01" = Nintendo, "A4" = Konami), -1 if invalid</summary>
+        private static int CLIParseCompany(string text)
+        {
+            string value = (text ?? string.Empty).Trim().ToUpperInvariant();
+            if (value.Length != 2) { return -1; }
+
+            int code = 0;
+
+            foreach (char character in value)
+            {
+                int digit;
+                if (character >= '0' && character <= '9') { digit = character - '0'; }
+                else if (character >= 'A' && character <= 'Z') { digit = character - 'A' + 10; }
+                else { return -1; }
+                code = code * 36 + digit;
+            }
+
+            return code;
         }
 
         private static short CLIHandleReturnCode(short returnCode, SNESROM sourceROM, string savePath, List<string> inputParameters)
@@ -452,6 +568,9 @@ namespace Advanced_SNES_ROM_Utility.Commandline
                                      "\t\t-deinterleave\t\t\tDeinterleave, if ROM is in interleaved format\n" +
                                      "\t\t-interleave\t\t\tInterleave, if ROM is in deinterleaved format\n" +
                                      "\t\t-patch <FILEPATH>\t\tPatch ROM with a specific patch\n" +
+                                     "\t\t-removeoverdump\t\t\tRemoves mirrored or padded data of an overdumped ROM\n" +
+                                     "\t\t-company <CODE>\t\tSets the company by its 2 character code (f.e. 01 = Nintendo, A4 = Konami)\n" +
+                                     "\t\t-sram <0-7>\t\t\tSets (S)RAM size: 0 = none, n = 2^n kByte (1 = 2 kByte ... 7 = 128 kByte)\n" +
                                      "\t\t-log\t\t\t\tWrite output to a logfile\n" +
                                      "\t\t-version\t\t\tShow version information\n" +
                                      "\t\t-help\t\t\t\tShow help and usage information\n";

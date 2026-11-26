@@ -5,7 +5,7 @@ namespace Advanced_SNES_ROM_Utility.Functions
 {
     public static partial class SNESROMFunction
     {
-        public static byte[] CalculateChecksum(byte[] sourceROM, uint uIntROMHeaderOffset, bool isBSROM, int intROMSize, int intCalcFileSize, byte byteROMType)
+        public static byte[] CalculateChecksum(byte[] sourceROM, uint uIntROMHeaderOffset, bool isBSROM, double intROMSize, double intCalcFileSize, byte byteROMType)
         {
             uint offsetChksm = uIntROMHeaderOffset + (uint)HeaderValue.inverse_checksum;
             ulong checksum = 0;

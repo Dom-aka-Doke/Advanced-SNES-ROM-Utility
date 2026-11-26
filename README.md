@@ -5,7 +5,18 @@ An easy to use utility for performing some tasks on SNES / SFC ROMs!
 ## Functions
 
 ### Edit Header Information
-Change basic header information like title, country/region, version and game code.
+Change basic header information like title, company, country/region, version, game code and (S)RAM size.
+- **Title:** Japanese (Shift-JIS) characters are supported. The title is limited by bytes, not by characters (21 bytes for most ROMs). A double byte character is never cut in half.
+- **Game Code:** only available for ROMs with an extended header; only `A-Z` and `0-9` are accepted.
+
+### Change Company
+- **Old header:** one byte at `$FFDA` – only companies with a one byte code can be chosen.
+- **Extended header** (`$FFDA` = `0x33`): a two character maker code at `$FFB0`.
+
+The tool converts between both formats automatically (e.g. `01` = Nintendo, `A4` = Konami).
+
+### Change (S)RAM Size
+Choose the size of the battery backed SRAM (none, 2 kByte … 128 kByte). Normal ROMs store it at `$FFD8`, Super FX games with an extended header at `$FFBD`. Early Super FX games without an extended header (e.g. **Star Fox / Star Wing**) have no field for it – here the option is locked.
 
 ### Add Header
 Adds an empty header.
@@ -16,11 +27,25 @@ Removes an existing header.
 ### Fix Checksum
 Fixes a broken checksum. You always should do this before saving, if possible. Please note that some beta or demo ROMs have an odd checksum anyway...
 
+The light next to **CHECKSUMS** shows the state: green = internal checksum is correct, red = it doesn't match.
+
 ### Fix Internal ROM size
-Fixes wrong internal ROM size information. Do this after expanding a ROM. Also useful to fix some ROM hacks.
+Fixes wrong internal ROM size information. Do this after expanding a ROM or removing an overdump. Also useful to fix some ROM hacks.
 
 ### Expand ROM
-Expands ROM to a specific size up to 64 Mbit (BS-X up to 32 Mbit). Mirror option should only be used, when there are problems with standard expanding. Always check if your ROM still works after doing this!
+Expands ROM to a specific size up to 64 Mbit (BS-X up to 32 Mbit). Choose how the new space is filled with **Expand fill**:
+
+| Expand fill | Use it for |
+|---|---|
+| **Empty (0x00)** | ROM hacks – free space for your own code and data (default) |
+| **Empty (0xFF)** | Same, but filled like an erased (E)EPROM / flash chip |
+| **Mirror data** | Writing a smaller game to a larger chip, e.g. an 8 Mbit game to a 16 Mbit EPROM |
+
+- *Mirror data* follows the address decoding of the SNES, so it also works for games whose size is no power of two. Target sizes that cannot be mirrored correctly (12, 20, 24, 28 Mbit) are not offered.
+- **48 / 64 Mbit:** LoROM and HiROM games are converted to ExLoROM / ExHiROM; the map mode is changed and the parts the SNES reads from the upper area are copied. Games with enhancement chips (SA-1, S-DD1, SPC7110, Super FX) and interleaved ROMs only get free space.
+
+> **Note**<br>
+> Expanding doesn't change the header for you – use **Fix Internal ROM Size** and **Fix Checksum** afterwards. Always check if your ROM still works after doing this!
 
 ### Split ROM
 Splits ROM into equal sized multiple parts.
@@ -56,6 +81,14 @@ Can switch ROM layout between HiROM and LoROM. If the ROM uses (S)RAM or some en
 > **Note**<br>
 Converting from HiROM to LoROM only works, if the ROM was designed to be convertible
 
+### Remove Overdump
+Detects and removes data beyond the real ROM size:
+- **Padded data** – the file is larger than its internal size and the rest only contains `0x00` or `0xFF`
+- **Mirrored data** – the end of the file repeats data from before, exactly as the SNES would see it on a smaller chip
+
+### ROM Heatmap
+Shows all ROM banks (32 kByte LoROM / 64 kByte HiROM) as a map: unique, identical and empty banks, or the entropy of each bank. Useful to spot overdumps, free space for ROM hacks or bad dumps.
+
 ### Apply Patch
 Patch your loaded ROM!
  - IPS
@@ -63,7 +96,7 @@ Patch your loaded ROM!
    - truncating
    - avoids EOF offset bug
  - UPS
-   - revert a patch, if applied a second time 
+   - revert a patch, if applied a second time (the result is verified)
  - BPS
  - BDF
  - XDELTA
@@ -74,12 +107,15 @@ Patch your loaded ROM!
 ### Scan
 - Scan/Rescan ROM for copy protections.
 
+### Open and Save
+- Open ROMs with the button, *File → Open*, by dragging a file onto the window or by starting the program with a ROM file ("Open with")
+- ROMs from 32 kByte (homebrew and test ROMs) up to 16 MByte can be loaded
+- The open dialog starts in the folder of the last opened ROM
+- When closing the window or opening another ROM with unsaved changes, the tool asks whether to save them
+
 ### Options
-- Miror ROM on expanding
-  - Checked
-    - ROMs' content gets mirrored when it gets expanded
-  - Unchecked
-    - Standard expanding will be perfomed to get more space available
+- Expand fill
+  - How new space is filled when expanding a ROM (see Expand ROM)
 - Scan protections on loading
   - Checked
     - ROM will be scanned instantly for copy protections on loading. This might take a few seconds
@@ -98,6 +134,8 @@ __Example:__
 
 This command will add a header to all ROMs in C:\ROMs (subfolders included), apply an IPS patch, remove header afterwards, fix internal ROM size and checksum and save the modfied file with an extension.
 
+New options: `-removeoverdump` (removes mirrored or padded data), `-company <CODE>` (e.g. `01` = Nintendo, `A4` = Konami) and `-sram <0-7>` (`0` = none, `n` = 2^n kByte).
+
 For more information type
 
 *Advanced_SNES_ROM_Utility.exe -help*
@@ -108,6 +146,9 @@ or take a look into the tool's manual.
 - checksum doesn’t include header information (it won't change if you edit values)
 - There's no region code (JP only)
 - ROM size is limited to a maximum of 32 Mbit
+
+## Other platforms
+A port for **Windows, macOS and Linux** (JavaScript/Tauri) with the same functions is available as *Advanced SNES ROM Utility JS*.
 
 ## Download
 - [Get it on RHDN](https://www.romhacking.net/utilities/1638)

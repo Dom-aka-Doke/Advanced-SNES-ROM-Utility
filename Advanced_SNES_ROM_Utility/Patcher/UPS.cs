@@ -59,7 +59,7 @@ namespace Advanced_SNES_ROM_Utility.Patcher
             if (internalHashSourceFile != crc32Hash && internalHashDestinationFile != crc32Hash) { return null; }
 
             // Create destination file for patching
-            byte[] patchedSourceROM = mergedSourceROM;
+            byte[] patchedSourceROM = (byte[])mergedSourceROM.Clone();
             
             if (internalHashSourceFile == crc32Hash) { Array.Resize(ref patchedSourceROM, (int)vwiDestinationFileLength); }
             else if (internalHashDestinationFile == crc32Hash) { Array.Resize(ref patchedSourceROM, (int)vwiSourceFileLength); }
@@ -92,7 +92,12 @@ namespace Advanced_SNES_ROM_Utility.Patcher
                 calcHashDestinationFile += singleByte.ToString("X2").ToUpper();
             }
 
-            if (internalHashDestinationFile != calcHashDestinationFile && internalHashDestinationFile != crc32Hash) { return null; }
+            // Applying: the result must match the target checksum. Reverting (ROM is already patched):
+            // the result must match the checksum of the original file.
+            bool reverting = internalHashSourceFile != crc32Hash && internalHashDestinationFile == crc32Hash;
+            string expectedHash = reverting ? internalHashSourceFile : internalHashDestinationFile;
+
+            if (calcHashDestinationFile != expectedHash) { return null; }
 
             return patchedSourceROM;
         }

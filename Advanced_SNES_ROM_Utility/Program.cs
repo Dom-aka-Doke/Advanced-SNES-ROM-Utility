@@ -12,7 +12,10 @@ namespace Advanced_SNES_ROM_Utility
         [STAThread]
         static void Main(string[] args)
         {
-            if (args.Length > 0)
+            // A single file (f.e. "Open with" or a ROM dropped onto the program) opens the window
+            bool openFile = args.Length == 1 && !args[0].StartsWith("-") && System.IO.File.Exists(args[0]);
+
+            if (args.Length > 0 && !openFile)
             {
                 SNESROMCommandline.Run(args);
             }
@@ -21,7 +24,7 @@ namespace Advanced_SNES_ROM_Utility
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new FormMain());
+                Application.Run(new FormMain(openFile ? args[0] : null));
             }
         }
     }

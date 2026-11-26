@@ -17,7 +17,10 @@
     <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#sramcheck">Remove SRAM Checks</a></span></span></li>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#slowcheck">Remove Slow ROM Checks</a></span></span></li>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#convert-hi-lo">Convert HiROM &harr; LoROM</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#overdump">Remove Overdump</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#heatmap">ROM Heatmap</a></span></span></li>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#patch">Apply Patch</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#open">Open, Save and Save As</a></span></span></li>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#options">Options</a></span></span></li>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#commandline">Commandline (CLI)</a></span></span></li>
 </ol>
@@ -26,7 +29,14 @@
 
 <h1><a name="info" /><span style="font-family:Arial,Helvetica,sans-serif">Edit ROM Information</span></h1>
 
-<p><span style="font-family:Arial,Helvetica,sans-serif">Change basic ROM information like title, country/region, version and game code.</span></p>
+<p><span style="font-family:Arial,Helvetica,sans-serif">Change basic ROM information like title, company, country/region, version, game code and (S)RAM size.</span></p>
+<ul>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Title:</strong> Japanese (Shift-JIS) characters are supported. The title is limited by bytes, not by characters (21 bytes for most ROMs). A double byte character is never cut in half.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Company:</strong> ROMs with the old header store one byte at $FFDA (only companies with a 1 byte code can be chosen). ROMs with the extended header ($FFDA = 0x33) store a 2 character maker code at $FFB0. The codes are converted automatically, f.e. 01 = Nintendo, A4 = Konami.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Game Code:</strong> only available for ROMs with an extended header; only A-Z and 0-9 are accepted.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>(S)RAM size:</strong> normal ROMs store the size at $FFD8, Super FX games with extended header at $FFBD. Early Super FX games without extended header (f.e. Star Fox / Star Wing) have no field for it - here the size cannot be changed.</span></li>
+</ul>
+<p><span style="font-family:Arial,Helvetica,sans-serif">The light next to <strong>CHECKSUMS</strong> shows whether the internal checksum is correct (green) or not (red).</span></p>
 <a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
 
 <h1><a name="addheader" /><span style="font-family:Arial,Helvetica,sans-serif">Add Header</span></h1>
@@ -46,12 +56,19 @@
 
 <h1><a name="fixsize" /><span style="font-family:Arial,Helvetica,sans-serif">Fix Internal ROM size</span></h1>
 
-<p><span style="font-family:Arial,Helvetica,sans-serif">Fixes wrong internal ROM size information. Do this after expanding a ROM. Also useful to fix some ROM hacks.</span></p>
+<p><span style="font-family:Arial,Helvetica,sans-serif">Fixes wrong internal ROM size information. Do this after expanding a ROM or removing an overdump. Also useful to fix some ROM hacks.</span></p>
 <a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
 
 <h1><a name="expand" /><span style="font-family:Arial,Helvetica,sans-serif">Expand ROM</span></h1>
 
-<p><span style="font-family:Arial,Helvetica,sans-serif">Expands ROM to a specific size up to 64 Mbit (BS-X up to 32 Mbit). Mirror option should only be used, when there are problems with standard expanding. Always check if your ROM still works after doing this!</span></p>
+<p><span style="font-family:Arial,Helvetica,sans-serif">Expands ROM to a specific size up to 64 Mbit (BS-X up to 32 Mbit). Choose how the new space is filled with <strong>Expand fill</strong>:</span></p>
+<ul>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Empty (0x00):</strong> free space for ROM hacks (default).</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Empty (0xFF):</strong> the same, but filled like an erased (E)EPROM / flash chip.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Mirror data:</strong> for writing a smaller game to a larger chip (f.e. an 8 Mbit game to a 16 Mbit EPROM). The data is mirrored exactly like the SNES sees it on the original cartridge, also for sizes that are no power of two. Sizes that cannot be mirrored correctly (12, 20, 24, 28 Mbit) are not offered.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>48 / 64 Mbit:</strong> LoROM and HiROM games are converted to ExLoROM / ExHiROM; the map mode is changed and the parts the SNES reads from the upper area are copied. Games with enhancement chips (SA-1, S-DD1, SPC7110, Super FX) and interleaved ROMs only get free space - data and header stay untouched.</span></li>
+</ul>
+<p><span style="font-family:Arial,Helvetica,sans-serif">Expanding does not change the header for you: use <strong>Fix Internal ROM size</strong> and <strong>Fix Checksum</strong> afterwards. Always check if your ROM still works after doing this!</span></p>
 <a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
 
 <h1><a name="split" /><span style="font-family:Arial,Helvetica,sans-serif">Split ROM</span></h1>
@@ -120,6 +137,27 @@
 <p><span style="font-family:Arial,Helvetica,sans-serif">Note: Converting from HiROM to LoROM only works, if the ROM was designed to be convertible.</span></p>
 <a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
 
+<h1><a name="overdump" /><span style="font-family:Arial,Helvetica,sans-serif">Remove Overdump</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">An overdump is a ROM file that is larger than the real chip. The tool recognizes two kinds:</span></p>
+<ul>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Padded data:</strong> the file is larger than its internal size and the rest only contains 0x00 or 0xFF.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Mirrored data:</strong> the end of the file repeats data from before, exactly as the SNES would see it on a smaller chip.</span></li>
+</ul>
+<p><span style="font-family:Arial,Helvetica,sans-serif">The button is only active if an overdump was found. The tool shows the detected sizes and asks before cutting the file. Afterwards use <strong>Fix Internal ROM size</strong>, if the tool tells you so.</span></p>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="heatmap" /><span style="font-family:Arial,Helvetica,sans-serif">ROM Heatmap</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Shows all ROM banks (32 kByte for LoROM, 64 kByte for HiROM; can be switched):</span></p>
+<ul>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Duplicates:</strong> unique banks, banks that are identical to another bank and empty banks (only 0x00 / 0xFF). The bank with the internal header has a dark frame.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Entropy:</strong> how random the data of each bank is - compressed graphics and music look different from code or empty space.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif">Move the mouse over a bank for details (file offset, SNES address, identical banks). Below the map all groups of identical banks and the overdump result are listed.</span></li>
+</ul>
+<p><span style="font-family:Arial,Helvetica,sans-serif">Useful to spot overdumps, free space for ROM hacks or bad dumps. The window updates when the ROM changes.</span></p>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
 <h1><a name="patch" /><span style="font-family:Arial,Helvetica,sans-serif">Apply Patch</span></h1>
 
 <p><span style="font-family:Arial,Helvetica,sans-serif">Patch your loaded ROM!</span></p>
@@ -146,13 +184,22 @@
 </ul>
 <a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
 
-<h1><a name="options" /><span style="font-family:Arial,Helvetica,sans-serif">Options</span></h1>
-
-<p><span style="font-family:Arial,Helvetica,sans-serif"><strong>Miror ROM on expanding</strong></span></p>
+<h1><a name="open" /><span style="font-family:Arial,Helvetica,sans-serif">Open, Save and Save As</span></h1>
 
 <ul>
-    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Checked:</strong> ROMs&#39; content gets mirrored when it gets expanded.</span></li>
-    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Unchecked:</strong> Standard expanding will be perfomed to get more space available.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif">Open ROMs with <strong>Select ROM File</strong>, <em>File &rarr; Open</em>, by dragging a file onto the window or by starting the program with a ROM file (f.e. "Open with").</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif">ROMs from 32 kByte (homebrew and test ROMs) up to 16 MByte can be loaded.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif">The open dialog starts in the folder of the last opened ROM. If that folder does not exist anymore, your documents folder is used.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif">When closing the window or opening another ROM with unsaved changes, the tool asks whether to save them.</span></li>
+</ul>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
+<h1><a name="options" /><span style="font-family:Arial,Helvetica,sans-serif">Options</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif"><strong>Expand fill</strong></span></p>
+
+<ul>
+    <li><span style="font-family:Arial,Helvetica,sans-serif">How new space is filled when expanding a ROM: Empty (0x00), Empty (0xFF) or Mirror data. See <a href="#expand">Expand ROM</a>.</span></li>
 </ul>
 
 <p><span style="font-family:Arial,Helvetica,sans-serif"><strong>Scan protections on loading</strong></span></p>
@@ -248,6 +295,21 @@
             <td width="5%">&nbsp;</td>
             <td width="40%">-patch &lt;FILEPATH&gt;</td>
             <td width="55%">Patch ROM with a specific patch</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-removeoverdump</td>
+            <td width="55%">Removes mirrored or padded data of an overdumped ROM</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-company &lt;CODE&gt;</td>
+            <td width="55%">Sets the company by its 2 character code (f.e. 01 = Nintendo, A4 = Konami)</td>
+        </tr>
+        <tr style="vertical-align:top">
+            <td width="5%">&nbsp;</td>
+            <td width="40%">-sram &lt;0-7&gt;</td>
+            <td width="55%">Sets the (S)RAM size: 0 = none, n = 2^n kByte (1 = 2 kByte ... 7 = 128 kByte)</td>
         </tr>
         <tr style="vertical-align:top">
             <td width="5%">&nbsp;</td>
