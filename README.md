@@ -113,7 +113,15 @@ Patch your loaded ROM!
 - The open dialog starts in the folder of the last opened ROM
 - When closing the window or opening another ROM with unsaved changes, the tool asks whether to save them
 
+### Run in Emulator
+Starts the current state of the ROM – including unsaved changes – in your emulator with **F5** (*File → Run in Emulator*). Choose the emulator once with *Options → Set Emulator…*.
+- `%ROM%` in the arguments is replaced by the ROM path; the default `"%ROM%"` works for most emulators (RetroArch: `-L cores\snes9x_libretro.dll "%ROM%"`)
+- A temporary copy is started, your original file stays untouched. Save files of the emulator are kept between test runs
+
 ### Options
+*Reset Options*, *Scan ROM on loading* and *Set Emulator…* can be found in the *Options* menu.
+- Reset Options
+  - Resets all saved settings (incl. the emulator) and shows suppressed messages again
 - Expand fill
   - How new space is filled when expanding a ROM (see Expand ROM)
 - Scan protections on loading

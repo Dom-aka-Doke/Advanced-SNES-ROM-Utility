@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.openROMFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.buttonSelectROM = new System.Windows.Forms.Button();
@@ -79,6 +80,7 @@
             this.textBoxCode = new System.Windows.Forms.TextBox();
             this.labelCode = new System.Windows.Forms.Label();
             this.groupBoxChecksums = new System.Windows.Forms.GroupBox();
+            this.checkLightChecksum = new Advanced_SNES_ROM_Utility.CheckLight();
             this.labelGetSHA1Chksm = new System.Windows.Forms.Label();
             this.labelGetMD5Chksm = new System.Windows.Forms.Label();
             this.labelGetSHA256Chksm = new System.Windows.Forms.Label();
@@ -91,17 +93,23 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.runInEmulatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileSeparatorToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetOptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsSeparator1ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
+            this.scanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsSeparator2ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
+            this.setEmulatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.manualToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.comboBoxExpandFill = new System.Windows.Forms.ComboBox();
             this.labelExpandFill = new System.Windows.Forms.Label();
             this.buttonRemoveOverdump = new System.Windows.Forms.Button();
             this.buttonHeatmap = new System.Windows.Forms.Button();
-            this.checkLightChecksum = new Advanced_SNES_ROM_Utility.CheckLight();
-            this.toolTipMain = new System.Windows.Forms.ToolTip();
+            this.toolTipMain = new System.Windows.Forms.ToolTip(this.components);
             this.groupBoxOptions = new System.Windows.Forms.GroupBox();
             this.checkBoxScan = new System.Windows.Forms.CheckBox();
             this.buttonScan = new System.Windows.Forms.Button();
@@ -634,6 +642,16 @@
             this.groupBoxChecksums.TabStop = false;
             this.groupBoxChecksums.Text = "CHECKSUMS";
             // 
+            // checkLightChecksum
+            // 
+            this.checkLightChecksum.BackColor = System.Drawing.Color.Transparent;
+            this.checkLightChecksum.Location = new System.Drawing.Point(78, 1);
+            this.checkLightChecksum.Name = "checkLightChecksum";
+            this.checkLightChecksum.Size = new System.Drawing.Size(11, 11);
+            this.checkLightChecksum.TabIndex = 0;
+            this.checkLightChecksum.TabStop = false;
+            this.checkLightChecksum.Visible = false;
+            // 
             // labelGetSHA1Chksm
             // 
             this.labelGetSHA1Chksm.AutoSize = true;
@@ -740,6 +758,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.optionsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -751,6 +770,8 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
+            this.runInEmulatorToolStripMenuItem,
+            this.fileSeparatorToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -759,61 +780,103 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
+            // 
+            // runInEmulatorToolStripMenuItem
+            // 
+            this.runInEmulatorToolStripMenuItem.Enabled = false;
+            this.runInEmulatorToolStripMenuItem.Name = "runInEmulatorToolStripMenuItem";
+            this.runInEmulatorToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.runInEmulatorToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.runInEmulatorToolStripMenuItem.Text = "Run in Emulator";
+            this.runInEmulatorToolStripMenuItem.Click += new System.EventHandler(this.RunInEmulatorToolStripMenuItem_Click);
+            // 
+            // fileSeparatorToolStripMenuItem
+            // 
+            this.fileSeparatorToolStripMenuItem.Name = "fileSeparatorToolStripMenuItem";
+            this.fileSeparatorToolStripMenuItem.Size = new System.Drawing.Size(175, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
+            // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.resetOptionsToolStripMenuItem,
+            this.optionsSeparator1ToolStripMenuItem,
+            this.scanToolStripMenuItem,
+            this.optionsSeparator2ToolStripMenuItem,
+            this.setEmulatorToolStripMenuItem});
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.optionsToolStripMenuItem.Text = "Options";
+            // 
+            // resetOptionsToolStripMenuItem
+            // 
+            this.resetOptionsToolStripMenuItem.Name = "resetOptionsToolStripMenuItem";
+            this.resetOptionsToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.resetOptionsToolStripMenuItem.Text = "Reset Options";
+            this.resetOptionsToolStripMenuItem.Click += new System.EventHandler(this.ResetOptionsToolStripMenuItem_Click);
+            // 
+            // optionsSeparator1ToolStripMenuItem
+            // 
+            this.optionsSeparator1ToolStripMenuItem.Name = "optionsSeparator1ToolStripMenuItem";
+            this.optionsSeparator1ToolStripMenuItem.Size = new System.Drawing.Size(186, 6);
+            // 
+            // scanToolStripMenuItem
+            // 
+            this.scanToolStripMenuItem.CheckOnClick = true;
+            this.scanToolStripMenuItem.Name = "scanToolStripMenuItem";
+            this.scanToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.scanToolStripMenuItem.Text = "Scan ROM on loading";
+            this.scanToolStripMenuItem.CheckedChanged += new System.EventHandler(this.ScanToolStripMenuItem_CheckedChanged);
+            // 
+            // optionsSeparator2ToolStripMenuItem
+            // 
+            this.optionsSeparator2ToolStripMenuItem.Name = "optionsSeparator2ToolStripMenuItem";
+            this.optionsSeparator2ToolStripMenuItem.Size = new System.Drawing.Size(186, 6);
+            // 
+            // setEmulatorToolStripMenuItem
+            // 
+            this.setEmulatorToolStripMenuItem.Name = "setEmulatorToolStripMenuItem";
+            this.setEmulatorToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.setEmulatorToolStripMenuItem.Text = "Set Emulator...";
+            this.setEmulatorToolStripMenuItem.Click += new System.EventHandler(this.SetEmulatorToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.resetOptionsToolStripMenuItem,
             this.manualToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
-            // resetOptionsToolStripMenuItem
-            // 
-            this.resetOptionsToolStripMenuItem.Name = "resetOptionsToolStripMenuItem";
-            this.resetOptionsToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
-            this.resetOptionsToolStripMenuItem.Text = "Reset Options";
-            this.resetOptionsToolStripMenuItem.Click += new System.EventHandler(this.ResetOptionsToolStripMenuItem_Click);
-            // 
             // manualToolStripMenuItem
             // 
             this.manualToolStripMenuItem.Name = "manualToolStripMenuItem";
-            this.manualToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.manualToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
             this.manualToolStripMenuItem.Text = "Manual";
             this.manualToolStripMenuItem.Click += new System.EventHandler(this.ManualToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
-            // 
-            // labelExpandFill
-            // 
-            this.labelExpandFill.AutoSize = true;
-            this.labelExpandFill.Location = new System.Drawing.Point(270, 190);
-            this.labelExpandFill.Name = "labelExpandFill";
-            this.labelExpandFill.Size = new System.Drawing.Size(57, 13);
-            this.labelExpandFill.TabIndex = 69;
-            this.labelExpandFill.Text = "Expand fill";
             // 
             // comboBoxExpandFill
             // 
             this.comboBoxExpandFill.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxExpandFill.Enabled = false;
+            this.comboBoxExpandFill.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.comboBoxExpandFill.FormattingEnabled = true;
             this.comboBoxExpandFill.Items.AddRange(new object[] {
             "Empty (0x00)",
@@ -823,8 +886,18 @@
             this.comboBoxExpandFill.Name = "comboBoxExpandFill";
             this.comboBoxExpandFill.Size = new System.Drawing.Size(168, 21);
             this.comboBoxExpandFill.TabIndex = 69;
-            this.toolTipMain.SetToolTip(this.comboBoxExpandFill, "How new space is filled when expanding: empty for ROM hacks, mirrored to write a game onto a bigger EPROM");
+            this.toolTipMain.SetToolTip(this.comboBoxExpandFill, "How new space is filled when expanding: empty for ROM hacks, mirrored to write a " +
+        "game onto a bigger EPROM");
             this.comboBoxExpandFill.SelectedIndexChanged += new System.EventHandler(this.ComboBoxExpandFill_SelectedIndexChanged);
+            // 
+            // labelExpandFill
+            // 
+            this.labelExpandFill.AutoSize = true;
+            this.labelExpandFill.Location = new System.Drawing.Point(270, 190);
+            this.labelExpandFill.Name = "labelExpandFill";
+            this.labelExpandFill.Size = new System.Drawing.Size(55, 13);
+            this.labelExpandFill.TabIndex = 69;
+            this.labelExpandFill.Text = "Expand fill";
             // 
             // buttonRemoveOverdump
             // 
@@ -847,14 +920,6 @@
             this.buttonHeatmap.Text = "ROM Heatmap";
             this.buttonHeatmap.UseVisualStyleBackColor = true;
             this.buttonHeatmap.Click += new System.EventHandler(this.ButtonHeatmap_Click);
-            // 
-            // checkLightChecksum
-            // 
-            this.checkLightChecksum.Location = new System.Drawing.Point(78, 1);
-            this.checkLightChecksum.Name = "checkLightChecksum";
-            this.checkLightChecksum.Size = new System.Drawing.Size(11, 11);
-            this.checkLightChecksum.TabIndex = 0;
-            this.checkLightChecksum.Visible = false;
             // 
             // groupBoxOptions
             // 
@@ -956,6 +1021,7 @@
             // 
             // FormMain
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(542, 595);
@@ -994,8 +1060,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "FormMain";
-            this.Text = "Advanced SNES ROM Utility v1.2";
-            this.AllowDrop = true;
+            this.Text = "Advanced SNES ROM Utility v1.3";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.FormMain_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.FormMain_DragEnter);
@@ -1090,6 +1155,13 @@
         private System.Windows.Forms.Button buttonConvertMapMode;
         private System.Windows.Forms.ToolStripMenuItem resetOptionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem runInEmulatorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator fileSeparatorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator optionsSeparator1ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem scanToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator optionsSeparator2ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setEmulatorToolStripMenuItem;
         private System.Windows.Forms.Button buttonInterleave;
         private System.Windows.Forms.Label labelSHA256Chksm;
         private System.Windows.Forms.Label labelSHA1Chksm;

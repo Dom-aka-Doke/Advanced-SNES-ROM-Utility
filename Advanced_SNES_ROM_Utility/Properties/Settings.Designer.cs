@@ -106,5 +106,29 @@ namespace Advanced_SNES_ROM_Utility.Properties {
                 this["ExpandFillMigrated"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string EmulatorPath {
+            get {
+                return ((string)(this["EmulatorPath"]));
+            }
+            set {
+                this["EmulatorPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\"%ROM%\"")]
+        public string EmulatorArguments {
+            get {
+                return ((string)(this["EmulatorArguments"]));
+            }
+            set {
+                this["EmulatorArguments"] = value;
+            }
+        }
     }
 }

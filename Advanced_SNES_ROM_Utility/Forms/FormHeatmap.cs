@@ -15,8 +15,8 @@ namespace Advanced_SNES_ROM_Utility
     public class FormHeatmap : Form
     {
         private static readonly Color ColorUnique = Color.FromArgb(42, 120, 214);
-        private static readonly Color ColorDuplicate = Color.FromArgb(235, 120, 40);
-        private static readonly Color ColorEmpty = Color.FromArgb(200, 200, 205);
+        private static readonly Color ColorDuplicate = Color.FromArgb(235, 104, 52);   // #eb6834, same as the JS/Tauri version
+        private static readonly Color ColorEmpty = Color.FromArgb(27, 175, 122);       // #1baf7a (green)
         private static readonly Color ColorHeader = Color.FromArgb(30, 30, 30);
 
         // Sequential ramp (light -> dark blue) for the entropy view
@@ -50,7 +50,8 @@ namespace Advanced_SNES_ROM_Utility
         private readonly ListBox _listGroups = new ListBox();
         private readonly Label _labelGroups = new Label();
         private readonly Button _buttonClose = new Button();
-        private readonly ToolTip _toolTip = new ToolTip();
+        // Bank details, drawn as a semi-transparent box on the map
+        private string _tipText;
 
         public FormHeatmap(SNESROM sourceROM)
         {
@@ -106,7 +107,7 @@ namespace Advanced_SNES_ROM_Utility
             _panelGrid.AutoScroll = true;
             _panelGrid.Paint += PanelGrid_Paint;
             _panelGrid.MouseMove += PanelGrid_MouseMove;
-            _panelGrid.MouseLeave += (s, e) => { _hoverBank = -1; _toolTip.Hide(_panelGrid); _panelGrid.Invalidate(); };
+            _panelGrid.MouseLeave += (s, e) => { _hoverBank = -1; _tipText = null; _panelGrid.Invalidate(); };
             _panelGrid.Resize += (s, e) => UpdateScrollSize();
             _panelGrid.Scroll += (s, e) => _panelGrid.Invalidate();
 
@@ -300,6 +301,34 @@ namespace Advanced_SNES_ROM_Utility
                     }
                 }
             }
+
+            DrawTip(g);
+        }
+
+        /// <summary>Details of the hovered bank: semi-transparent white box below (or above) the cell</summary>
+        private void DrawTip(Graphics g)
+        {
+            if (_hoverBank < 0 || string.IsNullOrEmpty(_tipText)) { return; }
+
+            const int padding = 6;
+            Rectangle cell = CellRectangle(_hoverBank);
+            Size textSize = TextRenderer.MeasureText(g, _tipText, Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPrefix);
+            Rectangle box = new Rectangle(cell.Left, cell.Bottom + 4, textSize.Width + padding * 2, textSize.Height + padding * 2);
+
+            // Keep the box inside the visible area of the map
+            Size client = _panelGrid.ClientSize;
+            if (box.Right > client.Width - 2) { box.X = Math.Max(2, client.Width - 2 - box.Width); }
+            if (box.Bottom > client.Height - 2 && cell.Top - 4 - box.Height >= 2) { box.Y = cell.Top - 4 - box.Height; }
+
+            using (GraphicsPath path = RoundedRectangle(box, 4))
+            using (Brush background = new SolidBrush(Color.FromArgb(225, 255, 255, 255)))
+            using (Pen border = new Pen(Color.FromArgb(160, 118, 118, 118)))
+            {
+                g.FillPath(background, path);
+                g.DrawPath(border, path);
+            }
+
+            TextRenderer.DrawText(g, _tipText, Font, new Rectangle(box.X + padding, box.Y + padding, textSize.Width, textSize.Height), Color.FromArgb(11, 11, 11), TextFormatFlags.NoPrefix);
         }
 
         private static GraphicsPath RoundedRectangle(Rectangle rect, int radius)
@@ -327,9 +356,10 @@ namespace Advanced_SNES_ROM_Utility
             if (found == _hoverBank) { return; }
 
             _hoverBank = found;
+            _tipText = null;
             _panelGrid.Invalidate();
 
-            if (found < 0) { _toolTip.Hide(_panelGrid); return; }
+            if (found < 0) { return; }
 
             BankInfo bank = _analysis.Banks[found];
             string status;
@@ -345,8 +375,7 @@ namespace Advanced_SNES_ROM_Utility
                           "Entropy: " + bank.Entropy.ToString("0.00") + " bits per byte" +
                           (bank.Header ? "\nContains the internal header" : string.Empty);
 
-            Rectangle rect = CellRectangle(found);
-            _toolTip.Show(text, _panelGrid, rect.Left, rect.Bottom + 4, 8000);
+            _tipText = text;
         }
 
         private void UpdateLegend()

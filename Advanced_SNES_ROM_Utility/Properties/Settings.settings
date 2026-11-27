@@ -23,5 +23,11 @@
     <Setting Name="ExpandFillMigrated" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="EmulatorPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="EmulatorArguments" Type="System.String" Scope="User">
+      <Value Profile="(Default)">"%ROM%"</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

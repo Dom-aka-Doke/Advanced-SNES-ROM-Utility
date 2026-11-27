@@ -65,6 +65,16 @@ namespace Advanced_SNES_ROM_Utility
             int captionWidth = TextRenderer.MeasureText(groupBoxChecksums.Text, groupBoxChecksums.Font).Width;
             checkLightChecksum.Location = new System.Drawing.Point(8 + captionWidth, 2);
 
+            // Options menu reflects the saved settings
+            _updatingControls = true;
+            scanToolStripMenuItem.Checked = Properties.Settings.Default.ScanROMSetting;
+            checkBoxScan.Checked = Properties.Settings.Default.ScanROMSetting;
+            _updatingControls = false;
+            RefreshRunInEmulator();
+
+            // Remove temporary ROM copies of "Run in Emulator"
+            FormClosed += (sender, e) => EmulatorLauncher.Cleanup();
+
             if (!string.IsNullOrEmpty(startupFile))
             {
                 Shown += (sender, e) => LoadROM(startupFile);
@@ -543,6 +553,7 @@ namespace Advanced_SNES_ROM_Utility
 
             // Set check boxes
             checkBoxScan.Checked = Properties.Settings.Default.ScanROMSetting;
+            RefreshRunInEmulator();
 
             // Set buttons
             if (!buttonSave.Enabled) { buttonSave.Enabled = true; }
@@ -818,17 +829,81 @@ namespace Advanced_SNES_ROM_Utility
 
         private void CheckBoxScan_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBoxScan.Checked)
+            SetScanSetting(checkBoxScan.Checked);
+        }
+
+        private void ScanToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_updatingControls) { return; }
+            SetScanSetting(scanToolStripMenuItem.Checked);
+        }
+
+        /// <summary>Saves "Scan ROM on loading" and keeps check box and menu item in sync</summary>
+        private void SetScanSetting(bool scan)
+        {
+            if (checkBoxScan.Checked != scan) { checkBoxScan.Checked = scan; }
+            if (scanToolStripMenuItem.Checked != scan) { scanToolStripMenuItem.Checked = scan; }
+
+            if (Properties.Settings.Default.ScanROMSetting != scan)
             {
-                Properties.Settings.Default.ScanROMSetting = true;
+                Properties.Settings.Default.ScanROMSetting = scan;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private bool HasEmulator()
+        {
+            return !string.IsNullOrEmpty(Properties.Settings.Default.EmulatorPath);
+        }
+
+        /// <summary>"Run in Emulator" needs a loaded ROM; without an emulator F5 asks to choose one</summary>
+        private void RefreshRunInEmulator()
+        {
+            bool romLoaded = _sourceROM != null && _sourceROM.SourceROM != null;
+            runInEmulatorToolStripMenuItem.Enabled = romLoaded;
+            runInEmulatorToolStripMenuItem.ToolTipText = HasEmulator() ? Properties.Settings.Default.EmulatorPath : "No emulator set (Options > Set Emulator...)";
+        }
+
+        private bool ShowEmulatorDialog()
+        {
+            using (FormEmulator emulatorForm = new FormEmulator(Properties.Settings.Default.EmulatorPath, Properties.Settings.Default.EmulatorArguments))
+            {
+                if (emulatorForm.ShowDialog(this) != DialogResult.OK) { return false; }
+
+                Properties.Settings.Default.EmulatorPath = emulatorForm.EmulatorPath;
+                Properties.Settings.Default.EmulatorArguments = emulatorForm.EmulatorArguments;
+                Properties.Settings.Default.Save();
             }
 
-            else if (!checkBoxScan.Checked)
+            RefreshRunInEmulator();
+            return HasEmulator();
+        }
+
+        private void SetEmulatorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowEmulatorDialog();
+        }
+
+        private void RunInEmulatorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_sourceROM == null || _sourceROM.SourceROM == null) { return; }
+
+            if (!HasEmulator())
             {
-                Properties.Settings.Default.ScanROMSetting = false;
+                DialogResult choose = MessageBox.Show("No emulator has been set yet.\n\nDo you want to choose one now?", "Run in Emulator", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (choose != DialogResult.Yes || !ShowEmulatorDialog()) { return; }
             }
 
-            Properties.Settings.Default.Save();
+            try
+            {
+                // Current state incl. unsaved changes; the original file stays untouched
+                EmulatorLauncher.Run(_sourceROM.GetSaveData(), _sourceROM.ROMFullPath, Properties.Settings.Default.EmulatorPath, Properties.Settings.Default.EmulatorArguments);
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show("The emulator could not be started.\n\n" + ex.Message, "Run in Emulator", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void CopyToClipboard_Click(object sender, EventArgs e)
@@ -899,18 +974,21 @@ namespace Advanced_SNES_ROM_Utility
 
         private void ResetOptionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult dialogResult = MessageBox.Show("This will reset all your saved settings and\n" +
+            DialogResult dialogResult = MessageBox.Show("This will reset all your saved settings (incl. the emulator) and\n" +
                                                         "restore all your suppressed dialog messages.\n\n" +
                                                         "Do you want to proceed?", "Attention!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (dialogResult == DialogResult.Yes)
             {
                 comboBoxExpandFill.SelectedIndex = (int)ExpandFill.Empty00;
-                checkBoxScan.Checked = false;
+                SetScanSetting(false);
                 Properties.Settings.Default.ExpandFill = "00";
+                Properties.Settings.Default.EmulatorPath = "";
+                Properties.Settings.Default.EmulatorArguments = EmulatorLauncher.DefaultArguments;
                 Properties.Settings.Default.SlowROMFixMessage = false;
                 Properties.Settings.Default.ConvertMapModeMessage = false;
                 Properties.Settings.Default.Save();
+                RefreshRunInEmulator();
 
                 MessageBox.Show("All settings have been reset successfully!", "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }

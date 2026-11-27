@@ -1,4 +1,4 @@
-<h1>
+﻿<h1>
     <a name="top"></a><span style="font-family:Arial,Helvetica,sans-serif">Table of Contents</span>
 </h1>
 
@@ -21,6 +21,7 @@
     <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#heatmap">ROM Heatmap</a></span></span></li>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#patch">Apply Patch</a></span></span></li>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#open">Open, Save and Save As</a></span></span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#emulator">Run in Emulator</a></span></span></li>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#options">Options</a></span></span></li>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:20px"><a href="#commandline">Commandline (CLI)</a></span></span></li>
 </ol>
@@ -194,7 +195,25 @@
 </ul>
 <a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
 
+<h1><a name="emulator" /><span style="font-family:Arial,Helvetica,sans-serif">Run in Emulator</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif">Starts the current state of the ROM - including unsaved changes - in your emulator. Press <strong>F5</strong> or choose <em>File &rarr; Run in Emulator</em>.</span></p>
+<ul>
+    <li><span style="font-family:Arial,Helvetica,sans-serif">Choose the emulator once with <em>Options &rarr; Set Emulator...</em> (f.e. snes9x-x64.exe or Mesen.exe). If no emulator is set, F5 asks you to choose one.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Arguments:</strong> <em>%ROM%</em> is replaced by the path of the ROM. The default <em>"%ROM%"</em> works for most emulators. RetroArch needs the core, f.e. <em>-L cores\snes9x_libretro.dll "%ROM%"</em>.</span></li>
+    <li><span style="font-family:Arial,Helvetica,sans-serif">The ROM is written to a temporary copy with the same file name, your original file stays untouched. The copies are deleted when the tool is closed. Save files (.srm) of the emulator are kept, so your progress stays between test runs.</span></li>
+</ul>
+<a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
+
 <h1><a name="options" /><span style="font-family:Arial,Helvetica,sans-serif">Options</span></h1>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif"><em>Reset Options</em>, <em>Scan ROM on loading</em> and <em>Set Emulator...</em> can be found in the <em>Options</em> menu.</span></p>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif"><strong>Reset Options</strong></span></p>
+
+<ul>
+    <li><span style="font-family:Arial,Helvetica,sans-serif">Resets all saved settings (incl. the emulator) and shows suppressed messages again.</span></li>
+</ul>
 
 <p><span style="font-family:Arial,Helvetica,sans-serif"><strong>Expand fill</strong></span></p>
 
@@ -207,6 +226,12 @@
 <ul>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Checked:</strong> ROM will be scanned instantly for copy protections on loading. This might take a few seconds.</span></li>
     <li><span style="font-family:Arial,Helvetica,sans-serif"><strong>Unchecked:</strong> You have to manually click the Scan button to check for copy protections.</span></li>
+</ul>
+
+<p><span style="font-family:Arial,Helvetica,sans-serif"><strong>Set Emulator...</strong></span></p>
+
+<ul>
+    <li><span style="font-family:Arial,Helvetica,sans-serif">Emulator and arguments for <a href="#emulator">Run in Emulator</a>.</span></li>
 </ul>
 <a href="#top"><span style="font-family:Arial,Helvetica,sans-serif">go back</span></a>
 
